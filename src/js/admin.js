@@ -22,32 +22,35 @@ import {
 // ============================================
 // RÉFÉRENCES DOM
 // ============================================
-const screenLogin      = document.getElementById('screen-login');
-const screenDashboard  = document.getElementById('screen-dashboard');
-const emailInput       = document.getElementById('email');
-const passwordInput    = document.getElementById('password');
-const btnLogin         = document.getElementById('btn-login');
-const btnLogout        = document.getElementById('btn-logout');
-const btnExport        = document.getElementById('btn-export');
-const loginError       = document.getElementById('login-error');
-const checkupsListe    = document.getElementById('checkups-liste');
-const filtreVehicule   = document.getElementById('filtre-vehicule');
-const filtreStatut     = document.getElementById('filtre-statut');
-const filtreDate       = document.getElementById('filtre-date');
-const statToday        = document.getElementById('stat-today');
-const statAnomalies    = document.getElementById('stat-anomalies');
-const statVehicules    = document.getElementById('stat-vehicules');
-const vueCheckups      = document.getElementById('vue-checkups');
-const vueFlotte        = document.getElementById('vue-flotte');
-const listeFlotte      = document.getElementById('liste-flotte');
-const btnAjouterVeh    = document.getElementById('btn-ajouter-vehicule');
-const modaleVehicule   = document.getElementById('modale-vehicule');
-const modaleTitre      = document.getElementById('modale-titre');
-const modaleFermer     = document.getElementById('modale-fermer');
-const btnAnnuler       = document.getElementById('btn-annuler');
-const btnSauvegarder   = document.getElementById('btn-sauvegarder');
+const screenLogin       = document.getElementById('screen-login');
+const screenDashboard   = document.getElementById('screen-dashboard');
+const emailInput        = document.getElementById('email');
+const passwordInput     = document.getElementById('password');
+const btnLogin          = document.getElementById('btn-login');
+const btnLogout         = document.getElementById('btn-logout');
+const btnExport         = document.getElementById('btn-export');
+const loginError        = document.getElementById('login-error');
+const checkupsListe     = document.getElementById('checkups-liste');
+const filtreVehicule    = document.getElementById('filtre-vehicule');
+const filtreStatut      = document.getElementById('filtre-statut');
+const filtreDate        = document.getElementById('filtre-date');
+const statToday         = document.getElementById('stat-today');
+const statAnomalies     = document.getElementById('stat-anomalies');
+const statVehicules     = document.getElementById('stat-vehicules');
+const vueCheckups       = document.getElementById('vue-checkups');
+const vueFlotte         = document.getElementById('vue-flotte');
+const listeFlotte       = document.getElementById('liste-flotte');
+const btnAjouterVeh     = document.getElementById('btn-ajouter-vehicule');
+const modaleVehicule    = document.getElementById('modale-vehicule');
+const modaleTitre       = document.getElementById('modale-titre');
+const modaleFermer      = document.getElementById('modale-fermer');
+const btnAnnuler        = document.getElementById('btn-annuler');
+const btnSauvegarder    = document.getElementById('btn-sauvegarder');
 const checkpointsEditor = document.getElementById('checkpoints-editor');
-const btnAjouterCat    = document.getElementById('btn-ajouter-categorie');
+const btnAjouterCat     = document.getElementById('btn-ajouter-categorie');
+const iconeLibreInput   = document.getElementById('v-icone-libre');
+const iconeApercu       = document.getElementById('icone-apercu');
+const iconeHidden       = document.getElementById('v-icone');
 
 // ============================================
 // STATE
@@ -56,51 +59,167 @@ let tousLesCheckups     = [];
 let tousLesVehicules    = [];
 let unsubscribeCheckups = null;
 let filtreActif         = null;
-let vehiculeEnEdition   = null; // null = ajout, sinon id du véhicule
+let vehiculeEnEdition   = null;
 
 // ============================================
 // TEMPLATES CHECKPOINTS PAR TYPE
 // ============================================
 const TEMPLATES_CHECKPOINTS = {
   "VL thermique": {
-    "Général": ["Documents de bord présents", "Propreté intérieure", "Rétroviseurs réglés"],
-    "Mécanique": ["Niveau huile moteur", "Niveau liquide refroidissement", "Niveau lave-glace"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Pneumatiques (état visuel)", "Freins (test à basse vitesse)"]
+    "Général": [
+      "Documents de bord présents",
+      "Propreté intérieure",
+      "Rétroviseurs réglés"
+    ],
+    "Mécanique": [
+      "Niveau huile moteur",
+      "Niveau liquide refroidissement",
+      "Niveau lave-glace"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Pneumatiques (état visuel)",
+      "Freins (test à basse vitesse)"
+    ]
   },
   "VL électrique": {
-    "Général": ["Documents de bord présents", "Propreté intérieure"],
-    "Batterie & Charge": ["Niveau de charge batterie", "Connecteur de charge (état)", "Câble de charge présent"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Pneumatiques (état visuel)", "Avertisseur sonore"]
+    "Général": [
+      "Documents de bord présents",
+      "Propreté intérieure"
+    ],
+    "Batterie & Charge": [
+      "Niveau de charge batterie",
+      "Connecteur de charge (état)",
+      "Câble de charge présent"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Pneumatiques (état visuel)",
+      "Avertisseur sonore"
+    ]
   },
   "Utilitaire": {
-    "Général": ["Documents de bord présents", "Propreté intérieure", "Rétroviseurs réglés"],
-    "Mécanique": ["Niveau huile moteur", "Niveau liquide refroidissement", "Niveau lave-glace"],
-    "Carrosserie & Chargement": ["Portes arrière (fermeture)", "Ridelles (état)", "Sangles d'arrimage présentes", "Plancher (état)"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Gyrophare (si équipé)", "Pneumatiques (état visuel)"]
+    "Général": [
+      "Documents de bord présents",
+      "Propreté intérieure",
+      "Rétroviseurs réglés"
+    ],
+    "Mécanique": [
+      "Niveau huile moteur",
+      "Niveau liquide refroidissement",
+      "Niveau lave-glace"
+    ],
+    "Carrosserie & Chargement": [
+      "Portes arrière (fermeture)",
+      "Ridelles (état)",
+      "Sangles d'arrimage présentes",
+      "Plancher (état)"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Gyrophare (si équipé)",
+      "Pneumatiques (état visuel)"
+    ]
   },
   "Benne ordures ménagères": {
-    "Général": ["Documents de bord présents", "Rétroviseurs grand angle"],
-    "Mécanique PL": ["Niveau huile moteur", "Niveau liquide refroidissement", "Pression circuit pneumatique", "Freins (test à basse vitesse)"],
-    "Équipement benne": ["Mécanisme compacteur", "Lève-conteneurs (état)", "Hayons (fermeture)", "Signalisation arrière"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Gyrophare", "Pneumatiques (état visuel)", "Marche arrière sonore"]
+    "Général": [
+      "Documents de bord présents",
+      "Rétroviseurs grand angle"
+    ],
+    "Mécanique PL": [
+      "Niveau huile moteur",
+      "Niveau liquide refroidissement",
+      "Pression circuit pneumatique",
+      "Freins (test à basse vitesse)"
+    ],
+    "Équipement benne": [
+      "Mécanisme compacteur",
+      "Lève-conteneurs (état)",
+      "Hayons (fermeture)",
+      "Signalisation arrière"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Gyrophare",
+      "Pneumatiques (état visuel)",
+      "Marche arrière sonore"
+    ]
   },
   "Laveuse/Balayeuse VL": {
-    "Général": ["Documents de bord présents", "Rétroviseurs réglés"],
-    "Mécanique": ["Niveau huile moteur", "Niveau liquide refroidissement"],
-    "Équipement balayage": ["Réservoir eau (niveau)", "Réservoir détergent (niveau)", "Brosses latérales (état)", "Brosse centrale (état)", "Buses (état et orientation)", "Trémie (vidée et propre)"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Gyrophare", "Pneumatiques (état visuel)"]
+    "Général": [
+      "Documents de bord présents",
+      "Rétroviseurs réglés"
+    ],
+    "Mécanique": [
+      "Niveau huile moteur",
+      "Niveau liquide refroidissement"
+    ],
+    "Équipement balayage": [
+      "Réservoir eau (niveau)",
+      "Réservoir détergent (niveau)",
+      "Brosses latérales (état)",
+      "Brosse centrale (état)",
+      "Buses (état et orientation)",
+      "Trémie (vidée et propre)"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Gyrophare",
+      "Pneumatiques (état visuel)"
+    ]
   },
   "Laveuse/Balayeuse PL": {
-    "Général": ["Documents de bord présents", "Rétroviseurs grand angle"],
-    "Mécanique PL": ["Niveau huile moteur", "Niveau liquide refroidissement", "Pression circuit pneumatique", "Freins (test à basse vitesse)"],
-    "Équipement balayage": ["Réservoir eau (niveau)", "Réservoir détergent (niveau)", "Brosses latérales (état)", "Brosse centrale (état)", "Buses (état et orientation)", "Trémie (vidée et propre)"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Gyrophare", "Pneumatiques (état visuel)", "Marche arrière sonore"]
+    "Général": [
+      "Documents de bord présents",
+      "Rétroviseurs grand angle"
+    ],
+    "Mécanique PL": [
+      "Niveau huile moteur",
+      "Niveau liquide refroidissement",
+      "Pression circuit pneumatique",
+      "Freins (test à basse vitesse)"
+    ],
+    "Équipement balayage": [
+      "Réservoir eau (niveau)",
+      "Réservoir détergent (niveau)",
+      "Brosses latérales (état)",
+      "Brosse centrale (état)",
+      "Buses (état et orientation)",
+      "Trémie (vidée et propre)"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Gyrophare",
+      "Pneumatiques (état visuel)",
+      "Marche arrière sonore"
+    ]
   },
   "Véhicule spécifique électrique": {
-    "Général": ["Documents de bord présents", "Propreté intérieure"],
-    "Batterie & Charge": ["Niveau de charge batterie", "Connecteur de charge (état)", "Câble de charge présent"],
-    "Équipement spécifique": ["Équipements de bord (état)", "Benne/plateau (si équipé)"],
-    "Sécurité": ["Éclairages avant", "Éclairages arrière", "Pneumatiques (état visuel)", "Avertisseur sonore"]
+    "Général": [
+      "Documents de bord présents",
+      "Propreté intérieure"
+    ],
+    "Batterie & Charge": [
+      "Niveau de charge batterie",
+      "Connecteur de charge (état)",
+      "Câble de charge présent"
+    ],
+    "Équipement spécifique": [
+      "Équipements de bord (état)",
+      "Benne/plateau (si équipé)"
+    ],
+    "Sécurité": [
+      "Éclairages avant",
+      "Éclairages arrière",
+      "Pneumatiques (état visuel)",
+      "Avertisseur sonore"
+    ]
   }
 };
 
@@ -120,25 +239,34 @@ onAuthStateChanged(auth, (user) => {
 btnLogin.addEventListener('click', async () => {
   const email    = emailInput.value.trim();
   const password = passwordInput.value;
-  if (!email || !password) { loginError.textContent = 'Remplis tous les champs.'; return; }
-  btnLogin.disabled = true;
+
+  if (!email || !password) {
+    loginError.textContent = 'Remplis tous les champs.';
+    return;
+  }
+
+  btnLogin.disabled    = true;
   btnLogin.textContent = 'Connexion...';
   loginError.textContent = '';
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch {
     loginError.textContent = 'Email ou mot de passe incorrect.';
   } finally {
-    btnLogin.disabled = false;
+    btnLogin.disabled    = false;
     btnLogin.textContent = 'Se connecter';
   }
 });
 
 btnLogout.addEventListener('click', async () => await signOut(auth));
-passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') btnLogin.click(); });
+
+passwordInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') btnLogin.click();
+});
 
 // ============================================
-// NAVIGATION
+// NAVIGATION ÉCRANS ET VUES
 // ============================================
 function showScreen(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -152,15 +280,11 @@ function showVue(vue) {
 }
 
 // ============================================
-// INITIALISATION
+// INITIALISATION DU DASHBOARD
 // ============================================
 async function initialiserDashboard() {
   await chargerVehiculesFiltres();
   ecouterCheckups();
-  initialiserFiltreDate();
-}
-
-function initialiserFiltreDate() {
   filtreDate.value = new Date().toISOString().split('T')[0];
 }
 
@@ -172,7 +296,6 @@ document.querySelectorAll('.stat-card').forEach(card => {
     const filtre = card.dataset.filtre;
 
     if (filtre === 'flotte') {
-      // Bascule sur la vue flotte
       document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
       filtreActif = 'flotte';
@@ -181,8 +304,8 @@ document.querySelectorAll('.stat-card').forEach(card => {
       return;
     }
 
-    // Toggle filtre check-ups
     showVue(vueCheckups);
+
     if (filtreActif === filtre) {
       filtreActif = null;
       card.classList.remove('active');
@@ -194,6 +317,7 @@ document.querySelectorAll('.stat-card').forEach(card => {
       filtreStatut.value   = '';
       filtreDate.value     = '';
     }
+
     afficherCheckups();
   });
 });
@@ -206,10 +330,11 @@ async function chargerVehiculesFiltres() {
     const snapshot = await getDocs(collection(db, 'vehicules'));
     tousLesVehicules = [];
     statVehicules.textContent = snapshot.size;
+
     snapshot.forEach(doc => {
       tousLesVehicules.push({ id: doc.id, ...doc.data() });
-      const option = document.createElement('option');
-      option.value = doc.id;
+      const option       = document.createElement('option');
+      option.value       = doc.id;
       option.textContent = doc.data().nom;
       filtreVehicule.appendChild(option);
     });
@@ -219,10 +344,11 @@ async function chargerVehiculesFiltres() {
 }
 
 // ============================================
-// VUE FLOTTE
+// VUE FLOTTE — chargement et affichage
 // ============================================
 async function chargerFlotte() {
   listeFlotte.innerHTML = '<p class="loading">Chargement...</p>';
+
   try {
     const snapshot = await getDocs(collection(db, 'vehicules'));
     tousLesVehicules = [];
@@ -234,6 +360,7 @@ async function chargerFlotte() {
     }
 
     listeFlotte.innerHTML = '';
+
     tousLesVehicules.forEach(v => {
       const card = document.createElement('div');
       card.className = 'flotte-card';
@@ -267,6 +394,7 @@ async function chargerFlotte() {
 // ============================================
 async function supprimerVehicule(id, nom) {
   if (!confirm(`Supprimer "${nom}" de la flotte ? Cette action est irréversible.`)) return;
+
   try {
     await deleteDoc(doc(db, 'vehicules', id));
     chargerFlotte();
@@ -278,29 +406,53 @@ async function supprimerVehicule(id, nom) {
 }
 
 // ============================================
-// MODALE — OUVRIR
+// ICÔNE — picker + champ libre
+// ============================================
+function selectionnerIcone(icone) {
+  document.querySelectorAll('.icone-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.icone === icone);
+  });
+  iconeHidden.value      = icone;
+  iconeApercu.textContent = icone;
+  iconeLibreInput.value  = '';
+}
+
+document.querySelectorAll('.icone-option').forEach(el => {
+  el.addEventListener('click', () => selectionnerIcone(el.dataset.icone));
+});
+
+iconeLibreInput.addEventListener('input', (e) => {
+  const val = e.target.value.trim();
+  if (!val) return;
+
+  document.querySelectorAll('.icone-option').forEach(el => {
+    el.classList.remove('selected');
+  });
+
+  iconeHidden.value       = val;
+  iconeApercu.textContent = val;
+});
+
+// ============================================
+// MODALE — ouvrir / fermer
 // ============================================
 function ouvrirModale(vehiculeId = null) {
-  vehiculeEnEdition = vehiculeId;
+  vehiculeEnEdition   = vehiculeId;
   modaleTitre.textContent = vehiculeId ? 'Modifier le véhicule' : 'Ajouter un véhicule';
 
   if (vehiculeId) {
-    // Mode édition — pré-remplir
     const v = tousLesVehicules.find(v => v.id === vehiculeId);
     if (v) {
       document.getElementById('v-nom').value   = v.nom;
       document.getElementById('v-immat').value = v.immatriculation;
       document.getElementById('v-type').value  = v.type;
-      document.getElementById('v-icone').value = v.icone || '🚗';
       selectionnerIcone(v.icone || '🚗');
       genererEditorCheckpoints(v.checkpoints);
     }
   } else {
-    // Mode ajout — reset
     document.getElementById('v-nom').value   = '';
     document.getElementById('v-immat').value = '';
     document.getElementById('v-type').value  = 'VL thermique';
-    document.getElementById('v-icone').value = '🚗';
     selectionnerIcone('🚗');
     genererEditorCheckpoints(TEMPLATES_CHECKPOINTS['VL thermique']);
   }
@@ -317,24 +469,10 @@ btnAjouterVeh.addEventListener('click', () => ouvrirModale());
 modaleFermer.addEventListener('click', fermerModale);
 btnAnnuler.addEventListener('click', fermerModale);
 
-// Pré-remplir quand on change le type
+// Pré-remplir checkpoints quand on change le type
 document.getElementById('v-type').addEventListener('change', (e) => {
   const template = TEMPLATES_CHECKPOINTS[e.target.value];
   if (template) genererEditorCheckpoints(template);
-});
-
-// ============================================
-// ICONE PICKER
-// ============================================
-function selectionnerIcone(icone) {
-  document.querySelectorAll('.icone-option').forEach(el => {
-    el.classList.toggle('selected', el.dataset.icone === icone);
-  });
-  document.getElementById('v-icone').value = icone;
-}
-
-document.querySelectorAll('.icone-option').forEach(el => {
-  el.addEventListener('click', () => selectionnerIcone(el.dataset.icone));
 });
 
 // ============================================
@@ -362,13 +500,13 @@ function ajouterBlocCategorie(nomCategorie = '', points = []) {
   `;
 
   bloc.querySelector('.btn-suppr-cat').addEventListener('click', () => bloc.remove());
+
   bloc.querySelector('.btn-ajouter-point').addEventListener('click', () => {
     const liste = bloc.querySelector('.points-list');
     liste.insertAdjacentHTML('beforeend', creerPointRow(''));
     attacherSupprPoint(liste.lastElementChild);
   });
 
-  // Attache les événements sur les points existants
   bloc.querySelectorAll('.point-row').forEach(row => attacherSupprPoint(row));
 
   checkpointsEditor.appendChild(bloc);
@@ -396,14 +534,13 @@ btnSauvegarder.addEventListener('click', async () => {
   const nom   = document.getElementById('v-nom').value.trim();
   const immat = document.getElementById('v-immat').value.trim();
   const type  = document.getElementById('v-type').value;
-  const icone = document.getElementById('v-icone').value;
+  const icone = iconeHidden.value;
 
   if (!nom || !immat) {
     alert('Le nom et l\'immatriculation sont obligatoires.');
     return;
   }
 
-  // Récupère les checkpoints depuis l'éditeur
   const checkpoints = {};
   checkpointsEditor.querySelectorAll('.categorie-block').forEach(bloc => {
     const cat    = bloc.querySelector('.input-categorie').value.trim();
@@ -429,18 +566,21 @@ btnSauvegarder.addEventListener('click', async () => {
     } else {
       await addDoc(collection(db, 'vehicules'), data);
     }
+
     fermerModale();
     chargerFlotte();
-    // Recharge les options du filtre véhicule
+
+    // Recharge les options du filtre
     filtreVehicule.innerHTML = '<option value="">Tous les véhicules</option>';
     const snap = await getDocs(collection(db, 'vehicules'));
     statVehicules.textContent = snap.size;
     snap.forEach(d => {
-      const o = document.createElement('option');
-      o.value = d.id;
+      const o       = document.createElement('option');
+      o.value       = d.id;
       o.textContent = d.data().nom;
       filtreVehicule.appendChild(o);
     });
+
   } catch (error) {
     alert('Erreur lors de la sauvegarde.');
     console.error(error);
@@ -454,7 +594,11 @@ btnSauvegarder.addEventListener('click', async () => {
 // ÉCOUTE TEMPS RÉEL CHECK-UPS
 // ============================================
 function ecouterCheckups() {
-  const q = query(collection(db, 'checkups'), orderBy('date', 'desc'));
+  const q = query(
+    collection(db, 'checkups'),
+    orderBy('date', 'desc')
+  );
+
   unsubscribeCheckups = onSnapshot(q, (snapshot) => {
     tousLesCheckups = [];
     snapshot.forEach(doc => tousLesCheckups.push({ id: doc.id, ...doc.data() }));
@@ -469,7 +613,9 @@ function ecouterCheckups() {
 function mettreAJourStats() {
   const aujourd_hui = new Date();
   aujourd_hui.setHours(0, 0, 0, 0);
-  let countToday = 0, countAnomalies = 0;
+
+  let countToday     = 0;
+  let countAnomalies = 0;
 
   tousLesCheckups.forEach(checkup => {
     if (checkup.date && checkup.date.toDate() >= aujourd_hui) countToday++;
@@ -481,7 +627,7 @@ function mettreAJourStats() {
 }
 
 // ============================================
-// AFFICHAGE CHECK-UPS
+// AFFICHAGE CHECK-UPS AVEC FILTRES
 // ============================================
 function afficherCheckups() {
   const filtreVeh       = filtreVehicule.value;
@@ -490,24 +636,30 @@ function afficherCheckups() {
   const aujourd_hui     = new Date();
   aujourd_hui.setHours(0, 0, 0, 0);
 
-  let liste = tousLesCheckups.filter(c => {
+  const liste = tousLesCheckups.filter(c => {
     if (filtreActif === 'today') {
       if (!c.date) return false;
-      const d = c.date.toDate(); d.setHours(0,0,0,0);
+      const d = c.date.toDate();
+      d.setHours(0, 0, 0, 0);
       if (d.getTime() !== aujourd_hui.getTime()) return false;
     }
+
     if (filtreActif === 'anomalie') {
       if (!Object.values(c.resultats || {}).some(r => r.statut === 'anomalie')) return false;
     }
+
     if (filtreVeh && c.vehiculeId !== filtreVeh) return false;
+
     if (filtreStatutVal) {
       const hasAno = Object.values(c.resultats || {}).some(r => r.statut === 'anomalie');
       if (filtreStatutVal === 'anomalie' && !hasAno) return false;
       if (filtreStatutVal === 'ok' && hasAno) return false;
     }
+
     if (filtreDateVal && c.date) {
       if (c.date.toDate().toISOString().split('T')[0] !== filtreDateVal) return false;
     }
+
     return true;
   });
 
@@ -516,8 +668,12 @@ function afficherCheckups() {
     : '';
 
   liste.forEach(checkup => {
-    const hasAnomalie = Object.values(checkup.resultats || {}).some(r => r.statut === 'anomalie');
-    const date = checkup.date ? checkup.date.toDate().toLocaleString('fr-FR') : 'Date inconnue';
+    const hasAnomalie = Object.values(checkup.resultats || {})
+      .some(r => r.statut === 'anomalie');
+    const date = checkup.date
+      ? checkup.date.toDate().toLocaleString('fr-FR')
+      : 'Date inconnue';
+
     const card = document.createElement('div');
     card.className = `checkup-card ${hasAnomalie ? 'has-anomalie' : ''}`;
     card.innerHTML = `
@@ -534,36 +690,44 @@ function afficherCheckups() {
         ${genererDetailCheckup(checkup.resultats)}
       </div>
     `;
+
     card.querySelector('.checkup-card-header').addEventListener('click', () => {
       document.getElementById(`body-${checkup.id}`).classList.toggle('visible');
     });
+
     checkupsListe.appendChild(card);
   });
 }
 
 // ============================================
-// DÉTAIL AVEC PHOTOS
+// DÉTAIL CHECK-UP AVEC PHOTOS
 // ============================================
 function genererDetailCheckup(resultats) {
   if (!resultats) return '<p>Aucun détail disponible.</p>';
+
   return Object.entries(resultats).map(([point, data]) => `
     <div class="checkpoint-result ${data.statut === 'anomalie' ? 'has-anomalie' : ''}">
       <div class="checkpoint-result-info">
         <div class="checkpoint-result-label">${point}</div>
-        ${data.detail ? `<div class="detail-text">${data.detail}</div>` : ''}
-        ${data.photoUrl ? `
-          <a href="${data.photoUrl}" target="_blank" class="photo-link">
-            <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
-            <span>Voir la photo</span>
-          </a>` : ''}
+        ${data.detail
+          ? `<div class="detail-text">${data.detail}</div>`
+          : ''}
+        ${data.photoUrl
+          ? `<a href="${data.photoUrl}" target="_blank" class="photo-link">
+               <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
+               <span>Voir la photo</span>
+             </a>`
+          : ''}
       </div>
-      <span class="statut-${data.statut}">${data.statut === 'ok' ? '✓ OK' : '⚠️'}</span>
+      <span class="statut-${data.statut}">
+        ${data.statut === 'ok' ? '✓ OK' : '⚠️'}
+      </span>
     </div>
   `).join('');
 }
 
 // ============================================
-// FILTRES
+// FILTRES — reset filtreActif au changement
 // ============================================
 [filtreVehicule, filtreStatut, filtreDate].forEach(f => {
   f.addEventListener('change', () => {
@@ -578,18 +742,34 @@ function genererDetailCheckup(resultats) {
 // EXPORT CSV
 // ============================================
 btnExport.addEventListener('click', () => {
-  if (tousLesCheckups.length === 0) { alert('Aucune donnée à exporter.'); return; }
+  if (tousLesCheckups.length === 0) {
+    alert('Aucune donnée à exporter.');
+    return;
+  }
+
   const lignes = ['Date,Véhicule,Immatriculation,Point de contrôle,Statut,Détail,Photo'];
+
   tousLesCheckups.forEach(c => {
     const date = c.date ? c.date.toDate().toLocaleString('fr-FR') : '';
     Object.entries(c.resultats || {}).forEach(([point, data]) => {
-      lignes.push([`"${date}"`,`"${c.vehiculeNom}"`,`"${c.immatriculation}"`,
-        `"${point}"`,`"${data.statut}"`,`"${data.detail||''}"`,`"${data.photoUrl||''}"`].join(','));
+      lignes.push([
+        `"${date}"`,
+        `"${c.vehiculeNom}"`,
+        `"${c.immatriculation}"`,
+        `"${point}"`,
+        `"${data.statut}"`,
+        `"${data.detail || ''}"`,
+        `"${data.photoUrl || ''}"`
+      ].join(','));
     });
   });
-  const blob = new Blob([lignes.join('\n')], { type: 'text/csv;charset=utf-8;' });
+
+  const csv  = lignes.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = `checkups-${new Date().toISOString().split('T')[0]}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  a.href     = url;
+  a.download = `checkups-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 });
