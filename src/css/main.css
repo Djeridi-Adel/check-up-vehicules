@@ -36,21 +36,80 @@ body {
 header {
   background: var(--primary);
   color: white;
-  padding: 16px 20px;
+  padding: 12px 16px;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow);
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+}
+
 header h1 {
   font-size: 1.1rem;
   font-weight: 600;
-  letter-spacing: 0.3px;
+}
+
+.btn-retour {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 0;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.btn-retour.hidden {
+  display: none;
 }
 
 /* ============================================
-   STEPS — navigation entre étapes
+   BARRE DE PROGRESSION
+   ============================================ */
+.progress-bar-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar-container.hidden {
+  display: none;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  width: var(--progress, 0%);
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* ============================================
+   STEPS
    ============================================ */
 .step {
   display: none;
@@ -112,28 +171,13 @@ header h1 {
 }
 
 /* ============================================
-   FORMULAIRE CHECK-UP
+   SECTION FORMULAIRE
    ============================================ */
-.step-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.step-header h2 {
-  font-size: 1rem;
+.section-title {
+  font-size: 1.1rem;
   font-weight: 600;
-}
-
-.btn-retour {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 8px 0;
-  white-space: nowrap;
+  margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 .checkpoint-group {
@@ -142,16 +186,6 @@ header h1 {
   margin-bottom: 16px;
   overflow: hidden;
   box-shadow: var(--shadow);
-}
-
-.checkpoint-group-title {
-  background: var(--primary);
-  color: white;
-  padding: 10px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .checkpoint-item {
@@ -204,6 +238,7 @@ header h1 {
 .anomalie-detail {
   display: none;
   padding: 0 16px 14px;
+  background: var(--surface);
 }
 
 .anomalie-detail.visible {
@@ -219,6 +254,7 @@ header h1 {
   font-family: inherit;
   resize: none;
   height: 80px;
+  margin-bottom: 10px;
 }
 
 .anomalie-detail textarea:focus {
@@ -226,11 +262,70 @@ header h1 {
   border-color: var(--primary);
 }
 
+/* Photo anomalie */
+.photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-photo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-photo:active {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.photo-preview {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: none;
+  border: 1.5px solid var(--border);
+}
+
+.photo-preview.visible {
+  display: block;
+}
+
+.btn-remove-photo {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+}
+
+.btn-remove-photo.visible {
+  display: block;
+}
+
 /* ============================================
-   BOUTONS
+   NAVIGATION BAS DE PAGE
    ============================================ */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 .btn-primary {
-  width: 100%;
+  flex: 1;
   padding: 16px;
   background: var(--primary);
   color: white;
@@ -239,12 +334,28 @@ header h1 {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
   transition: background 0.15s;
 }
 
 .btn-primary:active {
   background: var(--primary-dark);
+}
+
+.btn-secondary-action {
+  flex: 1;
+  padding: 16px;
+  background: var(--surface);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secondary-action:active {
+  background: var(--bg);
 }
 
 /* ============================================
@@ -292,12 +403,10 @@ header h1 {
 }
 
 /* ============================================
-   DESKTOP — à partir de 768px
+   DESKTOP
    ============================================ */
 @media (min-width: 768px) {
-  header h1 {
-    font-size: 1.3rem;
-  }
+  header h1 { font-size: 1.3rem; }
 
   .step {
     max-width: 600px;
@@ -310,7 +419,6 @@ header h1 {
     box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
   }
 
-  .toggle-btn:hover {
-    border-color: var(--text-secondary);
-  }
+  .toggle-btn:hover { border-color: var(--text-secondary); }
+  .btn-photo:hover { border-color: var(--primary); color: var(--primary); }
 }

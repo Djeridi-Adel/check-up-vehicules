@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <!-- Crucial pour le mobile first -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1a73e8">
   <title>Check-up véhicule</title>
@@ -11,7 +10,15 @@
 <body>
 
   <header>
-    <h1>Check-up véhicule</h1>
+    <div class="header-content">
+      <button id="btn-retour" class="btn-retour hidden">← Retour</button>
+      <h1 id="header-title">Check-up véhicule</h1>
+    </div>
+    <!-- Barre de progression -->
+    <div id="progress-bar-container" class="progress-bar-container hidden">
+      <div id="progress-bar" class="progress-bar"></div>
+      <span id="progress-label" class="progress-label"></span>
+    </div>
   </header>
 
   <main id="app">
@@ -20,21 +27,19 @@
     <section id="step-vehicule" class="step active">
       <h2>Sélectionne ton véhicule</h2>
       <div id="liste-vehicules" class="liste-vehicules">
-        <!-- Les véhicules seront chargés dynamiquement depuis Firebase -->
         <p class="loading">Chargement des véhicules...</p>
       </div>
     </section>
 
-    <!-- Étape 2 : formulaire de check-up -->
-    <section id="step-checkup" class="step">
-      <div class="step-header">
-        <button id="btn-retour" class="btn-retour">← Retour</button>
-        <h2 id="titre-vehicule"></h2>
-      </div>
-      <form id="form-checkup">
-        <!-- Les points de contrôle seront générés dynamiquement -->
+    <!-- Étape 2 : section du formulaire (générée dynamiquement) -->
+    <section id="step-section" class="step">
+      <form id="form-section">
+        <!-- Contenu généré dynamiquement -->
       </form>
-      <button id="btn-submit" class="btn-primary">Envoyer le check-up</button>
+      <div class="nav-buttons">
+        <button id="btn-precedent" class="btn-secondary-action">← Précédent</button>
+        <button id="btn-suivant" class="btn-primary">Suivant →</button>
+      </div>
     </section>
 
     <!-- Étape 3 : confirmation -->
@@ -50,9 +55,8 @@
 
   </main>
 
-  <!-- On charge Firebase et notre code en type module -->
   <script type="module" src="src/js/firebase.js"></script>
   <script type="module" src="src/js/checkup.js"></script>
-  
+
 </body>
 </html>
