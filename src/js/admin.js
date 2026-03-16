@@ -49,7 +49,7 @@ async function initialiserDashboard() {
     chargerFlotte((id) => ouvrirModale(id, tousLesVehicules));
   });
 
-  initStatCards((filtre, card) => {
+initStatCards((filtre, card) => {
     if (filtre === 'flotte') {
       document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
@@ -60,6 +60,8 @@ async function initialiserDashboard() {
     }
 
     showVue(vueCheckups);
+
+    // On met à jour filtreActif AVANT d'appeler afficherCheckups
     if (filtreActif === filtre) {
       filtreActif = null;
       card.classList.remove('active');
@@ -68,6 +70,13 @@ async function initialiserDashboard() {
       document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
     }
+
+    // On réinitialise les autres filtres quand on clique une stat
+    document.getElementById('filtre-vehicule').value = '';
+    document.getElementById('filtre-statut').value   = '';
+    document.getElementById('filtre-date').value     = '';
+
+    // filtreActif est maintenant à jour
     afficherCheckups(tousLesCheckups, filtreActif, getFiltresValeurs());
   });
 

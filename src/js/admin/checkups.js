@@ -33,7 +33,9 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
     }
 
     if (filtreActif === 'anomalie') {
-      if (!Object.values(c.resultats || {}).some(r => r.statut === 'anomalie')) return false;
+      const anomalies = Object.values(c.resultats || {})
+        .filter(r => r.statut === 'anomalie');
+      if (anomalies.length === 0) return false;
     }
 
     if (filtres.vehicule && c.vehiculeId !== filtres.vehicule) return false;
