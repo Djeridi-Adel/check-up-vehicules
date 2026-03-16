@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- Crucial pour le mobile first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Check-up véhicule</title>
+  <link rel="stylesheet" href="src/css/main.css">
+</head>
+<body>
+
+  <header>
+    <h1>Check-up véhicule</h1>
+  </header>
+
+  <main id="app">
+
+    <!-- Étape 1 : sélection du véhicule -->
+    <section id="step-vehicule" class="step active">
+      <h2>Sélectionne ton véhicule</h2>
+      <div id="liste-vehicules" class="liste-vehicules">
+        <!-- Les véhicules seront chargés dynamiquement depuis Firebase -->
+        <p class="loading">Chargement des véhicules...</p>
+      </div>
+    </section>
+
+    <!-- Étape 2 : formulaire de check-up -->
+    <section id="step-checkup" class="step">
+      <div class="step-header">
+        <button id="btn-retour" class="btn-retour">← Retour</button>
+        <h2 id="titre-vehicule"></h2>
+      </div>
+      <form id="form-checkup">
+        <!-- Les points de contrôle seront générés dynamiquement -->
+      </form>
+      <button id="btn-submit" class="btn-primary">Envoyer le check-up</button>
+    </section>
+
+    <!-- Étape 3 : confirmation -->
+    <section id="step-confirmation" class="step">
+      <div class="confirmation">
+        <span class="confirmation-icon">✓</span>
+        <h2>Check-up envoyé !</h2>
+        <p id="recap-vehicule"></p>
+        <p id="recap-heure"></p>
+        <button id="btn-nouveau" class="btn-primary">Nouveau check-up</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- On charge Firebase et notre code en type module -->
+  <script type="module" src="src/js/firebase.js"></script>
+  <script type="module" src="src/js/checkup.js"></script>
+
+</body>
+</html>
