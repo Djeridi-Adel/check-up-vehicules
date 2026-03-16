@@ -1,0 +1,14 @@
+# Dépendances
+node_modules/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de config sensibles
+.env
+firebase-config.js
+src/js/config.js
+
+# VS Code
+.vscode/
