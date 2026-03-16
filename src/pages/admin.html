@@ -16,17 +16,14 @@
       <div class="login-logo">🚗</div>
       <h1>Administration</h1>
       <p class="login-subtitle">Parc véhicules</p>
-
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" placeholder="ton@email.com" autocomplete="email">
       </div>
-
       <div class="form-group">
         <label for="password">Mot de passe</label>
         <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
       </div>
-
       <p id="login-error" class="error-msg"></p>
       <button id="btn-login" class="btn-primary">Se connecter</button>
     </div>
@@ -36,7 +33,7 @@
   <div id="screen-dashboard" class="screen">
 
     <header class="admin-header">
-      <h1>Tableau de bord</h1>
+      <h1 id="dashboard-title">Tableau de bord</h1>
       <div class="header-actions">
         <button id="btn-export" class="btn-secondary">⬇ Export CSV</button>
         <button id="btn-logout" class="btn-logout">Déconnexion</button>
@@ -45,44 +42,116 @@
 
     <main class="dashboard">
 
-      <!-- Stats cliquables -->
+      <!-- Stats -->
       <section class="stats-grid">
-        <div class="stat-card" data-filtre="today" title="Cliquer pour filtrer">
+        <div class="stat-card" data-filtre="today">
           <span class="stat-number" id="stat-today">—</span>
           <span class="stat-label">Check-ups aujourd'hui</span>
-          <span class="stat-hint">Cliquer pour filtrer</span>
+          <span class="stat-hint">Filtrer</span>
         </div>
-        <div class="stat-card" data-filtre="anomalie" title="Cliquer pour filtrer">
+        <div class="stat-card" data-filtre="anomalie">
           <span class="stat-number anomalie" id="stat-anomalies">—</span>
           <span class="stat-label">Anomalies</span>
-          <span class="stat-hint">Cliquer pour filtrer</span>
+          <span class="stat-hint">Filtrer</span>
         </div>
-        <div class="stat-card" data-filtre="vehicules">
+        <div class="stat-card" data-filtre="flotte">
           <span class="stat-number" id="stat-vehicules">—</span>
           <span class="stat-label">Véhicules</span>
-          <span class="stat-hint">Total flotte</span>
+          <span class="stat-hint">Gérer la flotte</span>
         </div>
       </section>
 
-      <!-- Filtres -->
-      <section class="filtres">
-        <select id="filtre-vehicule" class="filtre-select">
-          <option value="">Tous les véhicules</option>
-        </select>
-        <select id="filtre-statut" class="filtre-select">
-          <option value="">Tous les statuts</option>
-          <option value="anomalie">Avec anomalies</option>
-          <option value="ok">Sans anomalie</option>
-        </select>
-        <input type="date" id="filtre-date" class="filtre-select">
-      </section>
+      <!-- Vue check-ups -->
+      <div id="vue-checkups">
+        <section class="filtres">
+          <select id="filtre-vehicule" class="filtre-select">
+            <option value="">Tous les véhicules</option>
+          </select>
+          <select id="filtre-statut" class="filtre-select">
+            <option value="">Tous les statuts</option>
+            <option value="anomalie">Avec anomalies</option>
+            <option value="ok">Sans anomalie</option>
+          </select>
+          <input type="date" id="filtre-date" class="filtre-select">
+        </section>
+        <section class="checkups-liste" id="checkups-liste">
+          <p class="loading">Chargement des check-ups...</p>
+        </section>
+      </div>
 
-      <!-- Liste check-ups -->
-      <section class="checkups-liste" id="checkups-liste">
-        <p class="loading">Chargement des check-ups...</p>
-      </section>
+      <!-- Vue flotte -->
+      <div id="vue-flotte" class="hidden">
+        <div class="flotte-header">
+          <h2>Gestion de la flotte</h2>
+          <button id="btn-ajouter-vehicule" class="btn-ajouter">+ Ajouter un véhicule</button>
+        </div>
+        <div id="liste-flotte" class="liste-flotte">
+          <p class="loading">Chargement...</p>
+        </div>
+      </div>
 
     </main>
+  </div>
+
+  <!-- MODALE AJOUT/ÉDITION VÉHICULE -->
+  <div id="modale-vehicule" class="modale-overlay hidden">
+    <div class="modale">
+      <div class="modale-header">
+        <h3 id="modale-titre">Ajouter un véhicule</h3>
+        <button id="modale-fermer" class="btn-fermer">✕</button>
+      </div>
+
+      <div class="modale-body">
+        <div class="form-group">
+          <label>Nom du véhicule</label>
+          <input type="text" id="v-nom" placeholder="Ex: Renault Kangoo 02">
+        </div>
+        <div class="form-group">
+          <label>Immatriculation</label>
+          <input type="text" id="v-immat" placeholder="Ex: AB-123-CD">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="v-type">
+            <option value="VL thermique">VL thermique</option>
+            <option value="VL électrique">VL électrique</option>
+            <option value="Utilitaire">Utilitaire</option>
+            <option value="Benne ordures ménagères">Benne ordures ménagères</option>
+            <option value="Laveuse/Balayeuse VL">Laveuse/Balayeuse VL</option>
+            <option value="Laveuse/Balayeuse PL">Laveuse/Balayeuse PL</option>
+            <option value="Véhicule spécifique électrique">Véhicule spécifique électrique</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Icône</label>
+          <div class="icone-picker">
+            <span class="icone-option" data-icone="🚗">🚗</span>
+            <span class="icone-option" data-icone="🚐">🚐</span>
+            <span class="icone-option" data-icone="🚚">🚚</span>
+            <span class="icone-option" data-icone="⚡">⚡</span>
+            <span class="icone-option" data-icone="🧹">🧹</span>
+            <span class="icone-option" data-icone="🗑️">🗑️</span>
+            <span class="icone-option" data-icone="🚜">🚜</span>
+            <span class="icone-option" data-icone="🏗️">🏗️</span>
+          </div>
+          <input type="hidden" id="v-icone" value="🚗">
+        </div>
+
+        <div class="form-group">
+          <label>Points de contrôle</label>
+          <p class="form-hint">Sélectionne un type de véhicule pour pré-remplir les points, puis personnalise.</p>
+          <div id="checkpoints-editor">
+            <!-- Généré dynamiquement -->
+          </div>
+          <button type="button" id="btn-ajouter-categorie" class="btn-outline">+ Ajouter une catégorie</button>
+        </div>
+      </div>
+
+      <div class="modale-footer">
+        <button id="btn-annuler" class="btn-secondary-action">Annuler</button>
+        <button id="btn-sauvegarder" class="btn-primary">Sauvegarder</button>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="../js/firebase.js"></script>
