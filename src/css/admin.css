@@ -1,0 +1,275 @@
+/* ============================================
+   LOGIN
+   ============================================ */
+.screen {
+  display: none;
+  min-height: 100vh;
+}
+
+.screen.active {
+  display: block;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.login-logo {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.login-container h1 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.error-msg {
+  color: var(--danger);
+  font-size: 0.85rem;
+  min-height: 20px;
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   HEADER ADMIN
+   ============================================ */
+.admin-header {
+  background: var(--primary);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.btn-logout {
+  padding: 8px 14px;
+  background: none;
+  color: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+.dashboard {
+  padding: 20px 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-number.anomalie {
+  color: var(--danger);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+/* Filtres */
+.filtres {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filtre-select {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.filtre-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Liste check-ups */
+.checkup-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border-left: 4px solid var(--success);
+}
+
+.checkup-card.has-anomalie {
+  border-left-color: var(--danger);
+}
+
+.checkup-card-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkup-card-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.checkup-card-header .checkup-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.checkup-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.checkup-badge.ok {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.checkup-badge.anomalie {
+  background: #fce8e6;
+  color: #c62828;
+}
+
+.checkup-card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.checkup-card-body.visible {
+  display: block;
+}
+
+.checkpoint-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.checkpoint-result:last-child {
+  border-bottom: none;
+}
+
+.checkpoint-result .statut-ok {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.checkpoint-result .statut-anomalie {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.checkpoint-result .detail-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}

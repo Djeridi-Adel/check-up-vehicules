@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Admin — Parc véhicules</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- ÉCRAN DE CONNEXION -->
+  <div id="screen-login" class="screen active">
+    <div class="login-container">
+      <div class="login-logo">🚗</div>
+      <h1>Administration</h1>
+      <p class="login-subtitle">Parc véhicules</p>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="ton@email.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <p id="login-error" class="error-msg"></p>
+
+      <button id="btn-login" class="btn-primary">Se connecter</button>
+    </div>
+  </div>
+
+  <!-- TABLEAU DE BORD -->
+  <div id="screen-dashboard" class="screen">
+
+    <header class="admin-header">
+      <h1>Tableau de bord</h1>
+      <div class="header-actions">
+        <button id="btn-export" class="btn-secondary">⬇ Export CSV</button>
+        <button id="btn-logout" class="btn-logout">Déconnexion</button>
+      </div>
+    </header>
+
+    <main class="dashboard">
+
+      <!-- Statistiques rapides -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number" id="stat-today">—</span>
+          <span class="stat-label">Check-ups aujourd'hui</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number anomalie" id="stat-anomalies">—</span>
+          <span class="stat-label">Anomalies en cours</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="stat-vehicules">—</span>
+          <span class="stat-label">Véhicules dans la flotte</span>
+        </div>
+      </section>
+
+      <!-- Filtres -->
+      <section class="filtres">
+        <select id="filtre-vehicule" class="filtre-select">
+          <option value="">Tous les véhicules</option>
+        </select>
+        <select id="filtre-statut" class="filtre-select">
+          <option value="">Tous les statuts</option>
+          <option value="anomalie">Avec anomalies</option>
+          <option value="ok">Sans anomalie</option>
+        </select>
+      </section>
+
+      <!-- Liste des check-ups -->
+      <section class="checkups-liste" id="checkups-liste">
+        <p class="loading">Chargement des check-ups...</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="../js/firebase.js"></script>
+  <script type="module" src="../js/admin.js"></script>
+
+</body>
+</html>
