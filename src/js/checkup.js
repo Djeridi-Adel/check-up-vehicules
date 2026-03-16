@@ -2,6 +2,7 @@
 // IMPORTS
 // ============================================
 import { db } from './firebase.js';
+import { CLOUDINARY_CONFIG } from './config.js';
 import {
   collection,
   getDocs,
@@ -12,30 +13,30 @@ import {
 // ============================================
 // RÉFÉRENCES DOM
 // ============================================
-const stepVehicule     = document.getElementById('step-vehicule');
-const stepSection      = document.getElementById('step-section');
-const stepConfirmation = document.getElementById('step-confirmation');
-const listeVehicules   = document.getElementById('liste-vehicules');
-const formSection      = document.getElementById('form-section');
-const btnRetour        = document.getElementById('btn-retour');
-const btnPrecedent     = document.getElementById('btn-precedent');
-const btnSuivant       = document.getElementById('btn-suivant');
-const btnNouveau       = document.getElementById('btn-nouveau');
-const recapVehicule    = document.getElementById('recap-vehicule');
-const recapHeure       = document.getElementById('recap-heure');
-const headerTitle      = document.getElementById('header-title');
-const progressBar      = document.getElementById('progress-bar');
-const progressLabel    = document.getElementById('progress-label');
+const stepVehicule      = document.getElementById('step-vehicule');
+const stepSection       = document.getElementById('step-section');
+const stepConfirmation  = document.getElementById('step-confirmation');
+const listeVehicules    = document.getElementById('liste-vehicules');
+const formSection       = document.getElementById('form-section');
+const btnRetour         = document.getElementById('btn-retour');
+const btnPrecedent      = document.getElementById('btn-precedent');
+const btnSuivant        = document.getElementById('btn-suivant');
+const btnNouveau        = document.getElementById('btn-nouveau');
+const recapVehicule     = document.getElementById('recap-vehicule');
+const recapHeure        = document.getElementById('recap-heure');
+const headerTitle       = document.getElementById('header-title');
+const progressBar       = document.getElementById('progress-bar');
+const progressLabel     = document.getElementById('progress-label');
 const progressContainer = document.getElementById('progress-bar-container');
 
 // ============================================
 // STATE
 // ============================================
 let vehiculeSelectionne = null;
-let sections            = [];   // tableau des catégories ex: ["Général", "Mécanique"]
-let sectionIndex        = 0;    // index de la section courante
-let resultats           = {};   // accumule les réponses de toutes les sections
-let photos              = {};   // accumule les photos { "point": File }
+let sections            = [];
+let sectionIndex        = 0;
+let resultats           = {};
+let photos              = {};
 
 // ============================================
 // NAVIGATION
@@ -57,9 +58,9 @@ function hideProgress() {
 }
 
 function mettreAJourProgress() {
-  const total    = sections.length;
-  const current  = sectionIndex + 1;
-  const pct      = Math.round((current / total) * 100);
+  const total   = sections.length;
+  const current = sectionIndex + 1;
+  const pct     = Math.round((current / total) * 100);
   progressBar.style.setProperty('--progress', pct + '%');
   progressLabel.textContent = `${current} / ${total}`;
   headerTitle.textContent   = vehiculeSelectionne.nom;
@@ -130,31 +131,26 @@ function afficherSection(index) {
 
   mettreAJourProgress();
 
-  // Bouton précédent visible seulement après la 1ère section
   btnPrecedent.style.display = index === 0 ? 'none' : 'flex';
 
-  // Libellé du bouton suivant
   const isLast = index === sections.length - 1;
   btnSuivant.textContent = isLast ? 'Envoyer ✓' : 'Suivant →';
 
   formSection.innerHTML = `
     <div class="section-title">${categorie}</div>
     <div class="checkpoint-group">
-      ${points.map(point => genererCheckpoint(point, categorie)).join('')}
+      ${points.map(point => genererCheckpoint(point)).join('')}
     </div>
   `;
 
-  // Restaure les réponses déjà données si on revient en arrière
-  restaurerReponses(categorie, points);
-
-  // Attache les événements
-  attacherEvenements(categorie, points);
+  restaurerReponses(points);
+  attacherEvenements(points);
 }
 
 // ============================================
 // GÉNÉRATION D'UN POINT DE CONTRÔLE
 // ============================================
-function genererCheckpoint(point, categorie) {
+function genererCheckpoint(point) {
   const pointId = slugify(point);
   return `
     <div class="checkpoint-item-wrapper" data-point="${point}">
@@ -166,7 +162,7 @@ function genererCheckpoint(point, categorie) {
         </div>
       </div>
       <div class="anomalie-detail" id="detail-${pointId}">
-        <textarea placeholder="Décris l'anomalie..."></textarea>
+        <textarea placeholder="Décris l'anomalie... (optionnel)"></textarea>
         <div class="photo-upload">
           <label class="btn-photo" for="photo-${pointId}">
             📷 Ajouter une photo
@@ -178,7 +174,7 @@ function genererCheckpoint(point, categorie) {
             capture="environment"
             style="display:none"
           >
-          <img class="photo-preview" id="preview-${pointId}" src="" alt="Photo anomalie">
+          <img class="photo-preview" id="preview-${pointId}" alt="Photo anomalie">
           <button type="button" class="btn-remove-photo" id="remove-${pointId}">✕</button>
         </div>
       </div>
@@ -187,9 +183,9 @@ function genererCheckpoint(point, categorie) {
 }
 
 // ============================================
-// ATTACHER LES ÉVÉNEMENTS D'UNE SECTION
+// ATTACHER LES ÉVÉNEMENTS
 // ============================================
-function attacherEvenements(categorie, points) {
+function attacherEvenements(points) {
   points.forEach(point => {
     const pointId    = slugify(point);
     const wrapper    = formSection.querySelector(`[data-point="${point}"]`);
@@ -200,27 +196,22 @@ function attacherEvenements(categorie, points) {
     const preview    = document.getElementById(`preview-${pointId}`);
     const btnRemove  = document.getElementById(`remove-${pointId}`);
 
-    // Toggle OK
     btnOk.addEventListener('click', () => {
       btnOk.classList.add('selected');
       btnAno.classList.remove('selected');
       detail.classList.remove('visible');
     });
 
-    // Toggle Anomalie
     btnAno.addEventListener('click', () => {
       btnAno.classList.add('selected');
       btnOk.classList.remove('selected');
       detail.classList.add('visible');
     });
 
-    // Upload photo
     inputPhoto.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-
       photos[point] = file;
-
       const reader  = new FileReader();
       reader.onload = (ev) => {
         preview.src = ev.target.result;
@@ -230,11 +221,10 @@ function attacherEvenements(categorie, points) {
       reader.readAsDataURL(file);
     });
 
-    // Supprimer photo
     btnRemove.addEventListener('click', () => {
       delete photos[point];
-      inputPhoto.value  = '';
-      preview.src       = '';
+      inputPhoto.value = '';
+      preview.src      = '';
       preview.classList.remove('visible');
       btnRemove.classList.remove('visible');
     });
@@ -242,18 +232,18 @@ function attacherEvenements(categorie, points) {
 }
 
 // ============================================
-// RESTAURER LES RÉPONSES (navigation arrière)
+// RESTAURER LES RÉPONSES
 // ============================================
-function restaurerReponses(categorie, points) {
+function restaurerReponses(points) {
   points.forEach(point => {
     const pointId = slugify(point);
     const saved   = resultats[point];
     if (!saved) return;
 
-    const wrapper = formSection.querySelector(`[data-point="${point}"]`);
-    const btnOk   = wrapper.querySelector('.toggle-btn.ok');
-    const btnAno  = wrapper.querySelector('.toggle-btn.anomalie');
-    const detail  = wrapper.querySelector('.anomalie-detail');
+    const wrapper  = formSection.querySelector(`[data-point="${point}"]`);
+    const btnOk    = wrapper.querySelector('.toggle-btn.ok');
+    const btnAno   = wrapper.querySelector('.toggle-btn.anomalie');
+    const detail   = wrapper.querySelector('.anomalie-detail');
     const textarea = wrapper.querySelector('textarea');
 
     if (saved.statut === 'ok') {
@@ -263,7 +253,6 @@ function restaurerReponses(categorie, points) {
       detail.classList.add('visible');
       textarea.value = saved.detail || '';
 
-      // Restaure la photo si elle existe
       if (photos[point]) {
         const preview   = document.getElementById(`preview-${pointId}`);
         const btnRemove = document.getElementById(`remove-${pointId}`);
@@ -294,8 +283,8 @@ function sauvegarderSection() {
 
     if (!okSel && !anSel) {
       tousRemplis = false;
-      wrapper.style.background = '#fff3f3';
-      wrapper.style.borderRadius = '8px';
+      wrapper.style.background    = '#fff3f3';
+      wrapper.style.borderRadius  = '8px';
       return;
     }
 
@@ -308,6 +297,32 @@ function sauvegarderSection() {
   });
 
   return tousRemplis;
+}
+
+// ============================================
+// UPLOAD PHOTO VERS CLOUDINARY
+// ============================================
+async function uploadPhoto(file, checkupId, point, categorie) {
+  // Nom : vehicule-categorie-point ex: kangoo-01-mecanique-niveau-huile
+  const nomPhoto = slugify(
+    `${vehiculeSelectionne.id}-${categorie}-${point}`
+  );
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+  formData.append('folder', `checkups/${checkupId}`);
+  formData.append('public_id', nomPhoto);
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
+    { method: 'POST', body: formData }
+  );
+
+  if (!response.ok) throw new Error('Échec upload photo');
+
+  const data = await response.json();
+  return data.secure_url;
 }
 
 // ============================================
@@ -327,23 +342,44 @@ btnSuivant.addEventListener('click', async () => {
     return;
   }
 
-  // Dernière section — on envoie
-  btnSuivant.disabled     = true;
-  btnSuivant.textContent  = 'Envoi en cours...';
+  // Dernière section — envoi
+  btnSuivant.disabled    = true;
+  btnSuivant.textContent = 'Envoi en cours...';
 
   try {
-    // Convertit les photos en base64 pour les stocker dans Firestore
-    const photosBase64 = {};
-    for (const [point, file] of Object.entries(photos)) {
-      photosBase64[point] = await fileToBase64(file);
+    // Génère un ID unique pour ce check-up
+    const checkupId = `${vehiculeSelectionne.id}-${Date.now()}`;
+
+    // Upload des photos vers Cloudinary
+    const photosUrls = {};
+    const photoEntries = Object.entries(photos);
+
+    if (photoEntries.length > 0) {
+      btnSuivant.textContent = `Upload photos (0/${photoEntries.length})...`;
+
+      for (let i = 0; i < photoEntries.length; i++) {
+  const [point, file] = photoEntries[i];
+  btnSuivant.textContent = `Upload photos (${i + 1}/${photoEntries.length})...`;
+  // On retrouve la catégorie du point
+  const categorie = Object.entries(vehiculeSelectionne.checkpoints)
+    .find(([cat, points]) => points.includes(point))?.[0] || 'general';
+  photosUrls[point] = await uploadPhoto(file, checkupId, point, categorie);
+}
     }
 
+    // Intègre les URLs dans les résultats
+    Object.entries(photosUrls).forEach(([point, url]) => {
+      if (resultats[point]) {
+        resultats[point].photoUrl = url;
+      }
+    });
+
+    // Sauvegarde dans Firestore
     await addDoc(collection(db, 'checkups'), {
       vehiculeId:      vehiculeSelectionne.id,
       vehiculeNom:     vehiculeSelectionne.nom,
       immatriculation: vehiculeSelectionne.immatriculation,
       resultats,
-      photos:          photosBase64,
       date:            serverTimestamp()
     });
 
@@ -400,16 +436,11 @@ btnNouveau.addEventListener('click', () => {
 // UTILITAIRES
 // ============================================
 function slugify(str) {
-  return str.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader  = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9-]/g, '');
 }
 
 // ============================================
