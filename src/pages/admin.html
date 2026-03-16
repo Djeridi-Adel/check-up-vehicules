@@ -28,7 +28,6 @@
       </div>
 
       <p id="login-error" class="error-msg"></p>
-
       <button id="btn-login" class="btn-primary">Se connecter</button>
     </div>
   </div>
@@ -46,19 +45,22 @@
 
     <main class="dashboard">
 
-      <!-- Statistiques rapides -->
+      <!-- Stats cliquables -->
       <section class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card" data-filtre="today" title="Cliquer pour filtrer">
           <span class="stat-number" id="stat-today">—</span>
           <span class="stat-label">Check-ups aujourd'hui</span>
+          <span class="stat-hint">Cliquer pour filtrer</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" data-filtre="anomalie" title="Cliquer pour filtrer">
           <span class="stat-number anomalie" id="stat-anomalies">—</span>
-          <span class="stat-label">Anomalies en cours</span>
+          <span class="stat-label">Anomalies</span>
+          <span class="stat-hint">Cliquer pour filtrer</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" data-filtre="vehicules">
           <span class="stat-number" id="stat-vehicules">—</span>
-          <span class="stat-label">Véhicules dans la flotte</span>
+          <span class="stat-label">Véhicules</span>
+          <span class="stat-hint">Total flotte</span>
         </div>
       </section>
 
@@ -72,9 +74,10 @@
           <option value="anomalie">Avec anomalies</option>
           <option value="ok">Sans anomalie</option>
         </select>
+        <input type="date" id="filtre-date" class="filtre-select">
       </section>
 
-      <!-- Liste des check-ups -->
+      <!-- Liste check-ups -->
       <section class="checkups-liste" id="checkups-liste">
         <p class="loading">Chargement des check-ups...</p>
       </section>
