@@ -331,7 +331,7 @@ header h1 {
 }
 
 .btn-primary {
-  flex: 1;
+  flex: none;
   padding: 16px;
   background: var(--primary);
   color: white;
