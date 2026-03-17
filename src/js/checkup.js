@@ -79,8 +79,8 @@ function mettreAJourProgress() {
 // IDENTIFICATION AGENT
 // ============================================
 function initialiserIdentification() {
-  // Si le mail est déjà mémorisé → on saute l'étape
   if (agentMail) {
+    chargerVehicules();
     showStep(stepVehicule);
     return;
   }
@@ -95,7 +95,6 @@ function initialiserIdentification() {
       return;
     }
 
-    // Mémorise sur le téléphone
     localStorage.setItem('agent-mail', mail);
     agentMail = mail;
     mailError.textContent = '';
@@ -104,7 +103,6 @@ function initialiserIdentification() {
     showStep(stepVehicule);
   });
 
-  // Touche Entrée
   inputMail.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') btnIdentifier.click();
   });

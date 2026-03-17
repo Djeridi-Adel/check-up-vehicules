@@ -433,43 +433,59 @@ header h1 {
    IDENTIFICATION
    ============================================ */
 .identification {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 40px 24px;
   text-align: center;
-  padding: 40px 20px;
 }
 
 .identification-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
+  font-size: 4rem;
+  margin-bottom: 24px;
 }
 
 .identification h2 {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
-.identification p {
+.identification > p {
   color: var(--text-secondary);
-  margin-bottom: 24px;
-  font-size: 0.9rem;
+  margin-bottom: 32px;
+  font-size: 0.95rem;
+  max-width: 280px;
 }
 
 .identification .form-group {
-  margin-bottom: 16px;
+  width: 100%;
+  max-width: 320px;
   text-align: left;
+  margin-bottom: 16px;
 }
 
 .identification input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 16px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   font-size: 1rem;
   font-family: inherit;
+  text-align: center;
+  background: var(--surface);
 }
 
 .identification input:focus {
   outline: none;
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+}
+
+.identification .btn-primary {
+  max-width: 320px;
 }
 
 .mail-error {
@@ -477,4 +493,5 @@ header h1 {
   font-size: 0.85rem;
   min-height: 20px;
   margin-top: 6px;
+  text-align: center;
 }
