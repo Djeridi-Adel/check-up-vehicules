@@ -2,14 +2,17 @@
 // IMPORTS
 // ============================================
 import { db } from './firebase.js';
-import { CLOUDINARY_CONFIG } from './config.js';
 import {
   collection,
   getDocs,
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+const CLOUDINARY_CONFIG = {
+  cloudName:    "dpyfeif48",
+  apiKey:       "236871857242973",
+  uploadPreset: "ocgjzqqe"
+};
 // ============================================
 // RÉFÉRENCES DOM
 // ============================================
