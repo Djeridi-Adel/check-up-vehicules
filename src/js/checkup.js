@@ -31,6 +31,10 @@ const headerTitle       = document.getElementById('header-title');
 const progressBar       = document.getElementById('progress-bar');
 const progressLabel     = document.getElementById('progress-label');
 const progressContainer = document.getElementById('progress-bar-container');
+const stepIdentification = document.getElementById('step-identification');
+const inputMail          = document.getElementById('input-mail');
+const btnIdentifier      = document.getElementById('btn-identifier');
+const mailError          = document.getElementById('mail-error');
 
 // ============================================
 // STATE
@@ -40,6 +44,7 @@ let sections            = [];
 let sectionIndex        = 0;
 let resultats           = {};
 let photos              = {};
+let agentMail = localStorage.getItem('agent-mail') || '';
 
 // ============================================
 // NAVIGATION
@@ -68,6 +73,43 @@ function mettreAJourProgress() {
   progressLabel.textContent = `${current} / ${total}`;
   headerTitle.textContent   = vehiculeSelectionne.nom;
 }
+
+
+// ============================================
+// IDENTIFICATION AGENT
+// ============================================
+function initialiserIdentification() {
+  // Si le mail est déjà mémorisé → on saute l'étape
+  if (agentMail) {
+    showStep(stepVehicule);
+    return;
+  }
+
+  showStep(stepIdentification);
+
+  btnIdentifier.addEventListener('click', () => {
+    const mail = inputMail.value.trim();
+
+    if (!mail || !mail.includes('@')) {
+      mailError.textContent = 'Saisis une adresse mail valide.';
+      return;
+    }
+
+    // Mémorise sur le téléphone
+    localStorage.setItem('agent-mail', mail);
+    agentMail = mail;
+    mailError.textContent = '';
+
+    chargerVehicules();
+    showStep(stepVehicule);
+  });
+
+  // Touche Entrée
+  inputMail.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btnIdentifier.click();
+  });
+}
+
 
 // ============================================
 // CHARGEMENT DES VÉHICULES
@@ -383,6 +425,7 @@ btnSuivant.addEventListener('click', async () => {
       vehiculeNom:     vehiculeSelectionne.nom,
       immatriculation: vehiculeSelectionne.immatriculation,
       resultats,
+      agentMail,
       date:            serverTimestamp()
     });
 
@@ -448,5 +491,6 @@ function slugify(str) {
 
 // ============================================
 // INITIALISATION
+initialiserIdentification();
 // ============================================
-chargerVehicules();
+

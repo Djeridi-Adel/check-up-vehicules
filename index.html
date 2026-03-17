@@ -23,6 +23,25 @@
 
   <main id="app">
 
+    <!-- Étape 0 : identification -->
+<section id="step-identification" class="step active">
+  <div class="identification">
+    <div class="identification-icon">👤</div>
+    <h2>Identification</h2>
+    <p>Renseigne ton adresse mail pour commencer</p>
+    <div class="form-group">
+      <input 
+        type="email" 
+        id="input-mail" 
+        placeholder="prenom.nom@mairie.fr"
+        autocomplete="email"
+      >
+      <p id="mail-error" class="mail-error"></p>
+    </div>
+    <button id="btn-identifier" class="btn-primary">Continuer →</button>
+  </div>
+</section>
+
     <!-- Étape 1 : sélection du véhicule -->
     <section id="step-vehicule" class="step active">
       <h2>Sélectionne ton véhicule</h2>

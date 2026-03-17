@@ -428,3 +428,53 @@ header h1 {
   .toggle-btn:hover { border-color: var(--text-secondary); }
   .btn-photo:hover { border-color: var(--primary); color: var(--primary); }
 }
+
+/* ============================================
+   IDENTIFICATION
+   ============================================ */
+.identification {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.identification-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.identification h2 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.identification p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.identification .form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.identification input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.identification input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.mail-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  min-height: 20px;
+  margin-top: 6px;
+}
