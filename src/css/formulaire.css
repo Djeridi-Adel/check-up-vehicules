@@ -208,6 +208,26 @@
 }
 
 /* ============================================
+   CONSIGNES DE SÉCURITÉ
+   ============================================ */
+.consignes {
+  text-align: center;
+}
+
+.consignes h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.consignes-img {
+  width: 100%;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+/* ============================================
    DESKTOP
    ============================================ */
 @media (min-width: 768px) {

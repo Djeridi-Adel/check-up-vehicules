@@ -8,33 +8,41 @@ import {
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// ============================================
+// CONFIGURATION CLOUDINARY
+// ============================================
 const CLOUDINARY_CONFIG = {
   cloudName:    "dpyfeif48",
   apiKey:       "236871857242973",
   uploadPreset: "ocgjzqqe"
 };
+
 // ============================================
 // RÉFÉRENCES DOM
 // ============================================
-const stepVehicule      = document.getElementById('step-vehicule');
-const stepSection       = document.getElementById('step-section');
-const stepConfirmation  = document.getElementById('step-confirmation');
-const listeVehicules    = document.getElementById('liste-vehicules');
-const formSection       = document.getElementById('form-section');
-const btnRetour         = document.getElementById('btn-retour');
-const btnPrecedent      = document.getElementById('btn-precedent');
-const btnSuivant        = document.getElementById('btn-suivant');
-const btnNouveau        = document.getElementById('btn-nouveau');
-const recapVehicule     = document.getElementById('recap-vehicule');
-const recapHeure        = document.getElementById('recap-heure');
-const headerTitle       = document.getElementById('header-title');
-const progressBar       = document.getElementById('progress-bar');
-const progressLabel     = document.getElementById('progress-label');
-const progressContainer = document.getElementById('progress-bar-container');
-const stepIdentification = document.getElementById('step-identification');
-const inputMail          = document.getElementById('input-mail');
-const btnIdentifier      = document.getElementById('btn-identifier');
-const mailError          = document.getElementById('mail-error');
+const stepIdentification  = document.getElementById('step-identification');
+const stepVehicule        = document.getElementById('step-vehicule');
+const stepSection         = document.getElementById('step-section');
+const stepConsignes       = document.getElementById('step-consignes');
+const stepConfirmation    = document.getElementById('step-confirmation');
+const listeVehicules      = document.getElementById('liste-vehicules');
+const formSection         = document.getElementById('form-section');
+const btnRetour           = document.getElementById('btn-retour');
+const btnPrecedent        = document.getElementById('btn-precedent');
+const btnSuivant          = document.getElementById('btn-suivant');
+const btnNouveau          = document.getElementById('btn-nouveau');
+const btnConsignesRetour  = document.getElementById('btn-consignes-retour');
+const btnConsignesValider = document.getElementById('btn-consignes-valider');
+const recapVehicule       = document.getElementById('recap-vehicule');
+const recapHeure          = document.getElementById('recap-heure');
+const headerTitle         = document.getElementById('header-title');
+const progressBar         = document.getElementById('progress-bar');
+const progressLabel       = document.getElementById('progress-label');
+const progressContainer   = document.getElementById('progress-bar-container');
+const inputMail           = document.getElementById('input-mail');
+const btnIdentifier       = document.getElementById('btn-identifier');
+const mailError           = document.getElementById('mail-error');
 
 // ============================================
 // STATE
@@ -44,7 +52,7 @@ let sections            = [];
 let sectionIndex        = 0;
 let resultats           = {};
 let photos              = {};
-let agentMail = localStorage.getItem('agent-mail') || '';
+let agentMail           = localStorage.getItem('agent-mail') || '';
 
 // ============================================
 // NAVIGATION
@@ -74,7 +82,6 @@ function mettreAJourProgress() {
   headerTitle.textContent   = vehiculeSelectionne.nom;
 }
 
-
 // ============================================
 // IDENTIFICATION AGENT
 // ============================================
@@ -96,7 +103,7 @@ function initialiserIdentification() {
     }
 
     localStorage.setItem('agent-mail', mail);
-    agentMail = mail;
+    agentMail             = mail;
     mailError.textContent = '';
 
     chargerVehicules();
@@ -107,7 +114,6 @@ function initialiserIdentification() {
     if (e.key === 'Enter') btnIdentifier.click();
   });
 }
-
 
 // ============================================
 // CHARGEMENT DES VÉHICULES
@@ -177,7 +183,7 @@ function afficherSection(index) {
   btnPrecedent.style.display = index === 0 ? 'none' : 'flex';
 
   const isLast = index === sections.length - 1;
-  btnSuivant.textContent = isLast ? 'Envoyer ✓' : 'Suivant →';
+  btnSuivant.textContent = isLast ? 'Suivant →' : 'Suivant →';
 
   formSection.innerHTML = `
     <div class="section-title">${categorie}</div>
@@ -254,9 +260,9 @@ function attacherEvenements(points) {
     inputPhoto.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      photos[point] = file;
-      const reader  = new FileReader();
-      reader.onload = (ev) => {
+      photos[point]   = file;
+      const reader    = new FileReader();
+      reader.onload   = (ev) => {
         preview.src = ev.target.result;
         preview.classList.add('visible');
         btnRemove.classList.add('visible');
@@ -325,9 +331,9 @@ function sauvegarderSection() {
     const anSel   = wrapper.querySelector('.toggle-btn.anomalie').classList.contains('selected');
 
     if (!okSel && !anSel) {
-      tousRemplis = false;
-      wrapper.style.background    = '#fff3f3';
-      wrapper.style.borderRadius  = '8px';
+      tousRemplis              = false;
+      wrapper.style.background = '#fff3f3';
+      wrapper.style.borderRadius = '8px';
       return;
     }
 
@@ -346,7 +352,6 @@ function sauvegarderSection() {
 // UPLOAD PHOTO VERS CLOUDINARY
 // ============================================
 async function uploadPhoto(file, checkupId, point, categorie) {
-  // Nom : vehicule-categorie-point ex: kangoo-01-mecanique-niveau-huile
   const nomPhoto = slugify(
     `${vehiculeSelectionne.id}-${categorie}-${point}`
   );
@@ -369,9 +374,58 @@ async function uploadPhoto(file, checkupId, point, categorie) {
 }
 
 // ============================================
-// BOUTON SUIVANT / ENVOYER
+// ENVOI DU CHECK-UP
 // ============================================
-btnSuivant.addEventListener('click', async () => {
+async function envoyerCheckup(btnEnvoi) {
+  btnEnvoi.disabled    = true;
+  btnEnvoi.textContent = 'Envoi en cours...';
+
+  try {
+    const checkupId    = `${vehiculeSelectionne.id}-${Date.now()}`;
+    const photosUrls   = {};
+    const photoEntries = Object.entries(photos);
+
+    if (photoEntries.length > 0) {
+      for (let i = 0; i < photoEntries.length; i++) {
+        const [point, file] = photoEntries[i];
+        btnEnvoi.textContent = `Upload photos (${i + 1}/${photoEntries.length})...`;
+        const categorie = Object.entries(vehiculeSelectionne.checkpoints)
+          .find(([cat, pts]) => pts.includes(point))?.[0] || 'general';
+        photosUrls[point] = await uploadPhoto(file, checkupId, point, categorie);
+      }
+    }
+
+    Object.entries(photosUrls).forEach(([point, url]) => {
+      if (resultats[point]) resultats[point].photoUrl = url;
+    });
+
+    await addDoc(collection(db, 'checkups'), {
+      vehiculeId:      vehiculeSelectionne.id,
+      vehiculeNom:     vehiculeSelectionne.nom,
+      immatriculation: vehiculeSelectionne.immatriculation,
+      resultats,
+      agentMail,
+      date:            serverTimestamp()
+    });
+
+    recapVehicule.textContent = `Véhicule : ${vehiculeSelectionne.nom} — ${vehiculeSelectionne.immatriculation}`;
+    recapHeure.textContent    = `Heure : ${new Date().toLocaleTimeString('fr-FR')}`;
+    headerTitle.textContent   = 'Check-up véhicule';
+    showStep(stepConfirmation);
+
+  } catch (error) {
+    alert('Erreur lors de l\'envoi. Vérifie ta connexion.');
+    console.error('Erreur envoi :', error);
+  } finally {
+    btnEnvoi.disabled    = false;
+    btnEnvoi.textContent = 'J\'ai lu et compris ✓';
+  }
+}
+
+// ============================================
+// BOUTON SUIVANT
+// ============================================
+btnSuivant.addEventListener('click', () => {
   if (!sauvegarderSection()) {
     alert('Tous les points doivent être vérifiés avant de continuer.');
     return;
@@ -385,62 +439,10 @@ btnSuivant.addEventListener('click', async () => {
     return;
   }
 
-  // Dernière section — envoi
-  btnSuivant.disabled    = true;
-  btnSuivant.textContent = 'Envoi en cours...';
-
-  try {
-    // Génère un ID unique pour ce check-up
-    const checkupId = `${vehiculeSelectionne.id}-${Date.now()}`;
-
-    // Upload des photos vers Cloudinary
-    const photosUrls = {};
-    const photoEntries = Object.entries(photos);
-
-    if (photoEntries.length > 0) {
-      btnSuivant.textContent = `Upload photos (0/${photoEntries.length})...`;
-
-      for (let i = 0; i < photoEntries.length; i++) {
-  const [point, file] = photoEntries[i];
-  btnSuivant.textContent = `Upload photos (${i + 1}/${photoEntries.length})...`;
-  // On retrouve la catégorie du point
-  const categorie = Object.entries(vehiculeSelectionne.checkpoints)
-    .find(([cat, points]) => points.includes(point))?.[0] || 'general';
-  photosUrls[point] = await uploadPhoto(file, checkupId, point, categorie);
-}
-    }
-
-    // Intègre les URLs dans les résultats
-    Object.entries(photosUrls).forEach(([point, url]) => {
-      if (resultats[point]) {
-        resultats[point].photoUrl = url;
-      }
-    });
-
-    // Sauvegarde dans Firestore
-    await addDoc(collection(db, 'checkups'), {
-      vehiculeId:      vehiculeSelectionne.id,
-      vehiculeNom:     vehiculeSelectionne.nom,
-      immatriculation: vehiculeSelectionne.immatriculation,
-      resultats,
-      agentMail,
-      date:            serverTimestamp()
-    });
-
-    recapVehicule.textContent = `Véhicule : ${vehiculeSelectionne.nom} — ${vehiculeSelectionne.immatriculation}`;
-    recapHeure.textContent    = `Heure : ${new Date().toLocaleTimeString('fr-FR')}`;
-
-    hideProgress();
-    headerTitle.textContent = 'Check-up véhicule';
-    showStep(stepConfirmation);
-
-  } catch (error) {
-    alert('Erreur lors de l\'envoi. Vérifie ta connexion.');
-    console.error('Erreur envoi :', error);
-  } finally {
-    btnSuivant.disabled    = false;
-    btnSuivant.textContent = 'Envoyer ✓';
-  }
+  // Dernière section → consignes
+  hideProgress();
+  headerTitle.textContent = 'Consignes de sécurité';
+  showStep(stepConsignes);
 });
 
 // ============================================
@@ -453,13 +455,27 @@ btnPrecedent.addEventListener('click', () => {
 });
 
 // ============================================
+// BOUTONS CONSIGNES
+// ============================================
+btnConsignesRetour.addEventListener('click', () => {
+  showProgress();
+  headerTitle.textContent = vehiculeSelectionne.nom;
+  afficherSection(sectionIndex);
+  showStep(stepSection);
+});
+
+btnConsignesValider.addEventListener('click', () => {
+  envoyerCheckup(btnConsignesValider);
+});
+
+// ============================================
 // BOUTON RETOUR (header)
 // ============================================
 btnRetour.addEventListener('click', () => {
   if (confirm('Abandonner ce check-up ?')) {
-    vehiculeSelectionne = null;
-    resultats           = {};
-    photos              = {};
+    vehiculeSelectionne     = null;
+    resultats               = {};
+    photos                  = {};
     hideProgress();
     headerTitle.textContent = 'Check-up véhicule';
     showStep(stepVehicule);
@@ -489,6 +505,5 @@ function slugify(str) {
 
 // ============================================
 // INITIALISATION
-initialiserIdentification();
 // ============================================
-
+initialiserIdentification();
