@@ -61,6 +61,18 @@ header h1 {
   font-weight: 600;
 }
 
+.lien-admin-header {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  margin-left: auto;
+  transition: opacity 0.15s;
+}
+
+.lien-admin-header:hover {
+  color: rgba(255,255,255,0.9);
+}
+
 .btn-retour {
   background: none;
   border: none;
