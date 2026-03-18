@@ -1,0 +1,207 @@
+/* ============================================
+   SECTION FORMULAIRE
+   ============================================ */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.checkpoint-group {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.checkpoint-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.checkpoint-item:last-child {
+  border-bottom: none;
+}
+
+.checkpoint-label {
+  font-size: 0.9rem;
+  flex: 1;
+  padding-right: 12px;
+}
+
+/* Toggle OK / Anomalie */
+.toggle-group {
+  display: flex;
+  gap: 6px;
+}
+
+.toggle-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.toggle-btn.ok.selected {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.toggle-btn.anomalie.selected {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+
+.anomalie-detail {
+  display: none;
+  padding: 0 16px 14px;
+  background: var(--surface);
+}
+
+.anomalie-detail.visible {
+  display: block;
+}
+
+.anomalie-detail textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: none;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.anomalie-detail textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Photo anomalie */
+.photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-photo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-photo:hover,
+.btn-photo:active {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.photo-preview {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: none;
+  border: 1.5px solid var(--border);
+}
+
+.photo-preview.visible {
+  display: block;
+}
+
+.btn-remove-photo {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+}
+
+.btn-remove-photo.visible {
+  display: block;
+}
+
+/* ============================================
+   NAVIGATION BAS DE PAGE
+   ============================================ */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-primary {
+  flex: none;
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.15s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  background: var(--primary-dark);
+}
+
+.btn-secondary-action {
+  flex: 1;
+  padding: 16px;
+  background: var(--surface);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.15s;
+}
+
+.btn-secondary-action:hover {
+  transform: scale(1.02);
+}
+
+.btn-secondary-action:active {
+  transform: scale(0.98);
+  background: var(--bg);
+}
+
+/* ============================================
+   DESKTOP
+   ============================================ */
+@media (min-width: 768px) {
+  .toggle-btn:hover { border-color: var(--text-secondary); }
+  .btn-photo:hover { border-color: var(--primary); color: var(--primary); }
+}

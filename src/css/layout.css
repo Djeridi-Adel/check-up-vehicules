@@ -1,0 +1,131 @@
+/* ============================================
+   HEADER
+   ============================================ */
+header {
+  background: var(--primary);
+  color: white;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+}
+
+header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn-retour {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 0;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.btn-retour.hidden {
+  display: none;
+}
+
+.lien-admin-header {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  margin-left: auto;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.lien-admin-header:hover {
+  color: rgba(255,255,255,0.9);
+  transform: scale(1.2);
+}
+
+/* ============================================
+   BARRE DE PROGRESSION
+   ============================================ */
+.progress-bar-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar-container.hidden {
+  display: none;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  width: var(--progress, 0%);
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* ============================================
+   STEPS
+   ============================================ */
+.step {
+  display: none;
+  padding: 20px 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.step.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   UTILITAIRES
+   ============================================ */
+.loading {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 40px 0;
+}
+
+/* ============================================
+   DESKTOP
+   ============================================ */
+@media (min-width: 768px) {
+  header h1 { font-size: 1.3rem; }
+
+  .step {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+}
