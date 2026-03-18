@@ -66,11 +66,13 @@ header h1 {
   color: rgba(255,255,255,0.5);
   text-decoration: none;
   margin-left: auto;
-  transition: opacity 0.15s;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
 }
 
 .lien-admin-header:hover {
   color: rgba(255,255,255,0.9);
+  transform: scale(1.2);
 }
 
 .btn-retour {
@@ -508,4 +510,25 @@ header h1 {
   min-height: 20px;
   margin-top: 6px;
   text-align: center;
+}
+
+/* ============================================
+   EFFETS HOVER BOUTONS ET CARDS
+   ============================================ */
+.btn-primary,
+.btn-secondary-action,
+.vehicule-card {
+  transition: transform 0.2s ease, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.btn-primary:hover,
+.btn-secondary-action:hover,
+.vehicule-card:hover {
+  transform: scale(1.02);
+}
+
+.btn-primary:active,
+.btn-secondary-action:active,
+.vehicule-card:active {
+  transform: scale(0.98);
 }
