@@ -71,6 +71,7 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
         <div>
           <h3>${checkup.vehiculeNom} — ${checkup.immatriculation}</h3>
           <p class="checkup-meta">${date}</p>
+          <p class="checkup-meta">${checkup.agentMail || 'Agent non identifié'}</p>
         </div>
         <span class="checkup-badge ${hasAnomalie ? 'anomalie' : 'ok'}">
           ${hasAnomalie ? '⚠️ Anomalie' : '✓ OK'}
