@@ -153,6 +153,15 @@
   margin-top: 24px;
 }
 
+.nav-buttons .btn-primary {
+  flex: 2;
+  width: auto;
+}
+
+.nav-buttons .btn-secondary-action {
+  flex: 1;
+}
+
 .btn-primary {
   flex: none;
   width: 100%;
