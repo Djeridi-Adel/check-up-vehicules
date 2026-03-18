@@ -1,0 +1,103 @@
+/* ============================================
+   VUE FLOTTE
+   ============================================ */
+.flotte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.flotte-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn-ajouter {
+  padding: 10px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-ajouter:hover {
+  background: var(--primary-dark);
+}
+
+.liste-flotte {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flotte-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+
+.flotte-card-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.flotte-icone {
+  font-size: 1.8rem;
+}
+
+.flotte-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.flotte-card p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.flotte-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-edit:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--danger);
+  transition: all 0.15s;
+}
+
+.btn-delete:hover {
+  background: #fce8e6;
+  border-color: var(--danger);
+}

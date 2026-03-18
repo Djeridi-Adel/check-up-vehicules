@@ -1,0 +1,124 @@
+/* ============================================
+   CARDS CHECK-UPS
+   ============================================ */
+.checkup-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border-left: 4px solid var(--success);
+}
+
+.checkup-card.has-anomalie {
+  border-left-color: var(--danger);
+}
+
+.checkup-card-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkup-card-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.checkup-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.checkup-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.checkup-badge.ok {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.checkup-badge.anomalie {
+  background: #fce8e6;
+  color: #c62828;
+}
+
+.checkup-card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.checkup-card-body.visible {
+  display: block;
+}
+
+.checkpoint-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.checkpoint-result:last-child {
+  border-bottom: none;
+}
+
+.checkpoint-result.has-anomalie {
+  background: #fff8f8;
+  margin: 0 -16px;
+  padding: 10px 16px;
+}
+
+.checkpoint-result-info {
+  flex: 1;
+  padding-right: 12px;
+}
+
+.checkpoint-result-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.detail-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.statut-ok { color: var(--success); font-weight: 600; }
+.statut-anomalie { color: var(--danger); font-weight: 600; }
+
+.photo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  text-decoration: none;
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+
+.photo-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  transition: transform 0.15s;
+}
+
+.photo-thumb:hover {
+  transform: scale(1.05);
+}

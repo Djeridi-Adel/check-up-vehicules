@@ -1,0 +1,95 @@
+/* ============================================
+   HEADER ADMIN
+   ============================================ */
+.admin-header {
+  background: var(--primary);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.btn-logout {
+  padding: 8px 14px;
+  background: none;
+  color: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+.dashboard {
+  padding: 20px 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ============================================
+   FILTRES
+   ============================================ */
+.filtres {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filtre-select {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.filtre-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ============================================
+   DESKTOP
+   ============================================ */
+@media (min-width: 768px) {
+  .admin-header h1 { font-size: 1.3rem; }
+}
