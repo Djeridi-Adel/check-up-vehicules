@@ -165,14 +165,6 @@ export function selectionnerIcone(icone) {
   }
 }
 
-function selectionnerIcone(icone) {
-  document.querySelectorAll('.icone-option').forEach(el => {
-    el.classList.toggle('selected', el.dataset.icone === icone);
-  });
-  iconeHidden.value       = icone;
-  iconeApercu.textContent = icone;
-  iconeLibreInput.value   = '';
-}
 
 function genererEditorCheckpoints(checkpoints) {
   checkpointsEditor.innerHTML = '';
