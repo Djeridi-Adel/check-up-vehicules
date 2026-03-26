@@ -137,7 +137,8 @@ async function chargerVehicules() {
       const card = document.createElement('div');
       card.className = 'vehicule-card';
       card.innerHTML = `
-        <div class="vehicule-icon">${v.icone || '🚗'}</div>
+        // Après
+        <div class="vehicule-icon">${afficherIcone(v.icone)}</div>
         <div class="vehicule-info">
           <h3>${v.nom}</h3>
           <p>${v.immatriculation} — ${v.type}</p>
@@ -501,6 +502,14 @@ function slugify(str) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/\s+/g, '-')
     .replace(/[^a-zA-Z0-9-]/g, '');
+}
+
+function afficherIcone(icone) {
+  if (!icone) return '🚗';
+  if (icone.startsWith('http')) {
+    return `<img src="${icone}" class="vehicule-icone-img" alt="icône véhicule">`;
+  }
+  return icone;
 }
 
 // ============================================

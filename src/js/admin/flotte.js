@@ -27,6 +27,14 @@ export async function chargerVehiculesFiltres() {
   return tousLesVehicules;
 }
 
+function afficherIcone(icone) {
+  if (!icone) return '🚗';
+  if (icone.startsWith('http')) {
+    return `<img src="${icone}" class="vehicule-icone-img" alt="icône véhicule">`;
+  }
+  return icone;
+}
+
 export async function chargerFlotte(onEditer) {
   const liste = document.getElementById('liste-flotte');
   liste.innerHTML = '<p class="loading">Chargement...</p>';
@@ -47,7 +55,7 @@ export async function chargerFlotte(onEditer) {
     card.className = 'flotte-card';
     card.innerHTML = `
       <div class="flotte-card-info">
-        <span class="flotte-icone">${v.icone || '🚗'}</span>
+        <span class="flotte-icone">${afficherIcone(v.icone)}</span>
         <div>
           <h3>${v.nom}</h3>
           <p>${v.immatriculation} — ${v.type}</p>

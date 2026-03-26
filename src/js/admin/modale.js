@@ -105,17 +105,64 @@ export function fermerModale() {
 }
 
 function initIconePicker() {
-  document.querySelectorAll('.icone-option').forEach(el => {
-    el.addEventListener('click', () => selectionnerIcone(el.dataset.icone));
-  });
+  const btnChoixIcone  = document.getElementById('btn-choix-icone');
+  const inputIcone     = document.getElementById('input-icone-upload');
+  const iconePreview   = document.getElementById('icone-apercu');
+  const iconeHidden    = document.getElementById('v-icone');
 
-  iconeLibreInput.addEventListener('input', (e) => {
-    const val = e.target.value.trim();
-    if (!val) return;
-    document.querySelectorAll('.icone-option').forEach(el => el.classList.remove('selected'));
-    iconeHidden.value       = val;
-    iconeApercu.textContent = val;
+  // Clic sur le bouton → ouvre le sélecteur de fichier
+  btnChoixIcone.addEventListener('click', () => inputIcone.click());
+
+  // Upload de l'icône
+  inputIcone.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    btnChoixIcone.textContent = 'Upload en cours...';
+    btnChoixIcone.disabled    = true;
+
+    try {
+      const url = await uploadIcone(file);
+      iconeHidden.value         = url;
+      iconePreview.innerHTML    = `<img src="${url}" class="icone-upload-preview">`;
+      btnChoixIcone.textContent = '✓ Icône choisie';
+    } catch (error) {
+      alert('Erreur upload icône.');
+      btnChoixIcone.textContent = '📁 Choisir une icône';
+      console.error(error);
+    } finally {
+      btnChoixIcone.disabled = false;
+    }
   });
+}
+
+async function uploadIcone(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'ocgjzqqe');
+  formData.append('folder', 'vehicules/icones');
+
+  const response = await fetch(
+    'https://api.cloudinary.com/v1_1/dpyfeif48/image/upload',
+    { method: 'POST', body: formData }
+  );
+
+  if (!response.ok) throw new Error('Échec upload icône');
+  const data = await response.json();
+  return data.secure_url;
+}
+
+export function selectionnerIcone(icone) {
+  const iconeHidden  = document.getElementById('v-icone');
+  const iconeApercu  = document.getElementById('icone-apercu');
+  iconeHidden.value  = icone;
+
+  // Si c'est une URL d'image
+  if (icone.startsWith('http')) {
+    iconeApercu.innerHTML = `<img src="${icone}" class="icone-upload-preview">`;
+  } else {
+    iconeApercu.innerHTML = icone;
+  }
 }
 
 function selectionnerIcone(icone) {

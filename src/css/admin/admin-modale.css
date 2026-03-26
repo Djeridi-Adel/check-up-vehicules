@@ -122,6 +122,63 @@
   text-align: center;
 }
 
+/* ============================================
+   ICÔNE UPLOAD
+   ============================================ */
+.icone-upload-zone {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+}
+
+.icone-apercu-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.icone-upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.icone-upload-actions {
+  flex: 1;
+}
+
+.btn-outline-primary {
+  padding: 10px 16px;
+  background: none;
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 8px;
+  display: block;
+  width: 100%;
+}
+
+.btn-outline-primary:hover {
+  background: rgba(26,115,232,0.08);
+}
+
 /* Checkpoints editor */
 .categorie-block {
   background: var(--bg);

@@ -112,16 +112,18 @@
           <input type="text" id="v-immat" placeholder="Ex: AB-123-CD">
         </div>
         <div class="form-group">
-          <label>Type</label>
-          <select id="v-type">
-            <option value="VL thermique">VL thermique</option>
-            <option value="VL électrique">VL électrique</option>
-            <option value="Utilitaire">Utilitaire</option>
-            <option value="Benne ordures ménagères">Benne ordures ménagères</option>
-            <option value="Laveuse/Balayeuse VL">Laveuse/Balayeuse VL</option>
-            <option value="Laveuse/Balayeuse PL">Laveuse/Balayeuse PL</option>
-            <option value="Véhicule spécifique électrique">Véhicule spécifique électrique</option>
-          </select>
+          <label>Icône du véhicule</label>
+          <div class="icone-upload-zone">
+            <div id="icone-apercu" class="icone-apercu-large">🚗</div>
+            <div class="icone-upload-actions">
+              <button type="button" id="btn-choix-icone" class="btn-outline-primary">
+                📁 Choisir une icône
+              </button>
+              <p class="form-hint">PNG, SVG ou JPG — recommandé : 128×128px</p>
+            </div>
+          </div>
+          <input type="file" id="input-icone-upload" accept="image/*" style="display:none">
+          <input type="hidden" id="v-icone" value="🚗">
         </div>
         <div class="form-group">
           <div class="form-group">
