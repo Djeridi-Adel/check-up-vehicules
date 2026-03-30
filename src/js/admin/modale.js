@@ -6,13 +6,6 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const modaleVehicule    = document.getElementById('modale-vehicule');
-const modaleTitre       = document.getElementById('modale-titre');
-const checkpointsEditor = document.getElementById('checkpoints-editor');
-const iconeLibreInput   = document.getElementById('v-icone-libre');
-const iconeApercu       = document.getElementById('icone-apercu');
-const iconeHidden       = document.getElementById('v-icone');
-
 let vehiculeEnEdition = null;
 
 export const TEMPLATES_CHECKPOINTS = {
@@ -70,13 +63,16 @@ export function initModale(tousLesVehicules, onSauvegarde) {
       const template = TEMPLATES_CHECKPOINTS[e.target.value];
       if (template) genererEditorCheckpoints(template);
     });
+  document.getElementById('btn-ajouter-categorie')
+    .addEventListener('click', () => ajouterBlocCategorie());
 
   initIconePicker();
   initSauvegarder(tousLesVehicules, onSauvegarde);
 }
 
 export function ouvrirModale(vehiculeId, tousLesVehicules) {
-  vehiculeEnEdition = vehiculeId;
+  vehiculeEnEdition       = vehiculeId;
+  const modaleTitre       = document.getElementById('modale-titre');
   modaleTitre.textContent = vehiculeId ? 'Modifier le véhicule' : 'Ajouter un véhicule';
 
   if (vehiculeId) {
@@ -96,24 +92,22 @@ export function ouvrirModale(vehiculeId, tousLesVehicules) {
     genererEditorCheckpoints(TEMPLATES_CHECKPOINTS['VL thermique']);
   }
 
-  modaleVehicule.classList.remove('hidden');
+  document.getElementById('modale-vehicule').classList.remove('hidden');
 }
 
 export function fermerModale() {
-  modaleVehicule.classList.add('hidden');
+  document.getElementById('modale-vehicule').classList.add('hidden');
   vehiculeEnEdition = null;
 }
 
 function initIconePicker() {
-  const btnChoixIcone  = document.getElementById('btn-choix-icone');
-  const inputIcone     = document.getElementById('input-icone-upload');
-  const iconePreview   = document.getElementById('icone-apercu');
-  const iconeHidden    = document.getElementById('v-icone');
+  const btnChoixIcone = document.getElementById('btn-choix-icone');
+  const inputIcone    = document.getElementById('input-icone-upload');
 
-  // Clic sur le bouton → ouvre le sélecteur de fichier
+  if (!btnChoixIcone || !inputIcone) return;
+
   btnChoixIcone.addEventListener('click', () => inputIcone.click());
 
-  // Upload de l'icône
   inputIcone.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -122,9 +116,10 @@ function initIconePicker() {
     btnChoixIcone.disabled    = true;
 
     try {
-      const url = await uploadIcone(file);
-      iconeHidden.value         = url;
-      iconePreview.innerHTML    = `<img src="${url}" class="icone-upload-preview">`;
+      const url                 = await uploadIcone(file);
+      document.getElementById('v-icone').value = url;
+      document.getElementById('icone-apercu').innerHTML =
+        `<img src="${url}" class="icone-upload-preview">`;
       btnChoixIcone.textContent = '✓ Icône choisie';
     } catch (error) {
       alert('Erreur upload icône.');
@@ -153,25 +148,27 @@ async function uploadIcone(file) {
 }
 
 export function selectionnerIcone(icone) {
-  const iconeHidden  = document.getElementById('v-icone');
-  const iconeApercu  = document.getElementById('icone-apercu');
-  iconeHidden.value  = icone;
+  const iconeHidden = document.getElementById('v-icone');
+  const iconeApercu = document.getElementById('icone-apercu');
+  if (!iconeHidden || !iconeApercu) return;
 
-  // Si c'est une URL d'image
-  if (icone.startsWith('http')) {
+  iconeHidden.value = icone;
+
+  if (icone && icone.startsWith('http')) {
     iconeApercu.innerHTML = `<img src="${icone}" class="icone-upload-preview">`;
   } else {
-    iconeApercu.innerHTML = icone;
+    iconeApercu.innerHTML = icone || '🚗';
   }
 }
 
-
 function genererEditorCheckpoints(checkpoints) {
+  const checkpointsEditor = document.getElementById('checkpoints-editor');
   checkpointsEditor.innerHTML = '';
   Object.entries(checkpoints).forEach(([cat, points]) => ajouterBlocCategorie(cat, points));
 }
 
 function ajouterBlocCategorie(nomCategorie = '', points = []) {
+  const checkpointsEditor = document.getElementById('checkpoints-editor');
   const bloc = document.createElement('div');
   bloc.className = 'categorie-block';
   bloc.innerHTML = `
@@ -209,21 +206,19 @@ function attacherSupprPoint(row) {
   row.querySelector('.btn-suppr-point').addEventListener('click', () => row.remove());
 }
 
-document.getElementById('btn-ajouter-categorie')
-  .addEventListener('click', () => ajouterBlocCategorie());
-
 function initSauvegarder(tousLesVehicules, onSauvegarde) {
   document.getElementById('btn-sauvegarder').addEventListener('click', async () => {
     const nom   = document.getElementById('v-nom').value.trim();
     const immat = document.getElementById('v-immat').value.trim();
     const type  = document.getElementById('v-type').value;
-    const icone = iconeHidden.value;
+    const icone = document.getElementById('v-icone').value;
 
     if (!nom || !immat) {
       alert('Le nom et l\'immatriculation sont obligatoires.');
       return;
     }
 
+    const checkpointsEditor = document.getElementById('checkpoints-editor');
     const checkpoints = {};
     checkpointsEditor.querySelectorAll('.categorie-block').forEach(bloc => {
       const cat    = bloc.querySelector('.input-categorie').value.trim();
@@ -238,7 +233,7 @@ function initSauvegarder(tousLesVehicules, onSauvegarde) {
       return;
     }
 
-    const btnSauvegarder = document.getElementById('btn-sauvegarder');
+    const btnSauvegarder       = document.getElementById('btn-sauvegarder');
     btnSauvegarder.disabled    = true;
     btnSauvegarder.textContent = 'Sauvegarde...';
 
