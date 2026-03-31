@@ -137,7 +137,6 @@ async function chargerVehicules() {
       const card = document.createElement('div');
       card.className = 'vehicule-card';
       card.innerHTML = `
-        // Après
         <div class="vehicule-icon">${afficherIcone(v.icone)}</div>
         <div class="vehicule-info">
           <h3>${v.nom}</h3>
