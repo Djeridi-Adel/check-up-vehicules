@@ -163,7 +163,7 @@
 }
 
 .btn-primary {
-  flex: none;
+  /*flex: none;*/
   width: 100%;
   padding: 16px;
   background: var(--primary);
