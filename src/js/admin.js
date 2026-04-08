@@ -61,7 +61,7 @@ initStatCards((filtre, card) => {
 
     showVue(vueCheckups);
 
-    // On met à jour filtreActif AVANT d'appeler afficherCheckups
+    // MAJ filtreActif AVANT d'appeler afficherCheckups
     if (filtreActif === filtre) {
       filtreActif = null;
       card.classList.remove('active');
@@ -71,7 +71,7 @@ initStatCards((filtre, card) => {
       card.classList.add('active');
     }
 
-    // On réinitialise les autres filtres quand on clique une stat
+    // Réinitialise les autres filtres quand on clique une stat
     document.getElementById('filtre-vehicule').value = '';
     document.getElementById('filtre-statut').value   = '';
     document.getElementById('filtre-date').value     = '';
