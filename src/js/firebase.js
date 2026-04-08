@@ -1,9 +1,9 @@
-// Import des fonctions Firebase dont on a besoin
+// Import des fonctions Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Ta configuration Firebase — remplace chaque valeur par la tienne
+// Configuration Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBeyfOGwXQaGITQPpLwm0V082VosZ3-850",
   authDomain: "check-up-vehicule.firebaseapp.com",
