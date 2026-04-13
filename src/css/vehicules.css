@@ -47,7 +47,7 @@
   margin-top: 2px;
 }
 
-.vehicule-card .vehicule-icon img {
+.vehicule-icon-img {
    width: 44px;
    height: 44px;
    object-fit: cover;
