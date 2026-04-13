@@ -101,11 +101,14 @@ export function fermerModale() {
 }
 
 function initIconePicker() {
-  const btnChoixIcone = document.getElementById('btn-choix-icone');
-  const inputIcone    = document.getElementById('input-icone-upload');
+  const btnChoixIcone   = document.getElementById('btn-choix-icone');
+  const inputIcone      = document.getElementById('input-icone-upload');
+  const btnAppliquerEmoji = document.getElementById('btn-appliquer-emoji');
+  const iconeLibreInput = document.getElementById('v-icone-libre');
 
   if (!btnChoixIcone || !inputIcone) return;
 
+  // Upload image
   btnChoixIcone.addEventListener('click', () => inputIcone.click());
 
   inputIcone.addEventListener('change', async (e) => {
@@ -116,17 +119,38 @@ function initIconePicker() {
     btnChoixIcone.disabled    = true;
 
     try {
-      const url                 = await uploadIcone(file);
+      const url = await uploadIcone(file);
       document.getElementById('v-icone').value = url;
       document.getElementById('icone-apercu').innerHTML =
         `<img src="${url}" class="icone-upload-preview">`;
-      btnChoixIcone.textContent = '✓ Icône choisie';
+      btnChoixIcone.textContent = '✓ Image choisie';
+      // Reset le champ emoji
+      iconeLibreInput.value = '';
     } catch (error) {
       alert('Erreur upload icône.');
-      btnChoixIcone.textContent = '📁 Choisir une icône';
+      btnChoixIcone.textContent = '📁 Choisir une image';
       console.error(error);
     } finally {
       btnChoixIcone.disabled = false;
+    }
+  });
+
+  // Appliquer emoji
+  btnAppliquerEmoji.addEventListener('click', () => {
+    const val = iconeLibreInput.value.trim();
+    if (!val) return;
+    document.getElementById('v-icone').value       = val;
+    document.getElementById('icone-apercu').innerHTML = val;
+    // Reset l'input file
+    inputIcone.value              = '';
+    btnChoixIcone.textContent     = '📁 Choisir une image';
+  });
+
+  // Aperçu en temps réel de l'emoji
+  iconeLibreInput.addEventListener('input', (e) => {
+    const val = e.target.value.trim();
+    if (val) {
+      document.getElementById('icone-apercu').innerHTML = val;
     }
   });
 }
