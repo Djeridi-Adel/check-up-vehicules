@@ -128,19 +128,40 @@
         </div>
 
         <div class="form-group">
-          <label>Icône du véhicule</label>
-          <div class="icone-upload-zone">
-            <div id="icone-apercu" class="icone-apercu-large">🚗</div>
-            <div class="icone-upload-actions">
-              <button type="button" id="btn-choix-icone" class="btn-outline-primary">
-                📁 Choisir une icône
-              </button>
-              <p class="form-hint">PNG, SVG ou JPG — recommandé : 128×128px</p>
-            </div>
-          </div>
-          <input type="file" id="input-icone-upload" accept="image/*" style="display:none">
-          <input type="hidden" id="v-icone" value="🚗">
-        </div>
+  <label>Icône du véhicule</label>
+
+  <!-- Aperçu -->
+  <div class="icone-upload-zone">
+    <div id="icone-apercu" class="icone-apercu-large">🚗</div>
+    <div class="icone-upload-actions">
+      <button type="button" id="btn-choix-icone" class="btn-outline-primary">
+        📁 Choisir une image
+      </button>
+      <p class="form-hint">PNG, SVG ou JPG — recommandé : 128×128px</p>
+    </div>
+  </div>
+  <input type="file" id="input-icone-upload" accept="image/*" style="display:none">
+
+  <!-- Séparateur -->
+  <div class="icone-separateur">
+    <span>ou utiliser un emoji</span>
+  </div>
+
+  <!-- Emoji libre -->
+  <div class="icone-libre">
+    <input
+      type="text"
+      id="v-icone-libre"
+      placeholder="Colle un emoji ici... 🚛"
+      maxlength="4"
+    >
+    <button type="button" id="btn-appliquer-emoji" class="btn-outline-primary">
+      Appliquer
+    </button>
+  </div>
+
+  <input type="hidden" id="v-icone" value="🚗">
+</div>
 
         <div class="form-group">
           <label>Points de contrôle</label>
