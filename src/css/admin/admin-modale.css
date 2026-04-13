@@ -72,56 +72,6 @@
   cursor: pointer;
 }
 
-/* Icône picker */
-.icone-picker {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-
-.icone-option {
-  font-size: 1.8rem;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s;
-}
-
-.icone-option:hover,
-.icone-option.selected {
-  border-color: var(--primary);
-  background: rgba(26,115,232,0.08);
-}
-
-.icone-libre {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.icone-libre input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-family: inherit;
-}
-
-.icone-libre input:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-#icone-apercu {
-  font-size: 2rem;
-  min-width: 44px;
-  text-align: center;
-}
-
 /* ============================================
    ICÔNE UPLOAD
    ============================================ */
@@ -179,7 +129,53 @@
   background: rgba(26,115,232,0.08);
 }
 
-/* Checkpoints editor */
+/* ============================================
+   SÉPARATEUR IMAGE / EMOJI
+   ============================================ */
+.icone-separateur {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.icone-separateur::before,
+.icone-separateur::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ============================================
+   EMOJI LIBRE
+   ============================================ */
+.icone-libre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icone-libre input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-family: inherit;
+  text-align: center;
+}
+
+.icone-libre input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ============================================
+   CHECKPOINTS EDITOR
+   ============================================ */
 .categorie-block {
   background: var(--bg);
   border-radius: 8px;
@@ -257,7 +253,9 @@
   color: var(--primary);
 }
 
-/* Desktop */
+/* ============================================
+   DESKTOP
+   ============================================ */
 @media (min-width: 768px) {
   .modale {
     border-radius: 16px;
