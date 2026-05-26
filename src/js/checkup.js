@@ -43,6 +43,7 @@ const progressContainer   = document.getElementById('progress-bar-container');
 const inputMail           = document.getElementById('input-mail');
 const btnIdentifier       = document.getElementById('btn-identifier');
 const mailError           = document.getElementById('mail-error');
+const stepAccueil = document.getElementById('step-accueil');
 
 // ============================================
 // STATE
@@ -87,8 +88,8 @@ function mettreAJourProgress() {
 // ============================================
 function initialiserIdentification() {
   if (agentMail) {
-    chargerVehicules();
-    showStep(stepVehicule);
+    showStep(stepAccueil);
+    document.getElementById('accueil-mail').textContent = agentMail;
     return;
   }
 
@@ -96,18 +97,15 @@ function initialiserIdentification() {
 
   btnIdentifier.addEventListener('click', () => {
     const mail = inputMail.value.trim();
-
     if (!mail || !mail.includes('@')) {
       mailError.textContent = 'Saisis une adresse mail valide.';
       return;
     }
-
     localStorage.setItem('agent-mail', mail);
     agentMail             = mail;
     mailError.textContent = '';
-
-    chargerVehicules();
-    showStep(stepVehicule);
+    document.getElementById('accueil-mail').textContent = mail;
+    showStep(stepAccueil);
   });
 
   inputMail.addEventListener('keydown', (e) => {
@@ -485,11 +483,11 @@ btnRetour.addEventListener('click', () => {
 // ============================================
 // BOUTON NOUVEAU CHECK-UP
 // ============================================
-btnNouveau.addEventListener('click', () => {
+  btnNouveau.addEventListener('click', () => {
   vehiculeSelectionne = null;
   resultats           = {};
   photos              = {};
-  showStep(stepVehicule);
+  showStep(stepAccueil);
 });
 
 // ============================================
@@ -514,4 +512,8 @@ function afficherIcone(icone) {
 // ============================================
 // INITIALISATION
 // ============================================
+document.getElementById('btn-checkup').addEventListener('click', () => {
+  chargerVehicules();
+  showStep(stepVehicule);
+});
 initialiserIdentification();
