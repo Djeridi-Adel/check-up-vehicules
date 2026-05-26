@@ -114,7 +114,6 @@ async function initialiserDashboard() {
   });
 
   initExport(() => tousLesCheckups);
-  filtreDate.value = new Date().toISOString().split('T')[0];
 }
 
 // ============================================
