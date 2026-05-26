@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e53935">
+  <title>Signalement — Parc véhicules</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/signalement.css">
+</head>
+<body>
 
+  <header class="header-danger">
+    <div class="header-content">
+      <a href="../../index.html" class="btn-retour">← Retour</a>
+      <h1>Signalement incident</h1>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Formulaire -->
+    <section id="step-signalement" class="step active">
+      <div class="signalement-form">
+
+        <!-- Sélection véhicule -->
+        <div class="form-group">
+          <label>Véhicule concerné</label>
+          <select id="select-vehicule" class="input-field">
+            <option value="">Chargement...</option>
+          </select>
+        </div>
+
+        <!-- Type d'incident -->
+        <div class="form-group">
+          <label>Type d'incident</label>
+          <div class="incident-types">
+            <button type="button" class="incident-btn" data-type="panne">
+              🔧 Panne mécanique
+            </button>
+            <button type="button" class="incident-btn" data-type="accident">
+              💥 Accident
+            </button>
+            <button type="button" class="incident-btn" data-type="autre">
+              ❗ Autre
+            </button>
+          </div>
+          <input type="hidden" id="type-incident" value="">
+        </div>
+
+        <!-- Lieu (affiché uniquement si accident) -->
+        <div class="form-group" id="groupe-lieu" style="display:none">
+          <label>Lieu de l'accident</label>
+          <input
+            type="text"
+            id="input-lieu"
+            class="input-field"
+            placeholder="Ex: Rue de la Paix, intersection avec..."
+          >
+          <button type="button" id="btn-localisation" class="btn-localisation">
+            📍 Utiliser ma position GPS
+          </button>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label>Description <span class="optionnel">(optionnel)</span></label>
+          <textarea
+            id="input-description"
+            class="input-field"
+            placeholder="Décris l'incident..."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <!-- Photo -->
+        <div class="form-group">
+          <label>Photo <span class="optionnel">(optionnel)</span></label>
+          <div class="photo-signalement">
+            <label for="input-photo" class="btn-photo">
+              📷 Prendre une photo
+            </label>
+            <input
+              type="file"
+              id="input-photo"
+              accept="image/*"
+              capture="environment"
+              style="display:none"
+            >
+            <img id="preview-photo" class="photo-preview" alt="Photo incident">
+            <button type="button" id="btn-remove-photo" class="btn-remove-photo">✕</button>
+          </div>
+        </div>
+
+        <p id="signalement-error" class="error-msg"></p>
+        <button id="btn-envoyer" class="btn-primary btn-danger">⚠️ Envoyer le signalement</button>
+
+      </div>
+    </section>
+
+    <!-- Confirmation -->
+    <section id="step-confirmation" class="step">
+      <div class="confirmation">
+        <span class="confirmation-icon confirmation-icon-danger">⚠️</span>
+        <h2>Signalement envoyé !</h2>
+        <p id="recap-signalement"></p>
+        <p id="recap-heure"></p>
+        <a href="../../index.html" class="btn-primary">Retour à l'accueil</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/firebase.js"></script>
+  <script type="module" src="../js/signalement.js"></script>
+
+</body>
+</html>
