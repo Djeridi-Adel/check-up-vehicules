@@ -4,6 +4,7 @@ import { ecouterCheckups, afficherCheckups } from './admin/checkups.js';
 import { chargerVehiculesFiltres, chargerFlotte, tousLesVehicules } from './admin/flotte.js';
 import { initModale, ouvrirModale }          from './admin/modale.js';
 import { initExport }            from './admin/export.js';
+import { ecouterSignalements, afficherSignalements } from './admin/signalements.js';
 
 // ============================================
 // STATE GLOBAL
