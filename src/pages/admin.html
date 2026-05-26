@@ -43,55 +43,68 @@
 
     <main class="dashboard">
 
-      <!-- Stats -->
-      <section class="stats-grid">
-        <div class="stat-card" data-filtre="today">
-          <span class="stat-number" id="stat-today">—</span>
-          <span class="stat-label">Check-ups aujourd'hui</span>
-          <span class="stat-hint">Filtrer</span>
-        </div>
-        <div class="stat-card" data-filtre="anomalie">
-          <span class="stat-number anomalie" id="stat-anomalies">—</span>
-          <span class="stat-label">Anomalies</span>
-          <span class="stat-hint">Filtrer</span>
-        </div>
-        <div class="stat-card" data-filtre="flotte">
-          <span class="stat-number" id="stat-vehicules">—</span>
-          <span class="stat-label">Véhicules</span>
-          <span class="stat-hint">Gérer la flotte</span>
-        </div>
-      </section>
+  <!-- Stats -->
+  <section class="stats-grid">
+    <div class="stat-card" data-filtre="today">
+      <span class="stat-number" id="stat-today">—</span>
+      <span class="stat-label">Check-ups aujourd'hui</span>
+      <span class="stat-hint">Filtrer</span>
+    </div>
+    <div class="stat-card" data-filtre="anomalie">
+      <span class="stat-number anomalie" id="stat-anomalies">—</span>
+      <span class="stat-label">Anomalies</span>
+      <span class="stat-hint">Filtrer</span>
+    </div>
+    <div class="stat-card" data-filtre="flotte">
+      <span class="stat-number" id="stat-vehicules">—</span>
+      <span class="stat-label">Véhicules</span>
+      <span class="stat-hint">Gérer la flotte</span>
+    </div>
+  </section>
 
-      <!-- Vue check-ups -->
-      <div id="vue-checkups">
-        <section class="filtres">
-          <select id="filtre-vehicule" class="filtre-select">
-            <option value="">Tous les véhicules</option>
-          </select>
-          <select id="filtre-statut" class="filtre-select">
-            <option value="">Tous les statuts</option>
-            <option value="anomalie">Avec anomalies</option>
-            <option value="ok">Sans anomalie</option>
-          </select>
-          <input type="date" id="filtre-date" class="filtre-select">
-        </section>
-        <section class="checkups-liste" id="checkups-liste">
-          <p class="loading">Chargement des check-ups...</p>
-        </section>
-      </div>
+  <!-- Onglets navigation -->
+  <div class="onglets">
+    <button class="onglet active" data-onglet="checkups">Check-ups</button>
+    <button class="onglet" data-onglet="signalements">⚠️ Signalements</button>
+  </div>
 
-      <!-- Vue flotte -->
-      <div id="vue-flotte" class="hidden">
-        <div class="flotte-header">
-          <h2>Gestion de la flotte</h2>
-          <button id="btn-ajouter-vehicule" class="btn-ajouter">+ Ajouter un véhicule</button>
-        </div>
-        <div id="liste-flotte" class="liste-flotte">
-          <p class="loading">Chargement...</p>
-        </div>
-      </div>
+  <!-- Vue check-ups -->
+  <div id="vue-checkups">
+    <section class="filtres">
+      <select id="filtre-vehicule" class="filtre-select">
+        <option value="">Tous les véhicules</option>
+      </select>
+      <select id="filtre-statut" class="filtre-select">
+        <option value="">Tous les statuts</option>
+        <option value="anomalie">Avec anomalies</option>
+        <option value="ok">Sans anomalie</option>
+      </select>
+      <input type="date" id="filtre-date" class="filtre-select">
+    </section>
+    <section class="checkups-liste" id="checkups-liste">
+      <p class="loading">Chargement des check-ups...</p>
+    </section>
+  </div>
 
-    </main>
+  <!-- Vue signalements -->
+  <div id="vue-signalements" class="hidden">
+    <section class="signalements-liste" id="signalements-liste">
+      <p class="loading">Chargement des signalements...</p>
+    </section>
+  </div>
+
+  <!-- Vue flotte -->
+  <div id="vue-flotte" class="hidden">
+    <div class="flotte-header">
+      <h2>Gestion de la flotte</h2>
+      <button id="btn-ajouter-vehicule" class="btn-ajouter">+ Ajouter un véhicule</button>
+    </div>
+    <div id="liste-flotte" class="liste-flotte">
+      <p class="loading">Chargement...</p>
+    </div>
+  </div>
+
+</main>
   </div>
 
   <!-- MODALE AJOUT/ÉDITION VÉHICULE -->
