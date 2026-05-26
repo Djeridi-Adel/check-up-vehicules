@@ -512,8 +512,11 @@ function afficherIcone(icone) {
 // ============================================
 // INITIALISATION
 // ============================================
-document.getElementById('btn-checkup').addEventListener('click', () => {
-  chargerVehicules();
-  showStep(stepVehicule);
-});
+const btnCheckup = document.getElementById('btn-checkup');
+if (btnCheckup) {
+  btnCheckup.addEventListener('click', () => {
+    chargerVehicules();
+    showStep(stepVehicule);
+  });
+}
 initialiserIdentification();
