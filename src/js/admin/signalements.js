@@ -3,7 +3,9 @@ import {
   collection,
   query,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 export function ecouterSignalements(onMiseAJour) {
@@ -44,37 +46,37 @@ export function afficherSignalements(signalements) {
     const card = document.createElement('div');
     card.className = 'signalement-card';
     card.innerHTML = `
-      <div class="signalement-card-header">
-        <div>
-          <h3>${s.vehiculeNom} — ${s.immatriculation}</h3>
-          <p class="checkup-meta">${date} — ${s.agentMail || 'Agent inconnu'}</p>
-        </div>
-        <span class="signalement-badge ${badgeClass}">${badgeLabel}</span>
-      </div>
-      <div class="signalement-card-body" id="sbody-${s.id}">
-        ${s.lieu ? `
-          <div class="signalement-detail-row">
-            <span class="signalement-detail-label">Lieu</span>
-            <span>${s.lieu}</span>
-          </div>` : ''}
-        ${s.description ? `
-          <div class="signalement-detail-row">
-            <span class="signalement-detail-label">Description</span>
-            <span>${s.description}</span>
-          </div>` : ''}
-        ${s.photoUrl ? `
-          <div class="signalement-detail-row">
-            <span class="signalement-detail-label">Photo</span>
-            <a href="${s.photoUrl}" target="_blank" class="photo-link">
-              <img src="${s.photoUrl}" class="photo-thumb" alt="Photo incident">
-              <span>Voir la photo</span>
-            </a>
-          </div>` : ''}
-        ${!s.lieu && !s.description && !s.photoUrl
-          ? '<p style="padding: 8px 0; color: var(--text-secondary); font-size: 0.85rem;">Aucun détail fourni.</p>'
-          : ''}
-      </div>
-    `;
+      card.innerHTML = `
+  <div class="signalement-card-header">
+    <div>
+      <h3>${s.vehiculeNom} — ${s.immatriculation}</h3>
+      <p class="checkup-meta">${date} — ${s.agentMail || 'Agent inconnu'}</p>
+    </div>
+    <div class="card-actions">
+      <span class="signalement-badge ${badgeClass}">${badgeLabel}</span>
+      <button class="btn-suppr-card" data-id="${s.id}" title="Supprimer ce signalement">🗑️</button>
+    </div>
+  </div>
+  <div class="signalement-card-body" id="sbody-${s.id}">
+    ${genererDetailSignalement(s)}
+  </div>
+`;
+
+card.querySelector('.signalement-card-header').addEventListener('click', (e) => {
+  if (e.target.closest('.btn-suppr-card')) return;
+  document.getElementById(`sbody-${s.id}`).classList.toggle('visible');
+});
+
+card.querySelector('.btn-suppr-card').addEventListener('click', async (e) => {
+  e.stopPropagation();
+  if (!confirm('Supprimer ce signalement définitivement ?')) return;
+  try {
+    await deleteDoc(doc(db, 'signalements', s.id));
+  } catch (error) {
+    alert('Erreur lors de la suppression.');
+    console.error(error);
+  }
+});
 
     card.querySelector('.signalement-card-header').addEventListener('click', () => {
       document.getElementById(`sbody-${s.id}`).classList.toggle('visible');
