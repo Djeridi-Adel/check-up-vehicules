@@ -90,6 +90,8 @@ function mettreAJourProgress() {
 // IDENTIFICATION AGENT
 // ============================================
 function initialiserIdentification() {
+  if (btnRetour) btnRetour.textContent = '';
+  
   if (agentMail) {
     const accueilMail = document.getElementById('accueil-mail');
     if (accueilMail) accueilMail.textContent = agentMail;
