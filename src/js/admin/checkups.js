@@ -16,13 +16,13 @@ export function ecouterCheckups(onMiseAJour) {
 
   return onSnapshot(q, (snapshot) => {
     const checkups = [];
-    snapshot.forEach(doc => checkups.push({ id: doc.id, ...doc.data() }));
+    snapshot.forEach(d => checkups.push({ id: d.id, ...d.data() }));
     onMiseAJour(checkups);
   });
 }
 
 export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
-  const liste    = document.getElementById('checkups-liste');
+  const liste       = document.getElementById('checkups-liste');
   const aujourd_hui = new Date();
   aujourd_hui.setHours(0, 0, 0, 0);
 
@@ -69,43 +69,38 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
     const card = document.createElement('div');
     card.className = `checkup-card ${hasAnomalie ? 'has-anomalie' : ''}`;
     card.innerHTML = `
-      card.innerHTML = `
-  <div class="checkup-card-header">
-    <div>
-      <h3>${checkup.vehiculeNom} — ${checkup.immatriculation}</h3>
-      <p class="checkup-meta">${date}</p>
-      <p class="checkup-meta">${checkup.agentMail || 'Agent non identifié'}</p>
-    </div>
-    <div class="card-actions">
-      <span class="checkup-badge ${hasAnomalie ? 'anomalie' : 'ok'}">
-        ${hasAnomalie ? '⚠️ Anomalie' : '✓ OK'}
-      </span>
-      <button class="btn-suppr-card" data-id="${checkup.id}" title="Supprimer ce check-up">🗑️</button>
-    </div>
-  </div>
-  <div class="checkup-card-body" id="body-${checkup.id}">
-    ${genererDetailCheckup(checkup.resultats)}
-  </div>
-`;
+      <div class="checkup-card-header">
+        <div>
+          <h3>${checkup.vehiculeNom} — ${checkup.immatriculation}</h3>
+          <p class="checkup-meta">${date}</p>
+          <p class="checkup-meta">${checkup.agentMail || 'Agent non identifié'}</p>
+        </div>
+        <div class="card-actions">
+          <span class="checkup-badge ${hasAnomalie ? 'anomalie' : 'ok'}">
+            ${hasAnomalie ? '⚠️ Anomalie' : '✓ OK'}
+          </span>
+          <button class="btn-suppr-card" data-id="${checkup.id}" title="Supprimer ce check-up">🗑️</button>
+        </div>
+      </div>
+      <div class="checkup-card-body" id="body-${checkup.id}">
+        ${genererDetailCheckup(checkup.resultats)}
+      </div>
+    `;
 
-card.querySelector('.checkup-card-header').addEventListener('click', (e) => {
-  if (e.target.closest('.btn-suppr-card')) return;
-  document.getElementById(`body-${checkup.id}`).classList.toggle('visible');
-});
-
-card.querySelector('.btn-suppr-card').addEventListener('click', async (e) => {
-  e.stopPropagation();
-  if (!confirm('Supprimer ce check-up définitivement ?')) return;
-  try {
-    await deleteDoc(doc(db, 'checkups', checkup.id));
-  } catch (error) {
-    alert('Erreur lors de la suppression.');
-    console.error(error);
-  }
-});
-
-    card.querySelector('.checkup-card-header').addEventListener('click', () => {
+    card.querySelector('.checkup-card-header').addEventListener('click', (e) => {
+      if (e.target.closest('.btn-suppr-card')) return;
       document.getElementById(`body-${checkup.id}`).classList.toggle('visible');
+    });
+
+    card.querySelector('.btn-suppr-card').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm('Supprimer ce check-up définitivement ?')) return;
+      try {
+        await deleteDoc(doc(db, 'checkups', checkup.id));
+      } catch (error) {
+        alert('Erreur lors de la suppression.');
+        console.error(error);
+      }
     });
 
     liste.appendChild(card);
