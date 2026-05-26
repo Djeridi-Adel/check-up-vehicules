@@ -153,6 +153,13 @@ textarea.input-field {
   font-size: 2rem;
 }
 
+#step-confirmation .btn-primary {
+   margin-top: 32px;
+   display : block;
+   text-align: center;
+   text-decoration: none;
+}
+
 /* ============================================
    ERROR
    ============================================ */
