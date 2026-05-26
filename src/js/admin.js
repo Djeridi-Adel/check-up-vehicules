@@ -50,7 +50,7 @@ async function initialiserDashboard() {
     chargerFlotte((id) => ouvrirModale(id, tousLesVehicules));
   });
 
-initStatCards((filtre, card) => {
+  initStatCards((filtre, card) => {
     if (filtre === 'flotte') {
       document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
@@ -62,7 +62,6 @@ initStatCards((filtre, card) => {
 
     showVue(vueCheckups);
 
-    // MAJ filtreActif AVANT d'appeler afficherCheckups
     if (filtreActif === filtre) {
       filtreActif = null;
       card.classList.remove('active');
@@ -72,12 +71,10 @@ initStatCards((filtre, card) => {
       card.classList.add('active');
     }
 
-    // Réinitialise les autres filtres quand on clique une stat
     document.getElementById('filtre-vehicule').value = '';
     document.getElementById('filtre-statut').value   = '';
     document.getElementById('filtre-date').value     = '';
 
-    // filtreActif est maintenant à jour
     afficherCheckups(tousLesCheckups, filtreActif, getFiltresValeurs());
   });
 
@@ -89,7 +86,35 @@ initStatCards((filtre, card) => {
     afficherCheckups(tousLesCheckups, filtreActif, getFiltresValeurs());
   });
 
+  // Signalements temps réel
+  ecouterSignalements((signalements) => {
+    afficherSignalements(signalements);
+    const onglet = document.querySelector('.onglet[data-onglet="signalements"]');
+    if (onglet) {
+      onglet.textContent = signalements.length > 0
+        ? `⚠️ Signalements (${signalements.length})`
+        : '⚠️ Signalements';
+    }
+  });
+
+  // Onglets
+  document.querySelectorAll('.onglet').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.onglet').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const onglet = btn.dataset.onglet;
+      document.getElementById('vue-checkups').classList.add('hidden');
+      document.getElementById('vue-signalements').classList.add('hidden');
+      if (onglet === 'checkups') {
+        document.getElementById('vue-checkups').classList.remove('hidden');
+      } else if (onglet === 'signalements') {
+        document.getElementById('vue-signalements').classList.remove('hidden');
+      }
+    });
+  });
+
   initExport(() => tousLesCheckups);
+  filtreDate.value = new Date().toISOString().split('T')[0];
 }
 
 // ============================================
