@@ -122,3 +122,80 @@
 .photo-thumb:hover {
   transform: scale(1.05);
 }
+
+/* ============================================
+   CARDS SIGNALEMENTS
+   ============================================ */
+.signalement-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border-left: 4px solid var(--danger);
+}
+
+.signalement-card-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.signalement-card-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.signalement-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.signalement-badge.panne {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.signalement-badge.accident {
+  background: #fce8e6;
+  color: #c62828;
+}
+
+.signalement-badge.autre {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.signalement-card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.signalement-card-body.visible {
+  display: block;
+}
+
+.signalement-detail-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.signalement-detail-row:last-child {
+  border-bottom: none;
+}
+
+.signalement-detail-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 80px;
+}
