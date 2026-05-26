@@ -170,7 +170,7 @@ async function chargerVehicules() {
 // ============================================
 function selectionnerVehicule(id, vehicule) {
   vehiculeSelectionne = { id, ...vehicule };
-  sections            = Object.keys(vehicule.checkpoints);
+  sections            = Object.keys(vehicule.checkpoints).sort();
   sectionIndex        = 0;
   resultats           = {};
   photos              = {};
