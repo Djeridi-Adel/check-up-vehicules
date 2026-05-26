@@ -68,7 +68,10 @@ function showStep(step) {
 
 function showProgress() {
   if (progressContainer) progressContainer.classList.remove('hidden');
-  if (btnRetour) btnRetour.classList.remove('hidden');
+  if (btnRetour) {
+    btnRetour.classList.remove('hidden');
+    btnRetour.textContent = 'X Annuler';
+  }
 }
 
 function hideProgress() {
