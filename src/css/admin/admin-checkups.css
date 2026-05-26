@@ -194,6 +194,31 @@
   border-bottom: none;
 }
 
+/* ============================================
+   ACTIONS CARD
+   ============================================ */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-suppr-card {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  opacity: 0.5;
+}
+
+.btn-suppr-card:hover {
+  background: #fce8e6;
+  opacity: 1;
+}
+
 .signalement-detail-label {
   font-weight: 600;
   color: var(--text-secondary);
