@@ -66,3 +66,82 @@
   margin-top: 6px;
   text-align: center;
 }
+
+/* ============================================
+   ACCUEIL
+   ============================================ */
+.accueil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.accueil-mail {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.accueil h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+.accueil-boutons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.accueil-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+
+.accueil-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.accueil-btn:active {
+  transform: scale(0.98);
+}
+
+.accueil-btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.accueil-btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.accueil-btn-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.accueil-btn-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.accueil-btn-desc {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
