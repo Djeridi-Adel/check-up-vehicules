@@ -160,6 +160,23 @@ textarea.input-field {
    text-decoration: none;
 }
 
+#step-confirmation .confirmation {
+  padding-top: 60px;
+}
+
+#step-confirmation .confirmation p {
+  margin-bottom: 8px;
+}
+
+#step-confirmation .confirmation .btn-primary,
+#step-confirmation .confirmation a.btn-primary {
+  display: block;
+  margin-top: 40px;
+  text-decoration: none;
+  text-align: center;
+  width: auto;
+}
+
 /* ============================================
    ERROR
    ============================================ */
