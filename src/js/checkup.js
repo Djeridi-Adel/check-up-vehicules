@@ -22,6 +22,7 @@ const CLOUDINARY_CONFIG = {
 // RÉFÉRENCES DOM
 // ============================================
 const stepIdentification  = document.getElementById('step-identification');
+const stepAccueil         = document.getElementById('step-accueil');
 const stepVehicule        = document.getElementById('step-vehicule');
 const stepSection         = document.getElementById('step-section');
 const stepConsignes       = document.getElementById('step-consignes');
@@ -34,6 +35,7 @@ const btnSuivant          = document.getElementById('btn-suivant');
 const btnNouveau          = document.getElementById('btn-nouveau');
 const btnConsignesRetour  = document.getElementById('btn-consignes-retour');
 const btnConsignesValider = document.getElementById('btn-consignes-valider');
+const btnCheckup          = document.getElementById('btn-checkup');
 const recapVehicule       = document.getElementById('recap-vehicule');
 const recapHeure          = document.getElementById('recap-heure');
 const headerTitle         = document.getElementById('header-title');
@@ -43,7 +45,6 @@ const progressContainer   = document.getElementById('progress-bar-container');
 const inputMail           = document.getElementById('input-mail');
 const btnIdentifier       = document.getElementById('btn-identifier');
 const mailError           = document.getElementById('mail-error');
-const stepAccueil = document.getElementById('step-accueil');
 
 // ============================================
 // STATE
@@ -59,22 +60,24 @@ let agentMail           = localStorage.getItem('agent-mail') || '';
 // NAVIGATION
 // ============================================
 function showStep(step) {
+  if (!step) return;
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   step.classList.add('active');
   window.scrollTo(0, 0);
 }
 
 function showProgress() {
-  progressContainer.classList.remove('hidden');
-  btnRetour.classList.remove('hidden');
+  if (progressContainer) progressContainer.classList.remove('hidden');
+  if (btnRetour) btnRetour.classList.remove('hidden');
 }
 
 function hideProgress() {
-  progressContainer.classList.add('hidden');
-  btnRetour.classList.add('hidden');
+  if (progressContainer) progressContainer.classList.add('hidden');
+  if (btnRetour) btnRetour.classList.add('hidden');
 }
 
 function mettreAJourProgress() {
+  if (!progressBar || !progressLabel || !headerTitle) return;
   const total   = sections.length;
   const current = sectionIndex + 1;
   const pct     = Math.round((current / total) * 100);
@@ -88,35 +91,42 @@ function mettreAJourProgress() {
 // ============================================
 function initialiserIdentification() {
   if (agentMail) {
+    const accueilMail = document.getElementById('accueil-mail');
+    if (accueilMail) accueilMail.textContent = agentMail;
     showStep(stepAccueil);
-    document.getElementById('accueil-mail').textContent = agentMail;
     return;
   }
 
   showStep(stepIdentification);
 
-  btnIdentifier.addEventListener('click', () => {
-    const mail = inputMail.value.trim();
-    if (!mail || !mail.includes('@')) {
-      mailError.textContent = 'Saisis une adresse mail valide.';
-      return;
-    }
-    localStorage.setItem('agent-mail', mail);
-    agentMail             = mail;
-    mailError.textContent = '';
-    document.getElementById('accueil-mail').textContent = mail;
-    showStep(stepAccueil);
-  });
+  if (btnIdentifier) {
+    btnIdentifier.addEventListener('click', () => {
+      const mail = inputMail.value.trim();
+      if (!mail || !mail.includes('@')) {
+        if (mailError) mailError.textContent = 'Saisis une adresse mail valide.';
+        return;
+      }
+      localStorage.setItem('agent-mail', mail);
+      agentMail = mail;
+      if (mailError) mailError.textContent = '';
+      const accueilMail = document.getElementById('accueil-mail');
+      if (accueilMail) accueilMail.textContent = mail;
+      showStep(stepAccueil);
+    });
+  }
 
-  inputMail.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') btnIdentifier.click();
-  });
+  if (inputMail) {
+    inputMail.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && btnIdentifier) btnIdentifier.click();
+    });
+  }
 }
 
 // ============================================
 // CHARGEMENT DES VÉHICULES
 // ============================================
 async function chargerVehicules() {
+  if (!listeVehicules) return;
   try {
     const snapshot = await getDocs(collection(db, 'vehicules'));
 
@@ -173,15 +183,14 @@ function selectionnerVehicule(id, vehicule) {
 // AFFICHAGE D'UNE SECTION
 // ============================================
 function afficherSection(index) {
+  if (!formSection) return;
   const categorie = sections[index];
   const points    = vehiculeSelectionne.checkpoints[categorie];
 
   mettreAJourProgress();
 
-  btnPrecedent.style.display = index === 0 ? 'none' : 'flex';
-
-  const isLast = index === sections.length - 1;
-  btnSuivant.textContent = isLast ? 'Suivant →' : 'Suivant →';
+  if (btnPrecedent) btnPrecedent.style.display = index === 0 ? 'none' : 'flex';
+  if (btnSuivant)   btnSuivant.textContent = 'Suivant →';
 
   formSection.innerHTML = `
     <div class="section-title">${categorie}</div>
@@ -329,8 +338,8 @@ function sauvegarderSection() {
     const anSel   = wrapper.querySelector('.toggle-btn.anomalie').classList.contains('selected');
 
     if (!okSel && !anSel) {
-      tousRemplis              = false;
-      wrapper.style.background = '#fff3f3';
+      tousRemplis                = false;
+      wrapper.style.background   = '#fff3f3';
       wrapper.style.borderRadius = '8px';
       return;
     }
@@ -366,7 +375,6 @@ async function uploadPhoto(file, checkupId, point, categorie) {
   );
 
   if (!response.ok) throw new Error('Échec upload photo');
-
   const data = await response.json();
   return data.secure_url;
 }
@@ -406,9 +414,11 @@ async function envoyerCheckup(btnEnvoi) {
       date:            serverTimestamp()
     });
 
-    recapVehicule.textContent = `Véhicule : ${vehiculeSelectionne.nom} — ${vehiculeSelectionne.immatriculation}`;
-    recapHeure.textContent    = `Heure : ${new Date().toLocaleTimeString('fr-FR')}`;
-    headerTitle.textContent   = 'Check-up véhicule';
+    if (recapVehicule) recapVehicule.textContent =
+      `Véhicule : ${vehiculeSelectionne.nom} — ${vehiculeSelectionne.immatriculation}`;
+    if (recapHeure) recapHeure.textContent =
+      `Heure : ${new Date().toLocaleTimeString('fr-FR')}`;
+    if (headerTitle) headerTitle.textContent = 'Check-up véhicule';
     showStep(stepConfirmation);
 
   } catch (error) {
@@ -421,74 +431,80 @@ async function envoyerCheckup(btnEnvoi) {
 }
 
 // ============================================
-// BOUTON SUIVANT
+// ÉVÉNEMENTS BOUTONS
 // ============================================
-btnSuivant.addEventListener('click', () => {
-  if (!sauvegarderSection()) {
-    alert('Tous les points doivent être vérifiés avant de continuer.');
-    return;
-  }
+if (btnSuivant) {
+  btnSuivant.addEventListener('click', () => {
+    if (!sauvegarderSection()) {
+      alert('Tous les points doivent être vérifiés avant de continuer.');
+      return;
+    }
 
-  const isLast = sectionIndex === sections.length - 1;
+    const isLast = sectionIndex === sections.length - 1;
 
-  if (!isLast) {
-    sectionIndex++;
-    afficherSection(sectionIndex);
-    return;
-  }
+    if (!isLast) {
+      sectionIndex++;
+      afficherSection(sectionIndex);
+      return;
+    }
 
-  // Dernière section → consignes
-  hideProgress();
-  headerTitle.textContent = 'Consignes de sécurité';
-  showStep(stepConsignes);
-});
-
-// ============================================
-// BOUTON PRÉCÉDENT
-// ============================================
-btnPrecedent.addEventListener('click', () => {
-  sauvegarderSection();
-  sectionIndex--;
-  afficherSection(sectionIndex);
-});
-
-// ============================================
-// BOUTONS CONSIGNES
-// ============================================
-btnConsignesRetour.addEventListener('click', () => {
-  showProgress();
-  headerTitle.textContent = vehiculeSelectionne.nom;
-  afficherSection(sectionIndex);
-  showStep(stepSection);
-});
-
-btnConsignesValider.addEventListener('click', () => {
-  envoyerCheckup(btnConsignesValider);
-});
-
-// ============================================
-// BOUTON RETOUR (header)
-// ============================================
-btnRetour.addEventListener('click', () => {
-  if (confirm('Abandonner ce check-up ?')) {
-    vehiculeSelectionne     = null;
-    resultats               = {};
-    photos                  = {};
     hideProgress();
-    headerTitle.textContent = 'Check-up véhicule';
-    showStep(stepVehicule);
-  }
-});
+    if (headerTitle) headerTitle.textContent = 'Consignes de sécurité';
+    showStep(stepConsignes);
+  });
+}
 
-// ============================================
-// BOUTON NOUVEAU CHECK-UP
-// ============================================
+if (btnPrecedent) {
+  btnPrecedent.addEventListener('click', () => {
+    sauvegarderSection();
+    sectionIndex--;
+    afficherSection(sectionIndex);
+  });
+}
+
+if (btnConsignesRetour) {
+  btnConsignesRetour.addEventListener('click', () => {
+    showProgress();
+    if (headerTitle) headerTitle.textContent = vehiculeSelectionne.nom;
+    afficherSection(sectionIndex);
+    showStep(stepSection);
+  });
+}
+
+if (btnConsignesValider) {
+  btnConsignesValider.addEventListener('click', () => {
+    envoyerCheckup(btnConsignesValider);
+  });
+}
+
+if (btnRetour) {
+  btnRetour.addEventListener('click', () => {
+    if (confirm('Abandonner ce check-up ?')) {
+      vehiculeSelectionne     = null;
+      resultats               = {};
+      photos                  = {};
+      hideProgress();
+      if (headerTitle) headerTitle.textContent = 'Check-up véhicule';
+      showStep(stepAccueil);
+    }
+  });
+}
+
+if (btnNouveau) {
   btnNouveau.addEventListener('click', () => {
-  vehiculeSelectionne = null;
-  resultats           = {};
-  photos              = {};
-  showStep(stepAccueil);
-});
+    vehiculeSelectionne = null;
+    resultats           = {};
+    photos              = {};
+    showStep(stepAccueil);
+  });
+}
+
+if (btnCheckup) {
+  btnCheckup.addEventListener('click', () => {
+    chargerVehicules();
+    showStep(stepVehicule);
+  });
+}
 
 // ============================================
 // UTILITAIRES
@@ -512,11 +528,4 @@ function afficherIcone(icone) {
 // ============================================
 // INITIALISATION
 // ============================================
-const btnCheckup = document.getElementById('btn-checkup');
-if (btnCheckup) {
-  btnCheckup.addEventListener('click', () => {
-    chargerVehicules();
-    showStep(stepVehicule);
-  });
-}
 initialiserIdentification();
