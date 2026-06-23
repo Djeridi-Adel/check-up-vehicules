@@ -65,7 +65,7 @@ export async function getAnomaliesVehicule(vehiculeId) {
 // RÉCUPÉRER LES ANOMALIES ACTIVES D'UN VÉHICULE
 // Statuts : en_attente ou marquee_resolue
 // ============================================
-export async function getAnomalieActive(vehiculeID, point) {
+export async function getAnomalieActive(vehiculeId, point) {
     const q = query(
         collection(db, 'anomalies'),
         where('vehiculeId', '==', vehiculeId),
