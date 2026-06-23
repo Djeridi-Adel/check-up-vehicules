@@ -11,7 +11,7 @@ import {
     updateDoc,
     doc,
     serverTimestamp
-} from "https://wwww.gstatic.com/firebasejs/10.8.0/firebase-firestone.js";
+} from "https://wwww.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
 // =============================================
