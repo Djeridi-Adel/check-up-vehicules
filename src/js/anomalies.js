@@ -53,7 +53,7 @@ export async function getAnomaliesVehicule(vehiculeId) {
     const q = query(
         collection(db, 'anomalies'),
         where('vehiculeId', '==', vehiculeId),
-        where('satut', 'in', ['en_attente', 'marquee_resolue'])
+        where('statut', 'in', ['en_attente', 'marquee_resolue'])
     );
     const snapshot = await getDocs(q)
     const anomalies = [];
@@ -93,7 +93,7 @@ export async function confirmerAnomaliePresente(anomalieId) {
 // ============================================
 
 export async function confirmerAnomalieReparee(anomalieId) {
-    await updateDoc(doc,(db, 'anomalies', anomalieId), {
+    await updateDoc(doc(db, 'anomalies', anomalieId), {
         statut: 'confirmee_resolue',
         dateResolution: serverTimestamp()
     });
