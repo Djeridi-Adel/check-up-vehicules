@@ -1,11 +1,13 @@
 import { db } from '../firebase.js';
+import { getAnomalieActive } from '../anomalies.js';
 import {
   collection,
   query,
   orderBy,
   onSnapshot,
   deleteDoc,
-  doc
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 export function ecouterCheckups(onMiseAJour) {
@@ -83,7 +85,7 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
         </div>
       </div>
       <div class="checkup-card-body" id="body-${checkup.id}">
-        ${genererDetailCheckup(checkup.resultats)}
+        ${genererDetailCheckup(checkup.resultats, checkup.vehiculeId)}
       </div>
     `;
 
@@ -104,25 +106,62 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
     });
 
     liste.appendChild(card);
-  });
-}
 
-function genererDetailCheckup(resultats) {
+    // Boutons "Marquer comme résolu"
+card.querySelectorAll('.btn-resoudre').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const point      = btn.dataset.point;
+    const vehiculeId = checkup.vehiculeId;
+
+    if (!confirm(`Marquer "${point}" comme résolu ?`)) return;
+
+    btn.disabled    = true;
+    btn.textContent = 'En cours...';
+
+    try {
+      // Trouve l'anomalie active dans Firestore
+      const anomalie = await getAnomalieActive(vehiculeId, point);
+      if (!anomalie) {
+        alert('Anomalie introuvable dans la base.');
+        return;
+      }
+
+      // Marque comme résolue par l'admin
+      await updateDoc(doc(db, 'anomalies', anomalie.id), {
+        statut: 'marquee_resolue',
+        dateResolution: new Date()
+      });
+
+      btn.textContent = '✓ Résolu — en attente confirmation agent';
+      btn.style.background = '#e6f4ea';
+      btn.style.color      = 'var(--success)';
+
+    } catch (error) {
+      alert('Erreur lors de la mise à jour.');
+      console.error(error);
+      btn.disabled    = false;
+      btn.textContent = '🔧 Marquer comme résolu';
+    }
+  });
+});
+
+function genererDetailCheckup(resultats, vehiculeId) {
   if (!resultats) return '<p>Aucun détail disponible.</p>';
 
   return Object.entries(resultats).map(([point, data]) => `
-    <div class="checkpoint-result ${data.statut === 'anomalie' ? 'has-anomalie' : ''}">
+    <div class="checkpoint-result ${data.statut === 'anomalie' ? 'has-anomalie' : ''}" data-point="${point}" data-vehicule-id="${vehiculeId}">
       <div class="checkpoint-result-info">
         <div class="checkpoint-result-label">${point}</div>
-        ${data.detail
-          ? `<div class="detail-text">${data.detail}</div>`
-          : ''}
-        ${data.photoUrl
-          ? `<a href="${data.photoUrl}" target="_blank" class="photo-link">
+        ${data.detail ? `<div class="detail-text">${data.detail}</div>` : ''}
+        ${data.photoUrl ? `<a href="${data.photoUrl}" target="_blank" class="photo-link">
                <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
                <span>Voir la photo</span>
-             </a>`
-          : ''}
+             </a>` : ''}
+        ${data.statut === 'anomalie' ? `
+          <button class="btn-resoudre" data-point="${point}">
+            🔧 Marquer comme résolu
+          </button>` : ''}
       </div>
       <span class="statut-${data.statut}">
         ${data.statut === 'ok' ? '✓ OK' : '⚠️'}
