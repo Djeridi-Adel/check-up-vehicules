@@ -19,13 +19,13 @@ import {
 // Appellé quand un agent signale une anomalie
 // dans le check-up
 // =============================================
-export async function creerAnomalies(checkupId, vehiculeID, vehiculeNom, immatriculation, resultats, agentMail) {
+export async function creerAnomalies(checkupId, vehiculeId, vehiculeNom, immatriculation, resultats, agentMail) {
     const anomalieACreer = Object.entries(resultats)
     .filter(([, data]) => data.statut === 'anomalie');
 
     for (const [point, data] of anomalieACreer) {
         // Vérifie si une anomalie en_attente existe déjà pour ce point
-        const existing = await getAnomalieActive(vehiculeID, point);
+        const existing = await getAnomalieActive(vehiculeId, point);
         if (existing) continue; // Ne pas créer de doublon
 
         await addDoc(collection(db, 'anomalies'), {
