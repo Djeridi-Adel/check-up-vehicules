@@ -228,6 +228,149 @@
 }
 
 /* ============================================
+   POP-UP ANOMALIES PERSISTANTES
+   ============================================ */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.popup {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.popup-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.popup-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.popup-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.popup-footer .btn-primary:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+}
+
+.popup-section {
+  margin-bottom: 20px;
+}
+
+.popup-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.popup-anomalie {
+  background: #fff8f0;
+  border: 1.5px solid #ffcc80;
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.popup-anomalie-resolue {
+  background: #f0fff4;
+  border-color: #81c784;
+}
+
+.popup-anomalie-point {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.popup-anomalie-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.popup-anomalie-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.popup-anomalie-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.popup-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.popup-btn-danger {
+  background: #fce8e6;
+  color: var(--danger);
+}
+
+.popup-btn-danger:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.popup-btn-success {
+  background: #e6f4ea;
+  color: var(--success);
+}
+
+.popup-btn-success:hover {
+  background: var(--success);
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .popup {
+    border-radius: 16px;
+    margin: auto;
+    max-height: 80vh;
+  }
+
+  .popup-overlay {
+    align-items: center;
+  }
+}
+
+
+/* ============================================
    DESKTOP
    ============================================ */
 @media (min-width: 768px) {

@@ -2,6 +2,7 @@
 // IMPORTS
 // ============================================
 import { db } from './firebase.js';
+import { getAnomaliesVehicule, confirmerAnomaliePresente, confirmerAnomalieReparee, infirmerReparation, creerAnomalies } from './anomalies.js';
 import {
   collection,
   getDocs,
@@ -166,14 +167,138 @@ async function chargerVehicules() {
 }
 
 // ============================================
+// POP-UP ANOMALIES PERSISTANTES
+// ============================================
+async function verifierAnomaliesPersistantes(vehiculeId) {
+  const anomalies = await getAnomaliesVehicule(vehiculeId);
+  if (anomalies.length === 0) return true; // Pas d'anomalie, on continue
+
+  return new Promise((resolve) => {
+    // Crée le pop-up
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+
+    const enAttente    = anomalies.filter(a => a.statut === 'en_attente');
+    const marqueeResolue = anomalies.filter(a => a.statut === 'marquee_resolue');
+
+    let contenu = '';
+
+    if (enAttente.length > 0) {
+      contenu += `
+        <div class="popup-section">
+          <div class="popup-section-title">⚠️ Anomalies en cours</div>
+          ${enAttente.map(a => `
+            <div class="popup-anomalie" data-id="${a.id}" data-type="en_attente">
+              <div class="popup-anomalie-point">🔧 ${a.point}</div>
+              ${a.description ? `<div class="popup-anomalie-desc">${a.description}</div>` : ''}
+              <div class="popup-anomalie-date">Signalée le ${a.dateSignalement?.toDate().toLocaleDateString('fr-FR') || '—'}</div>
+              <div class="popup-anomalie-actions">
+                <button class="popup-btn popup-btn-danger" data-action="presente" data-id="${a.id}">
+                  Toujours présente
+                </button>
+                <button class="popup-btn popup-btn-success" data-action="reparee" data-id="${a.id}">
+                  C'est réparé ✓
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (marqueeResolue.length > 0) {
+      contenu += `
+        <div class="popup-section">
+          <div class="popup-section-title">✅ Réparations à confirmer</div>
+          ${marqueeResolue.map(a => `
+            <div class="popup-anomalie popup-anomalie-resolue" data-id="${a.id}" data-type="marquee_resolue">
+              <div class="popup-anomalie-point">✅ ${a.point}</div>
+              <div class="popup-anomalie-desc">L'encadrement indique que c'est réparé. Confirmes-tu ?</div>
+              <div class="popup-anomalie-actions">
+                <button class="popup-btn popup-btn-success" data-action="confirmer" data-id="${a.id}">
+                  Oui, ça fonctionne ✓
+                </button>
+                <button class="popup-btn popup-btn-danger" data-action="infirmer" data-id="${a.id}">
+                  Non, toujours cassé
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    overlay.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <h3>État du véhicule</h3>
+        </div>
+        <div class="popup-body">
+          ${contenu}
+        </div>
+        <div class="popup-footer">
+          <button id="popup-continuer" class="btn-primary" disabled>
+            Continuer le check-up →
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Gestion des réponses
+    const reponses   = new Set();
+    const totalItems = anomalies.length;
+
+    overlay.querySelectorAll('.popup-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action     = btn.dataset.action;
+        const anomalieId = btn.dataset.id;
+
+        // Désactive les boutons de cet item
+        const itemBtns = btn.closest('.popup-anomalie').querySelectorAll('.popup-btn');
+        itemBtns.forEach(b => {
+          b.disabled = true;
+          b.style.opacity = '0.5';
+        });
+        btn.style.opacity = '1';
+        btn.style.fontWeight = '700';
+
+        // Appelle la bonne fonction
+        if (action === 'presente')  await confirmerAnomaliePresente(anomalieId);
+        if (action === 'reparee')   await confirmerAnomalieReparee(anomalieId);
+        if (action === 'confirmer') await confirmerAnomalieReparee(anomalieId);
+        if (action === 'infirmer')  await infirmerReparation(anomalieId);
+
+        reponses.add(anomalieId);
+
+        // Active "Continuer" quand tout est répondu
+        if (reponses.size === totalItems) {
+          document.getElementById('popup-continuer').disabled = false;
+        }
+      });
+    });
+
+    document.getElementById('popup-continuer').addEventListener('click', () => {
+      document.body.removeChild(overlay);
+      resolve(true);
+    });
+  });
+}
+
+// ============================================
 // SÉLECTION D'UN VÉHICULE
 // ============================================
-function selectionnerVehicule(id, vehicule) {
+async function selectionnerVehicule(id, vehicule) {
   vehiculeSelectionne = { id, ...vehicule };
   sections            = Object.keys(vehicule.checkpoints).sort();
   sectionIndex        = 0;
   resultats           = {};
   photos              = {};
+
+  // Vérifie les anomalies persistantes avant de continuer
+  const continuer = await verifierAnomaliesPersistantes(id);
+  if (!continuer) return;
 
   showProgress();
   mettreAJourProgress();
@@ -415,6 +540,16 @@ async function envoyerCheckup(btnEnvoi) {
       agentMail,
       date:            serverTimestamp()
     });
+
+    // Crée les anomalies persistantes pour les points en anomalie
+    await creerAnomalies(
+      checkupId,
+      vehiculeSelectionne.id,
+      vehiculeSelectionne.nom,
+      vehiculeSelectionne.immatriculation,
+      resultats,
+      agentMail
+    );
 
     if (recapVehicule) recapVehicule.textContent =
       `Véhicule : ${vehiculeSelectionne.nom} — ${vehiculeSelectionne.immatriculation}`;
