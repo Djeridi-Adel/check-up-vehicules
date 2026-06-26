@@ -1,5 +1,5 @@
 import { db } from '../firebase.js';
-import { getAnomalieActive } from '../anomalies.js';
+import { getAnomalieActive, marquePrisEnCompte, marquerAstechDemande } from '../anomalies.js';
 import {
   collection,
   query,
@@ -105,44 +105,57 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
       }
     });
 
-    // Boutons "Marquer comme résolu"
-    card.querySelectorAll('.btn-resoudre').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const point      = btn.dataset.point;
-        const vehiculeId = checkup.vehiculeId;
+    // Boutons actions anomalie
+card.querySelectorAll('.btn-action-anomalie').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const point      = btn.dataset.point;
+    const vehiculeId = checkup.vehiculeId;
 
-        if (!confirm(`Marquer "${point}" comme résolu ?`)) return;
+    try {
+      const anomalie = await getAnomalieActive(vehiculeId, point);
+      if (!anomalie) {
+        alert('Anomalie introuvable.');
+        return;
+      }
 
-        btn.disabled    = true;
-        btn.textContent = 'En cours...';
+      // Désactive tous les boutons de ce point
+      const groupeBtns = btn.closest('.btn-actions-anomalie').querySelectorAll('.btn-action-anomalie');
+      groupeBtns.forEach(b => { b.disabled = true; b.style.opacity = '0.4'; });
+      btn.style.opacity = '1';
 
-        try {
-          const anomalie = await getAnomalieActive(vehiculeId, point);
-          if (!anomalie) {
-            alert('Anomalie introuvable dans la base.');
-            btn.disabled    = false;
-            btn.textContent = '🔧 Marquer comme résolu';
-            return;
-          }
+      if (btn.classList.contains('btn-pris-en-compte')) {
+        await marquerPrisEnCompte(anomalie.id);
+        btn.textContent = '👀 Pris en compte ✓';
+        btn.style.background = '#fff3e0';
+        btn.style.color = '#e65100';
+      }
 
-          await updateDoc(doc(db, 'anomalies', anomalie.id), {
-            statut:         'marquee_resolue',
-            dateResolution: new Date()
-          });
+      if (btn.classList.contains('btn-astech')) {
+        await marquerAstechDemande(anomalie.id);
+        btn.textContent = '🔧 Demande faite ✓';
+        btn.style.background = '#fffde7';
+        btn.style.color = '#f57f17';
+      }
 
-          btn.textContent      = '✓ Résolu — en attente confirmation agent';
-          btn.style.background = '#e6f4ea';
-          btn.style.color      = 'var(--success)';
+      if (btn.classList.contains('btn-resoudre')) {
+        await updateDoc(doc(db, 'anomalies', anomalie.id), {
+          statut: 'marquee_resolue',
+          dateResolution: new Date()
+        });
+        btn.textContent = '✅ Résolu — attente confirmation agent';
+        btn.style.background = '#e6f4ea';
+        btn.style.color = 'var(--success)';
+      }
 
-        } catch (error) {
-          alert('Erreur lors de la mise à jour.');
-          console.error(error);
-          btn.disabled    = false;
-          btn.textContent = '🔧 Marquer comme résolu';
-        }
-      });
-    });
+    } catch (error) {
+      alert('Erreur lors de la mise à jour.');
+      console.error(error);
+      btn.disabled    = false;
+      btn.style.opacity = '1';
+    }
+  });
+});
 
     liste.appendChild(card);
   });
@@ -158,20 +171,24 @@ function genererDetailCheckup(resultats, vehiculeId) {
     <div class="checkpoint-result ${data.statut === 'anomalie' ? 'has-anomalie' : ''}">
       <div class="checkpoint-result-info">
         <div class="checkpoint-result-label">${point}</div>
-        ${data.detail
-          ? `<div class="detail-text">${data.detail}</div>`
-          : ''}
-        ${data.photoUrl
-          ? `<a href="${data.photoUrl}" target="_blank" class="photo-link">
-               <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
-               <span>Voir la photo</span>
-             </a>`
-          : ''}
-        ${data.statut === 'anomalie'
-          ? `<button class="btn-resoudre" data-point="${point}">
-               🔧 Marquer comme résolu
-             </button>`
-          : ''}
+        ${data.detail ? `<div class="detail-text">${data.detail}</div>` : ''}
+        ${data.photoUrl ? `
+          <a href="${data.photoUrl}" target="_blank" class="photo-link">
+            <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
+            <span>Voir la photo</span>
+          </a>` : ''}
+        ${data.statut === 'anomalie' ? `
+          <div class="btn-actions-anomalie">
+            <button class="btn-action-anomalie btn-pris-en-compte" data-point="${point}">
+              👀 Pris en compte
+            </button>
+            <button class="btn-action-anomalie btn-astech" data-point="${point}">
+              🔧 Demande atelier
+            </button>
+            <button class="btn-action-anomalie btn-resoudre" data-point="${point}">
+              ✅ Résolu
+            </button>
+          </div>` : ''}
       </div>
       <span class="statut-${data.statut}">
         ${data.statut === 'ok' ? '✓ OK' : '⚠️'}

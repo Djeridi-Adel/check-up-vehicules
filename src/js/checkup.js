@@ -144,19 +144,24 @@ async function chargerVehicules() {
     listeVehicules.innerHTML = '';
 
     snapshot.forEach(doc => {
-      const v    = doc.data();
-      const card = document.createElement('div');
-      card.className = 'vehicule-card';
-      card.innerHTML = `
-        <div class="vehicule-icon">${afficherIcone(v.icone)}</div>
-        <div class="vehicule-info">
-          <h3>${v.nom}</h3>
-          <p>${v.immatriculation} — ${v.type}</p>
-        </div>
-      `;
-      card.addEventListener('click', () => selectionnerVehicule(doc.id, v));
-      listeVehicules.appendChild(card);
-    });
+
+    const v    = doc.data();
+    const estDisponible = v.disponible !== false;
+  const card = document.createElement('div');
+  card.className = `vehicule-card ${estDisponible ? '' : 'vehicule-card-indispo'}`;
+  card.innerHTML = `
+    <div class="vehicule-icon">${afficherIcone(v.icone)}</div>
+    <div class="vehicule-info">
+      <h3>${v.nom}</h3>
+      <p>${v.immatriculation} — ${v.type}</p>
+      ${estDisponible ? '' : '<p class="indispo-label">🔧 En maintenance</p>'}
+    </div>
+  `;
+  if (estDisponible) {
+    card.addEventListener('click', () => selectionnerVehicule(doc.id, v));
+  }
+  listeVehicules.appendChild(card);
+});
 
   } catch (error) {
     listeVehicules.innerHTML = `

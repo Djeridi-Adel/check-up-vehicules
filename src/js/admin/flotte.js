@@ -3,7 +3,8 @@ import {
   collection,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 export let tousLesVehicules = [];
@@ -53,19 +54,38 @@ export async function chargerFlotte(onEditer) {
   tousLesVehicules.forEach(v => {
     const card = document.createElement('div');
     card.className = 'flotte-card';
-    card.innerHTML = `
-      <div class="flotte-card-info">
-        <span class="flotte-icone">${afficherIcone(v.icone)}</span>
-        <div>
-          <h3>${v.nom}</h3>
-          <p>${v.immatriculation} — ${v.type}</p>
-        </div>
-      </div>
-      <div class="flotte-card-actions">
-        <button class="btn-edit" data-id="${v.id}">✏️ Modifier</button>
-        <button class="btn-delete" data-id="${v.id}">🗑️</button>
-      </div>
-    `;
+    const estDisponible = v.disponible !== false;
+card.className = `flotte-card ${estDisponible ? '' : 'flotte-card-indispo'}`;
+card.innerHTML = `
+  <div class="flotte-card-info">
+    <span class="flotte-icone">${afficherIcone(v.icone)}</span>
+    <div>
+      <h3>${v.nom} ${estDisponible ? '' : '<span class="badge-indispo">🔧 En maintenance</span>'}</h3>
+      <p>${v.immatriculation} — ${v.type}</p>
+    </div>
+  </div>
+  <div class="flotte-card-actions">
+    <button class="btn-toggle-dispo ${estDisponible ? 'btn-toggle-dispo-on' : 'btn-toggle-dispo-off'}" data-id="${v.id}" data-dispo="${estDisponible}">
+      ${estDisponible ? '✅ Disponible' : '🔧 Indisponible'}
+    </button>
+    <button class="btn-edit" data-id="${v.id}">✏️ Modifier</button>
+    <button class="btn-delete" data-id="${v.id}">🗑️</button>
+  </div>
+`;
+
+card.querySelector('.btn-toggle-dispo').addEventListener('click', async (e) => {
+  e.stopPropagation();
+  const nouvelleValeur = !(e.target.dataset.dispo === 'true');
+  try {
+    await updateDoc(doc(db, 'vehicules', v.id), {
+      disponible: nouvelleValeur
+    });
+    chargerFlotte(onEditer);
+  } catch (error) {
+    alert('Erreur lors de la mise à jour.');
+    console.error(error);
+  }
+});
 
     card.querySelector('.btn-edit').addEventListener('click', () => onEditer(v.id));
     card.querySelector('.btn-delete').addEventListener('click', () => supprimerVehicule(v.id, v.nom, onEditer));

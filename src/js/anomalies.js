@@ -10,6 +10,7 @@ import {
     addDoc,
     updateDoc,
     doc,
+    orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -108,4 +109,43 @@ export async function infirmerReparation(anomalieId) {
         statut:         're_signalee',
         dateSignalement: serverTimestamp()
     });
+}
+
+
+// ============================================
+// ADMIN MARQUE "PRIS EN COMPTE"
+// ============================================
+
+export async function marquePrisEnCompte(anomalieId) {
+    await updateDoc(doc(db, 'anomalies', anomalieId), {
+        statut: 'pris_en_compte'
+    });
+}
+
+// ============================================
+// ADMIN MARQUE "DEMANDE ATELIER FAITE"
+// ============================================
+
+export async function marquerAstechDemande(anomalieId) {
+    await updateDoc(doc(db, 'anomalies', anomalieId), {
+        statut: 'astech_demande'
+    });
+}
+
+
+// ============================================
+// RÉCUPÉRER TOUTES LES ANOMALIES D'UN VÉHICULE
+// (pour l'historique maintenance)
+// ============================================
+
+export async function getHistoriqueVehicule(vehiculeId) {
+    const q = query(
+        collection(db, 'anomalies'),
+        where('vehiculeId', '==', vehiculeId),
+        orderBy('dateSignalement', 'desc')
+    );
+    const snapshot = await getDocs(q);
+    const anomalie = [];
+    snapshot.forEach(d => anomalies.push({ id: d.id, ...d.data() }));
+    return anomalie;
 }

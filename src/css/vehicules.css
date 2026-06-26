@@ -53,3 +53,26 @@
    object-fit: contain;
    border-radius: 8px;
 }
+
+/* ============================================
+   VÉHICULE INDISPONIBLE
+   ============================================ */
+   .vehicule-card-indispo {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    border-color: var(--border);
+    background: var(--bg);
+   }
+
+   .vehicule-card-indispo:hover {
+    transform: none !important;
+    border-color: var(--border) !important;
+    box-shadow: none !important;
+   }
+
+   .indispo-label {
+    color: var(--danger);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 4px;
+   }
