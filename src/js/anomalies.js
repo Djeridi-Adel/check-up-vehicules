@@ -54,7 +54,12 @@ export async function getAnomaliesVehicule(vehiculeId) {
     const q = query(
         collection(db, 'anomalies'),
         where('vehiculeId', '==', vehiculeId),
-        where('statut', 'in', ['en_attente', 'marquee_resolue'])
+        where('statut', 'in', ['en_attente',
+            'pris_en_compte',
+            'astech_demande',
+            'marquee_resolue',
+            're_signalee'
+        ])
     );
     const snapshot = await getDocs(q)
     const anomalies = [];
@@ -71,7 +76,13 @@ export async function getAnomalieActive(vehiculeId, point) {
         collection(db, 'anomalies'),
         where('vehiculeId', '==', vehiculeId),
         where('point', '==', point),
-        where('statut', 'in', ['en_attente', 'marquee_resolue'])
+        where('statut', 'in', [
+            'en_attente',
+            'pris_en_compte',
+            'astech_demande',
+            'marquee_resolue',
+            're_signalee'
+        ])
     );
     const snapshot = await getDocs(q)
     if (snapshot.empty) return null;
