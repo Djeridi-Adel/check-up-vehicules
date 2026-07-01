@@ -239,6 +239,7 @@
   align-items: flex-end;
   justify-content: center;
   animation: fadeIn 0.2s ease;
+  pointer-events: none; 
 }
 
 .popup {
@@ -249,6 +250,7 @@
   max-height: 85vh;
   display: flex;
   flex-direction: column;
+  pointer-events: all;
 }
 
 .popup-header {
