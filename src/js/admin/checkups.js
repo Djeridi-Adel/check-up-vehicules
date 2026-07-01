@@ -1,5 +1,5 @@
 import { db } from '../firebase.js';
-import { getAnomalieActive, marquePrisEnCompte, marquerAstechDemande } from '../anomalies.js';
+import { getAnomalieActive, marquerPrisEnCompte, marquerAstechDemande } from '../anomalies.js';
 import {
   collection,
   query,
