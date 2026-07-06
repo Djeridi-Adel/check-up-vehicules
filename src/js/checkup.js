@@ -158,7 +158,10 @@ async function chargerVehicules() {
     </div>
   `;
   if (estDisponible) {
-    card.addEventListener('click', () => selectionnerVehicule(doc.id, v));
+    card.addEventListener('click', (e) => {
+  e.stopPropagation();
+  selectionnerVehicule(doc.id, v);
+});
   }
   listeVehicules.appendChild(card);
 });
@@ -176,14 +179,20 @@ async function chargerVehicules() {
 // ============================================
 async function verifierAnomaliesPersistantes(vehiculeId) {
   const anomalies = await getAnomaliesVehicule(vehiculeId);
-  if (anomalies.length === 0) return true; // Pas d'anomalie, on continue
+  if (anomalies.length === 0) return true;
 
   return new Promise((resolve) => {
-    // Crée le pop-up
     const overlay = document.createElement('div');
     overlay.className = 'popup-overlay';
 
-    const enAttente    = anomalies.filter(a => a.statut === 'en_attente');
+    // Empêche les clics de bubble depuis la page
+    overlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    const enAttente = anomalies.filter(a =>
+      ['en_attente', 'pris_en_compte', 'astech_demande', 're_signalee'].includes(a.statut)
+    );
     const marqueeResolue = anomalies.filter(a => a.statut === 'marquee_resolue');
 
     let contenu = '';
@@ -195,6 +204,12 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
           ${enAttente.map(a => `
             <div class="popup-anomalie" data-id="${a.id}" data-type="en_attente">
               <div class="popup-anomalie-point">🔧 ${a.point}</div>
+              ${a.statut === 'pris_en_compte'
+                ? '<div class="popup-statut-badge badge-pris-en-compte">👀 Pris en compte par l\'encadrement</div>'
+                : ''}
+              ${a.statut === 'astech_demande'
+                ? '<div class="popup-statut-badge badge-astech">🔧 Demande atelier en cours</div>'
+                : ''}
               ${a.description ? `<div class="popup-anomalie-desc">${a.description}</div>` : ''}
               <div class="popup-anomalie-date">Signalée le ${a.dateSignalement?.toDate().toLocaleDateString('fr-FR') || '—'}</div>
               <div class="popup-anomalie-actions">
@@ -256,17 +271,20 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
     const totalItems = anomalies.length;
 
     overlay.querySelectorAll('.popup-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const action     = btn.dataset.action;
         const anomalieId = btn.dataset.id;
 
         // Désactive les boutons de cet item
         const itemBtns = btn.closest('.popup-anomalie').querySelectorAll('.popup-btn');
         itemBtns.forEach(b => {
-          b.disabled = true;
+          b.disabled     = true;
           b.style.opacity = '0.5';
         });
-        btn.style.opacity = '1';
+        btn.style.opacity    = '1';
         btn.style.fontWeight = '700';
 
         // Appelle la bonne fonction
@@ -284,7 +302,8 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
       });
     });
 
-    document.getElementById('popup-continuer').addEventListener('click', () => {
+    document.getElementById('popup-continuer').addEventListener('click', (e) => {
+      e.stopPropagation();
       document.body.removeChild(overlay);
       resolve(true);
     });
