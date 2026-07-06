@@ -5,6 +5,7 @@ import { chargerVehiculesFiltres, chargerFlotte, tousLesVehicules } from './admi
 import { initModale, ouvrirModale }          from './admin/modale.js';
 import { initExport }            from './admin/export.js';
 import { ecouterSignalements, afficherSignalements } from './admin/signalements.js';
+import { chargerVehiculesMaintenance, initMaintenanceRetour } from './admin/maintenance.js';
 
 // ============================================
 // STATE GLOBAL
@@ -105,14 +106,20 @@ async function initialiserDashboard() {
       const onglet = btn.dataset.onglet;
       document.getElementById('vue-checkups').classList.add('hidden');
       document.getElementById('vue-signalements').classList.add('hidden');
+      document.getElementById('vue-maintenance').classList.add('hidden');
+
       if (onglet === 'checkups') {
         document.getElementById('vue-checkups').classList.remove('hidden');
       } else if (onglet === 'signalements') {
         document.getElementById('vue-signalements').classList.remove('hidden');
+      } else if (onglet === 'maintenance') {
+        document.getElementById('vue-maintenance').classList.remove('hidden');
+        chargerVehiculesMaintenance();
       }
     });
   });
-
+  
+  initMaintenanceRetour();
   initExport(() => tousLesCheckups);
 }
 

@@ -66,6 +66,7 @@
   <div class="onglets">
     <button class="onglet active" data-onglet="checkups">Check-ups</button>
     <button class="onglet" data-onglet="signalements">⚠️ Signalements</button>
+    <button class="onglet" data-onglet="maintenance">🔧 Maintenance</button>
   </div>
 
   <!-- Vue check-ups -->
@@ -91,6 +92,29 @@
     <section class="signalements-liste" id="signalements-liste">
       <p class="loading">Chargement des signalements...</p>
     </section>
+  </div>
+
+  <!-- Vue maintenance -->
+  <div id="vue-maintenance" class="hidden">
+    <div class="maintenance-container">
+
+      <!-- Liste véhicules -->
+      <div id="maintenance-vehicules" class="maintenance-vehicules">
+        <p class="loading">Chargement...</p>
+      </div>
+
+      <!-- Historique du véhicule sélectionné -->
+      <div id="maintenance-historique" class="maintenance-historique hidden">
+        <div class="maintenance-historique-header">
+          <button id="btn-retour-maintenance" class="btn-retour-maintenance">← Retour</button>
+          <h2 id="maintenance-vehicule-titre">Historique</h2>
+        </div>
+        <div id="maintenance-liste-pannes" class="maintenance-liste-pannes">
+          <p class="loading">Chargement...</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Vue flotte -->
