@@ -127,7 +127,7 @@ export async function infirmerReparation(anomalieId) {
 // ADMIN MARQUE "PRIS EN COMPTE"
 // ============================================
 
-export async function marquePrisEnCompte(anomalieId) {
+export async function marquerPrisEnCompte(anomalieId) {
     await updateDoc(doc(db, 'anomalies', anomalieId), {
         statut: 'pris_en_compte'
     });
@@ -157,6 +157,6 @@ export async function getHistoriqueVehicule(vehiculeId) {
     );
     const snapshot = await getDocs(q);
     const anomalie = [];
-    snapshot.forEach(d => anomalies.push({ id: d.id, ...d.data() }));
+    snapshot.forEach(d => anomalie.push({ id: d.id, ...d.data() }));
     return anomalie;
 }
