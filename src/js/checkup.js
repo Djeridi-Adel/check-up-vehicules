@@ -287,6 +287,12 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
         btn.style.opacity    = '1';
         btn.style.fontWeight = '700';
 
+        if (action === 'presente' || action === 'infirmer') {
+          btn.classList.add('selected-danger')
+        } else {
+          btn.classList.add('selected.success');
+        }
+
         // Appelle la bonne fonction
         if (action === 'presente')  await confirmerAnomaliePresente(anomalieId);
         if (action === 'reparee')   await confirmerAnomalieReparee(anomalieId);

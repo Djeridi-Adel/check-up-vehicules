@@ -360,6 +360,26 @@
   color: white;
 }
 
+.pop-btn.selected-danger {
+  background: var(--danger) !important;
+  color:  white !important;
+  opacity: 1 !important;
+}
+
+.popup-btn.selected-success {
+  background: var(--success) !important;
+  color: white !important;
+  opacity: 1 !important;
+}
+
+.popup-btn:hover:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.popup-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
 @media (min-width: 768px) {
   .popup {
     border-radius: 16px;
