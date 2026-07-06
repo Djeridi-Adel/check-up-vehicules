@@ -336,7 +336,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer !important;
-  transition: all 0.15s;
+  transition: all 0.15s transform 0.2s ease;
   pointer-events: all !important;
 }
 
@@ -360,7 +360,7 @@
   color: white;
 }
 
-.pop-btn.selected-danger {
+.popup-btn.selected-danger {
   background: var(--danger) !important;
   color:  white !important;
   opacity: 1 !important;
@@ -373,7 +373,7 @@
 }
 
 .popup-btn:hover:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(1.03);
 }
 
 .popup-btn:active:not(:disabled) {

@@ -300,13 +300,16 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
           b.disabled     = true;
           b.style.opacity = '0.5';
         });
-        btn.style.opacity    = '1';
-        btn.style.fontWeight = '700';
+        // Reset les styles inline sur tous les boutons
+        itemBtns.forEach(b => {
+          b.style.cssText = 'opacity: 0.4;';
+        });
 
+        // Applique le style sur le bouton cliqué via styles inline directs
         if (action === 'presente' || action === 'infirmer') {
-          btn.classList.add('selected-danger')
+          btn.style.cssText = 'opacity: 1 !important; background: var(--danger) !important; color: white !important; font-weight: 700;';
         } else {
-          btn.classList.add('selected.success');
+          btn.style.cssText = 'opacity: 1 !important; background: var(--success) !important; color: white !important; font-weight: 700;';
         }
 
         // Appelle la bonne fonction
