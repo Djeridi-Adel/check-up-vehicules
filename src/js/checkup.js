@@ -7,6 +7,8 @@ import {
   collection,
   getDocs,
   addDoc,
+  deleteDoc,
+  doc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -86,6 +88,28 @@ function mettreAJourProgress() {
   progressLabel.textContent = `${current} / ${total}`;
   headerTitle.textContent   = vehiculeSelectionne.nom;
 }
+
+
+// ============================================
+// SUPPRESSION DU CHECK-UP ASSOCIÉ
+// ============================================
+async function supprimerCheckup(checkupId) {
+  try {
+    // Le checkupId est de la forme "vehiculeId-timestamp"
+    // On cherche le doculent Firestore correspondant
+    const snapshot = await getDocs(collection(db, 'checkups'));
+    snapshot.forEach(async d => {
+      const data = d.data();
+      if (d.id === checkupId || data.vehiculeId + '-' + data.date?.seconds === checkupId) {
+        await deleteDoc(doc(db, 'checkups', d.id));
+      }
+    });
+  } catch (error) {
+    console.error('Erreur suppression check-up : ', error);
+  }
+}
+
+
 
 // ============================================
 // IDENTIFICATION AGENT
@@ -295,8 +319,17 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
 
         // Appelle la bonne fonction
         if (action === 'presente')  await confirmerAnomaliePresente(anomalieId);
-        if (action === 'reparee')   await confirmerAnomalieReparee(anomalieId);
-        if (action === 'confirmer') await confirmerAnomalieReparee(anomalieId);
+        if (action === 'reparee') {
+          await confirmerAnomalieReparee(anomalieId);
+          // Récupère l'anomalie pour avoir le checkupId
+          const anomalie = anomalies.find(a => a.id === anomalieId);
+          if (anomalie?.checkupId) await supprimerCheckup(anomalie.checkupId);
+        }
+        if (action === 'confirmer') {
+          await confirmerAnomalieReparee(anomalieId);
+          const anomalie = anomalies.find(a => a.id === anomalieId);
+          if (anomalie?.checkupId) await supprimerCheckup(anomalie.checkupId);
+        }
         if (action === 'infirmer')  await infirmerReparation(anomalieId);
 
         reponses.add(anomalieId);
