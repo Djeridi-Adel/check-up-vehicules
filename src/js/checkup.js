@@ -587,7 +587,7 @@ async function envoyerCheckup(btnEnvoi) {
       if (resultats[point]) resultats[point].photoUrl = url;
     });
 
-    const checkRef = await addDoc(collection(db, 'checkups'), {
+    const checkupRef = await addDoc(collection(db, 'checkups'), {
       vehiculeId:      vehiculeSelectionne.id,
       vehiculeNom:     vehiculeSelectionne.nom,
       immatriculation: vehiculeSelectionne.immatriculation,
