@@ -95,17 +95,9 @@ function mettreAJourProgress() {
 // ============================================
 async function supprimerCheckup(checkupId) {
   try {
-    // Le checkupId est de la forme "vehiculeId-timestamp"
-    // On cherche le doculent Firestore correspondant
-    const snapshot = await getDocs(collection(db, 'checkups'));
-    snapshot.forEach(async d => {
-      const data = d.data();
-      if (d.id === checkupId || data.vehiculeId + '-' + data.date?.seconds === checkupId) {
-        await deleteDoc(doc(db, 'checkups', d.id));
-      }
-    });
+    await deleteDoc(doc(db, 'checkups', checkupId));
   } catch (error) {
-    console.error('Erreur suppression check-up : ', error);
+    console.error('Erreur suppression check-up :', error);
   }
 }
 
@@ -595,7 +587,7 @@ async function envoyerCheckup(btnEnvoi) {
       if (resultats[point]) resultats[point].photoUrl = url;
     });
 
-    await addDoc(collection(db, 'checkups'), {
+    const checkRef = await addDoc(collection(db, 'checkups'), {
       vehiculeId:      vehiculeSelectionne.id,
       vehiculeNom:     vehiculeSelectionne.nom,
       immatriculation: vehiculeSelectionne.immatriculation,
@@ -604,9 +596,9 @@ async function envoyerCheckup(btnEnvoi) {
       date:            serverTimestamp()
     });
 
-    // Crée les anomalies persistantes pour les points en anomalie
+    // Crée les anomalies persistantes pour les points en anomalie avec Id Firestone
     await creerAnomalies(
-      checkupId,
+      checkupRef.id,
       vehiculeSelectionne.id,
       vehiculeSelectionne.nom,
       vehiculeSelectionne.immatriculation,
