@@ -137,13 +137,17 @@
   }
 
   .btn-toggle-dispo-on:hover {
-    background: var(--sucess);
+    background: #81c784;
     color: white;
+    border-color: black;
   }
 
   .btn-toggle-dispo-off {
     background: #e65100;
     color: white;
+    border-color: #e65100;
   }
+
+  
 
   
