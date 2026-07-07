@@ -29,7 +29,7 @@ header h1 {
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 4px 8px;
   white-space: nowrap;
   opacity: 0.9;
   border-radius: 6px;
