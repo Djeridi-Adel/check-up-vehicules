@@ -268,6 +268,7 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
       <div class="popup">
         <div class="popup-header">
           <h3>État du véhicule</h3>
+          <button id="popup-annuler" class="btn-fermer">✕</button>
         </div>
         <div class="popup-body">
           ${contenu}
@@ -281,6 +282,13 @@ async function verifierAnomaliesPersistantes(vehiculeId) {
     `;
 
     document.body.appendChild(overlay);
+
+    // Bouton annuler - ferme sans enregistrer
+    document.getElementById('popup-annuler').addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.body.removeChild(overlay);
+      resolve(false);
+    });
 
     // Gestion des réponses
     const reponses   = new Set();
