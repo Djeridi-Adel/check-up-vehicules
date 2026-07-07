@@ -60,11 +60,15 @@ async function chargerVehicules() {
     selectVehicule.innerHTML = '<option value="">Sélectionne un véhicule</option>';
     snapshot.forEach(doc => {
       const v      = doc.data();
+      const estDisponible = v.disponible !== false;
       const option = document.createElement('option');
       option.value = doc.id;
       option.setAttribute('data-nom', v.nom);
       option.setAttribute('data-immat', v.immatriculation);
-      option.textContent = `${v.nom} — ${v.immatriculation}`;
+      option.textContent = estDisponible
+      ? `${v.nom} — ${v.immatriculation}`
+      : ' 🔧 ${v.nom} - ${v.immatriculation} (En maintenance)';
+      if (!estDisponible) option.disabled = true;
       selectVehicule.appendChild(option);
     });
   } catch (error) {
