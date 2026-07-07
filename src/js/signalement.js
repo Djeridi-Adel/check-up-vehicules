@@ -67,7 +67,7 @@ async function chargerVehicules() {
       option.setAttribute('data-immat', v.immatriculation);
       option.textContent = estDisponible
       ? `${v.nom} — ${v.immatriculation}`
-      : ' 🔧 ${v.nom} - ${v.immatriculation} (En maintenance)';
+      : `🔧 ${v.nom} - ${v.immatriculation} (En maintenance)`;
       if (!estDisponible) option.disabled = true;
       selectVehicule.appendChild(option);
     });
