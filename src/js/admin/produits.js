@@ -1,215 +1,109 @@
-// src/js/admin/produits.js
-// Gestion de l'onglet "Produits" dans le dashboard admin
-// Suit le même pattern que admin/maintenance.js et admin/flotte.js
+// src/js/produits.js
+// Module partagé pour la gestion des fiches produits (fiches techniques + FDS)
+// Utilisé par sanitaires-produits-admin.html (CRUD) et sanitaires-fds.html (consultation agent)
 
 import {
-  NATURES_PRODUIT,
-  EPI_DISPONIBLES,
-  uploadFichierProduit,
-  creerProduit,
-  modifierProduit,
-  supprimerProduit,
-  listerProduits
-} from "../produits.js";
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-let elements = null;
+import { db } from "./firebase.js";
 
-function getElements() {
-  return {
-    form: document.getElementById("produitForm"),
-    nomInput: document.getElementById("nom"),
-    natureSelect: document.getElementById("nature"),
-    epiGrid: document.getElementById("epiGrid"),
-    ficheTechniqueInput: document.getElementById("ficheTechnique"),
-    fdsInput: document.getElementById("fds"),
-    ficheTechniqueActuelle: document.getElementById("ficheTechniqueActuelle"),
-    fdsActuelle: document.getElementById("fdsActuelle"),
-    produitIdInput: document.getElementById("produitId"),
-    submitBtn: document.getElementById("submitBtn"),
-    cancelEditBtn: document.getElementById("cancelEditBtn"),
-    statusMsg: document.getElementById("statusMsg"),
-    tableBody: document.getElementById("produitsTableBody")
-  };
-}
+// --- Configuration Cloudinary (identique au reste du projet) ---
+const CLOUDINARY_CLOUD_NAME = "dpyfeif48";
+const CLOUDINARY_UPLOAD_PRESET = "ocgjzqqe";
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-function getEpiSelectionnes() {
-  return Array.from(document.querySelectorAll(".epi-checkbox:checked")).map(
-    (cb) => cb.value
-  );
-}
+// --- Listes de référence (menu déroulant / checkboxes) ---
+export const NATURES_PRODUIT = [
+  "Détergent",
+  "Désinfectant",
+  "Détartrant",
+  "Savon",
+  "Dégraissant",
+  "Autre"
+];
 
-function setEpiSelectionnes(epiList = []) {
-  document.querySelectorAll(".epi-checkbox").forEach((cb) => {
-    cb.checked = epiList.includes(cb.value);
+export const EPI_DISPONIBLES = [
+  "Gants nitrile",
+  "Lunettes de protection",
+  "Masque",
+  "Tablier",
+  "Chaussures de sécurité",
+  "Autre"
+];
+
+const PRODUITS_COLLECTION = "produits";
+
+/**
+ * Upload un fichier (PDF fiche technique ou FDS) vers Cloudinary
+ * @param {File} file
+ * @returns {Promise<string>} URL sécurisée du fichier hébergé
+ */
+export async function uploadFichierProduit(file) {
+  if (!file) return null;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+    method: "POST",
+    body: formData
   });
-}
 
-function resetForm() {
-  const el = elements;
-  el.form.reset();
-  el.produitIdInput.value = "";
-  setEpiSelectionnes([]);
-  el.ficheTechniqueActuelle.textContent = "";
-  el.fdsActuelle.textContent = "";
-  el.submitBtn.textContent = "Ajouter le produit";
-  el.cancelEditBtn.style.display = "none";
-  afficherStatus("", "");
-}
-
-function afficherStatus(message, type) {
-  elements.statusMsg.textContent = message;
-  elements.statusMsg.className = type;
-}
-
-function remplirFormulairePourEdition(produit) {
-  const el = elements;
-  el.produitIdInput.value = produit.id;
-  el.nomInput.value = produit.nom;
-  el.natureSelect.value = produit.nature;
-  setEpiSelectionnes(produit.epiRecommandes || []);
-  el.ficheTechniqueActuelle.innerHTML = produit.ficheTechniqueUrl
-    ? `Fichier actuel : <a class="file-link" href="${produit.ficheTechniqueUrl}" target="_blank">voir</a> (laisser vide pour conserver)`
-    : "";
-  el.fdsActuelle.innerHTML = produit.fdsUrl
-    ? `Fichier actuel : <a class="file-link" href="${produit.fdsUrl}" target="_blank">voir</a> (laisser vide pour conserver)`
-    : "";
-  el.submitBtn.textContent = "Enregistrer les modifications";
-  el.cancelEditBtn.style.display = "block";
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-async function confirmerSuppression(produit) {
-  if (!confirm(`Supprimer définitivement "${produit.nom}" ?`)) return;
-  try {
-    await supprimerProduit(produit.id);
-    afficherStatus("Produit supprimé.", "success");
-    chargerProduitsAdmin();
-  } catch (err) {
-    console.error(err);
-    afficherStatus("Erreur lors de la suppression.", "error");
+  if (!response.ok) {
+    throw new Error("Échec de l'upload vers Cloudinary");
   }
+
+  const data = await response.json();
+  return data.secure_url;
 }
 
-function rendreTableau(produits) {
-  const tableBody = elements.tableBody;
-  if (produits.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="5">Aucun produit enregistré.</td></tr>`;
-    return;
-  }
-  tableBody.innerHTML = "";
-  produits.forEach((p) => {
-    const tr = document.createElement("tr");
-    const epiBadges = (p.epiRecommandes || [])
-      .map((e) => `<span class="badge">${e}</span>`)
-      .join(" ");
-    tr.innerHTML = `
-      <td>${p.nom}</td>
-      <td>${p.nature}</td>
-      <td>${epiBadges}</td>
-      <td>
-        ${p.ficheTechniqueUrl ? `<a class="file-link" href="${p.ficheTechniqueUrl}" target="_blank">Fiche technique</a><br>` : ""}
-        ${p.fdsUrl ? `<a class="file-link" href="${p.fdsUrl}" target="_blank">FDS</a>` : ""}
-      </td>
-      <td class="actions">
-        <button type="button" data-action="edit" data-id="${p.id}">Modifier</button>
-        <button type="button" data-action="delete" data-id="${p.id}" style="background:#c62828;">Suppr.</button>
-      </td>
-    `;
-    tableBody.appendChild(tr);
-    tr.querySelector('[data-action="edit"]').addEventListener("click", () => remplirFormulairePourEdition(p));
-    tr.querySelector('[data-action="delete"]').addEventListener("click", () => confirmerSuppression(p));
+/**
+ * Crée une nouvelle fiche produit
+ * @param {Object} produit { nom, nature, epiRecommandes: string[], ficheTechniqueUrl, fdsUrl }
+ */
+export async function creerProduit(produit) {
+  const docRef = await addDoc(collection(db, PRODUITS_COLLECTION), {
+    ...produit,
+    dateAjout: serverTimestamp(),
+    dateMiseAJour: serverTimestamp()
+  });
+  return docRef.id;
+}
+
+/**
+ * Met à jour une fiche produit existante
+ */
+export async function modifierProduit(produitId, champsMisAJour) {
+  const produitRef = doc(db, PRODUITS_COLLECTION, produitId);
+  await updateDoc(produitRef, {
+    ...champsMisAJour,
+    dateMiseAJour: serverTimestamp()
   });
 }
 
 /**
- * Charge et affiche la liste des produits.
- * Appelée à chaque ouverture de l'onglet "Produits".
+ * Supprime une fiche produit
+ * (Note : ne supprime pas automatiquement les fichiers sur Cloudinary)
  */
-export async function chargerProduitsAdmin() {
-  if (!elements) elements = getElements();
-  elements.tableBody.innerHTML = `<tr><td colspan="5"><p class="loading">Chargement...</p></td></tr>`;
-  try {
-    const produits = await listerProduits();
-    rendreTableau(produits);
-  } catch (err) {
-    console.error(err);
-    elements.tableBody.innerHTML = `<tr><td colspan="5">Erreur de chargement.</td></tr>`;
-  }
+export async function supprimerProduit(produitId) {
+  await deleteDoc(doc(db, PRODUITS_COLLECTION, produitId));
 }
 
 /**
- * Initialise le formulaire (menus déroulants, checkboxes, listeners).
- * À appeler une seule fois au démarrage du dashboard, comme initMaintenanceRetour().
+ * Récupère tous les produits, triés par nom
  */
-export function initProduitsAdmin() {
-  elements = getElements();
-  const el = elements;
-
-  NATURES_PRODUIT.forEach((nature) => {
-    const opt = document.createElement("option");
-    opt.value = nature;
-    opt.textContent = nature;
-    el.natureSelect.appendChild(opt);
-  });
-
-  EPI_DISPONIBLES.forEach((epi) => {
-    const wrapper = document.createElement("label");
-    wrapper.className = "epi-item";
-    wrapper.style.fontWeight = "normal";
-    wrapper.innerHTML = `
-      <input type="checkbox" value="${epi}" class="epi-checkbox">
-      <span>${epi}</span>
-    `;
-    el.epiGrid.appendChild(wrapper);
-  });
-
-  el.cancelEditBtn.addEventListener("click", resetForm);
-
-  el.form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    el.submitBtn.disabled = true;
-    afficherStatus("Enregistrement en cours...", "");
-
-    try {
-      const produitId = el.produitIdInput.value;
-      const nom = el.nomInput.value.trim();
-      const nature = el.natureSelect.value;
-      const epiRecommandes = getEpiSelectionnes();
-
-      const ficheTechniqueFile = el.ficheTechniqueInput.files[0];
-      const fdsFile = el.fdsInput.files[0];
-
-      let ficheTechniqueUrl;
-      let fdsUrl;
-
-      if (ficheTechniqueFile) {
-        afficherStatus("Upload de la fiche technique...", "");
-        ficheTechniqueUrl = await uploadFichierProduit(ficheTechniqueFile);
-      }
-      if (fdsFile) {
-        afficherStatus("Upload de la FDS...", "");
-        fdsUrl = await uploadFichierProduit(fdsFile);
-      }
-
-      const donnees = { nom, nature, epiRecommandes };
-      if (ficheTechniqueUrl) donnees.ficheTechniqueUrl = ficheTechniqueUrl;
-      if (fdsUrl) donnees.fdsUrl = fdsUrl;
-
-      if (produitId) {
-        await modifierProduit(produitId, donnees);
-        afficherStatus("Produit mis à jour avec succès.", "success");
-      } else {
-        await creerProduit(donnees);
-        afficherStatus("Produit ajouté avec succès.", "success");
-      }
-
-      resetForm();
-      chargerProduitsAdmin();
-    } catch (err) {
-      console.error(err);
-      afficherStatus("Erreur : " + err.message, "error");
-    } finally {
-      el.submitBtn.disabled = false;
-    }
-  });
+export async function listerProduits() {
+  const q = query(collection(db, PRODUITS_COLLECTION), orderBy("nom", "asc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
