@@ -67,6 +67,7 @@
     <button class="onglet active" data-onglet="checkups">📋 Check-ups</button>
     <button class="onglet" data-onglet="signalements">⚠️ Signalements</button>
     <button class="onglet" data-onglet="maintenance">🔧 Maintenance</button>
+    <button class="onglet" data-onglet="produits">🧴 Produits</button>
   </div>
 
   <!-- Vue check-ups -->
@@ -125,6 +126,61 @@
     </div>
     <div id="liste-flotte" class="liste-flotte">
       <p class="loading">Chargement...</p>
+    </div>
+  </div>
+
+  <!-- Vue produits -->
+  <div id="vue-produits" class="hidden">
+    <div class="flotte-header">
+      <h2>Gestion des fiches produits</h2>
+    </div>
+    <div class="layout">
+      <!-- Formulaire de création / édition -->
+      <div class="card">
+        <form id="produitForm">
+          <input type="hidden" id="produitId">
+
+          <label for="nom">Nom du produit</label>
+          <input type="text" id="nom" required placeholder="Ex: Détergent désinfectant sanitaire X">
+
+          <label for="nature">Nature</label>
+          <select id="nature" required></select>
+
+          <label>EPI recommandé(s)</label>
+          <div class="epi-grid" id="epiGrid"></div>
+
+          <label for="ficheTechnique">Fiche technique (PDF)</label>
+          <input type="file" id="ficheTechnique" accept="application/pdf">
+          <div id="ficheTechniqueActuelle" style="font-size:0.8rem;margin-top:4px;"></div>
+
+          <label for="fds">FDS (PDF)</label>
+          <input type="file" id="fds" accept="application/pdf">
+          <div id="fdsActuelle" style="font-size:0.8rem;margin-top:4px;"></div>
+
+          <button type="submit" id="submitBtn">Ajouter le produit</button>
+          <button type="button" id="cancelEditBtn" class="btn-secondary" style="display:none;">Annuler la modification</button>
+
+          <div id="statusMsg"></div>
+        </form>
+      </div>
+
+      <!-- Liste des produits existants -->
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Nature</th>
+              <th>EPI</th>
+              <th>Fichiers</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="produitsTableBody">
+            <tr><td colspan="5"><p class="loading">Chargement...</p></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

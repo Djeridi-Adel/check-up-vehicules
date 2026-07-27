@@ -1,0 +1,155 @@
+
+#vue-produits .layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 800px) {
+  #vue-produits .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+#vue-produits .card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+#vue-produits label {
+  display: block;
+  font-weight: bold;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+#vue-produits input[type="text"],
+#vue-produits select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+#vue-produits input[type="file"] {
+  width: 100%;
+  margin-top: 4px;
+}
+
+#vue-produits .epi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+#vue-produits .epi-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+#vue-produits #produitForm button[type="submit"] {
+  background: #65257D;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 18px;
+  width: 100%;
+}
+
+#vue-produits #produitForm button[type="submit"]:hover {
+  background: #8a4aa3;
+}
+
+#vue-produits #produitForm button[type="submit"]:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+#vue-produits .btn-secondary {
+  background: #888;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+#vue-produits .btn-secondary:hover {
+  background: #666;
+}
+
+#vue-produits #statusMsg {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+
+#vue-produits #statusMsg.error {
+  color: #c62828;
+}
+
+#vue-produits #statusMsg.success {
+  color: #2e7d32;
+}
+
+#vue-produits table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+#vue-produits th,
+#vue-produits td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#vue-produits th {
+  color: #65257D;
+}
+
+#vue-produits .badge {
+  display: inline-block;
+  background: #eee;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  margin: 1px;
+}
+
+#vue-produits .actions button {
+  width: auto;
+  margin: 0 4px 0 0;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  background: #65257D;
+  cursor: pointer;
+}
+
+#vue-produits .actions button:hover {
+  background: #8a4aa3;
+}
+
+#vue-produits a.file-link {
+  color: #65257D;
+  text-decoration: underline;
+}

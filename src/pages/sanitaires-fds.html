@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiches produits - Sanitaires</title>
+<style>
+  :root {
+    --primary: #65257D;
+    --primary-light: #8a4aa3;
+    --bg: #f5f3f7;
+    --border: #ddd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 16px;
+    color: #222;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  input[type="search"], select {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  input[type="search"] { flex: 1; min-width: 180px; }
+
+  .produit-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .produit-nom {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary);
+  }
+  .produit-nature {
+    display: inline-block;
+    background: #f0e7f4;
+    color: var(--primary);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+  .epi-list {
+    margin-top: 8px;
+    font-size: 0.85rem;
+  }
+  .epi-badge {
+    display: inline-block;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin: 2px 4px 0 0;
+    font-size: 0.8rem;
+  }
+  .file-buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .file-buttons a {
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .file-buttons a:hover { background: var(--primary-light); }
+  .file-buttons .disabled {
+    background: #ccc;
+    pointer-events: none;
+  }
+  #emptyState, #loadingState {
+    text-align: center;
+    color: #777;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧴 Fiches produits</h1>
+
+<div class="controls">
+  <input type="search" id="searchInput" placeholder="Rechercher un produit...">
+  <select id="natureFilter">
+    <option value="">Toutes les natures</option>
+  </select>
+</div>
+
+<div id="loadingState">Chargement des produits...</div>
+<div id="emptyState" style="display:none;">Aucun produit ne correspond à votre recherche.</div>
+<div id="produitsList"></div>
+
+<script type="module">
+  import { NATURES_PRODUIT, listerProduits } from "../js/produits.js";
+
+  const searchInput = document.getElementById("searchInput");
+  const natureFilter = document.getElementById("natureFilter");
+  const produitsList = document.getElementById("produitsList");
+  const loadingState = document.getElementById("loadingState");
+  const emptyState = document.getElementById("emptyState");
+
+  let tousLesProduits = [];
+
+  NATURES_PRODUIT.forEach((nature) => {
+    const opt = document.createElement("option");
+    opt.value = nature;
+    opt.textContent = nature;
+    natureFilter.appendChild(opt);
+  });
+
+  function afficherProduits(produits) {
+    produitsList.innerHTML = "";
+
+    if (produits.length === 0) {
+      emptyState.style.display = "block";
+      return;
+    }
+    emptyState.style.display = "none";
+
+    produits.forEach((p) => {
+      const card = document.createElement("div");
+      card.className = "produit-card";
+
+      const epiHtml = (p.epiRecommandes || [])
+        .map((e) => `<span class="epi-badge">⚠️ ${e}</span>`)
+        .join("");
+
+      card.innerHTML = `
+        <div class="produit-nom">${p.nom}</div>
+        <div class="produit-nature">${p.nature}</div>
+        <div class="epi-list">${epiHtml}</div>
+        <div class="file-buttons">
+          <a href="${p.ficheTechniqueUrl || "#"}" target="_blank" class="${p.ficheTechniqueUrl ? "" : "disabled"}">
+            📄 Fiche technique
+          </a>
+          <a href="${p.fdsUrl || "#"}" target="_blank" class="${p.fdsUrl ? "" : "disabled"}">
+            🧪 FDS
+          </a>
+        </div>
+      `;
+      produitsList.appendChild(card);
+    });
+  }
+
+  function filtrerEtAfficher() {
+    const recherche = searchInput.value.trim().toLowerCase();
+    const nature = natureFilter.value;
+
+    const filtres = tousLesProduits.filter((p) => {
+      const matchNom = p.nom.toLowerCase().includes(recherche);
+      const matchNature = !nature || p.nature === nature;
+      return matchNom && matchNature;
+    });
+
+    afficherProduits(filtres);
+  }
+
+  searchInput.addEventListener("input", filtrerEtAfficher);
+  natureFilter.addEventListener("change", filtrerEtAfficher);
+
+  async function init() {
+    try {
+      tousLesProduits = await listerProduits();
+      loadingState.style.display = "none";
+      afficherProduits(tousLesProduits);
+    } catch (err) {
+      console.error(err);
+      loadingState.textContent = "Erreur de chargement des produits.";
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
