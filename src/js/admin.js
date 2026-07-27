@@ -117,7 +117,7 @@ async function initialiserDashboard() {
       } else if (onglet === 'maintenance') {
         document.getElementById('vue-maintenance').classList.remove('hidden');
         chargerVehiculesMaintenance();
-      } else if (onglet === 'produit') {
+      } else if (onglet === 'produits') {
         document.getElementById('vue-produits').classList.remove('hidden');
         chargerProduitsAdmin();
       }
