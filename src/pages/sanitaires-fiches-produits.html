@@ -24,6 +24,32 @@
     font-size: 1.4rem;
     margin-bottom: 16px;
   }
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .page-header h1 {
+    margin-bottom: 0;
+  }
+  .btn-retour-page {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    white-space: nowrap;
+  }
+  .btn-retour-page:hover {
+    background: #f0e7f4;
+  }
   .controls {
     display: flex;
     gap: 10px;
@@ -100,7 +126,10 @@
 </head>
 <body>
 
-<h1>🧴 Fiches produits</h1>
+<div class="page-header">
+  <a href="sanitaires.html" class="btn-retour-page">← Retour</a>
+  <h1>🧴 Fiches produits</h1>
+</div>
 
 <div class="controls">
   <input type="search" id="searchInput" placeholder="Rechercher un produit...">
