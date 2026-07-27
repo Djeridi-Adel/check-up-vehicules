@@ -35,8 +35,6 @@ export const EPI_DISPONIBLES = [
   "Gants nitrile",
   "Lunettes de protection",
   "Masque",
-  "Tablier",
-  "Chaussures de sécurité",
   "Autre"
 ];
 
