@@ -130,6 +130,11 @@
   color: white;
 }
 
+.accueil-btn-secondary {
+  background: #65257D;
+  color: white;
+}
+
 .accueil-btn-icon {
   font-size: 2.5rem;
   margin-bottom: 10px;
