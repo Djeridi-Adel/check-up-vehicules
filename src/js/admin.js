@@ -7,6 +7,7 @@ import { initExport }            from './admin/export.js';
 import { ecouterSignalements, afficherSignalements } from './admin/signalements.js';
 import { chargerVehiculesMaintenance, initMaintenanceRetour } from './admin/maintenance.js';
 import { initProduitsAdmin, chargerProduitsAdmin } from './admin/produits.js';
+import { initSitesAdmin, chargerSitesAdmin } from './admin/sites-sanitaires.js'
 
 // ============================================
 // STATE GLOBAL
@@ -109,6 +110,7 @@ async function initialiserDashboard() {
       document.getElementById('vue-signalements').classList.add('hidden');
       document.getElementById('vue-maintenance').classList.add('hidden');
       document.getElementById('vue-produits').classList.add('hidden');
+      document.getElementById('vue-sites').classList.add('hidden');
 
       if (onglet === 'checkups') {
         document.getElementById('vue-checkups').classList.remove('hidden');
@@ -120,12 +122,16 @@ async function initialiserDashboard() {
       } else if (onglet === 'produits') {
         document.getElementById('vue-produits').classList.remove('hidden');
         chargerProduitsAdmin();
+      } else if (onglet === 'sites') {
+        document.getElementById('vue-sites').classList.remove('hidden');
+        chargerSitesAdmin();
       }
     });
   });
   
   initMaintenanceRetour();
   initProduitsAdmin();
+  initSitesAdmin();
   initExport(() => tousLesCheckups);
 }
 

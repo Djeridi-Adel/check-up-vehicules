@@ -68,6 +68,7 @@
     <button class="onglet" data-onglet="signalements">⚠️ Signalements</button>
     <button class="onglet" data-onglet="maintenance">🔧 Maintenance</button>
     <button class="onglet" data-onglet="produits">🧴 Produits</button>
+    <button class="onglet" data-onglet="sites">🚻 Cellules sanitaires</button>
   </div>
 
   <!-- Vue check-ups -->
@@ -183,6 +184,55 @@
       </div>
     </div>
   </div>
+
+  <!-- Vue sites sanitaires -->
+<div id="vue-sites" class="hidden">
+  <div class="flotte-header">
+    <h2>Gestion des cellules sanitaires</h2>
+  </div>
+  <div class="layout">
+    <div class="card">
+      <form id="siteForm">
+        <input type="hidden" id="siteId">
+
+        <label for="siteNom">Nom de la cellule</label>
+        <input type="text" id="siteNom" required placeholder="Ex: Parc Jouvet - Sanitaires public">
+
+        <label for="siteAdresse">Adresse</label>
+        <input type="text" id="siteAdresse" placeholder="Ex: 2 Rue Vernet, Valence">
+
+        <label for="siteNotes">Notes (optionnel)</label>
+        <input type="text" id="siteNotes" placeholder="Ex: Accès par l'arrière du bâtiment">
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:14px;">
+          <input type="checkbox" id="siteActif" checked style="width:auto;">
+          Cellule active (visible par les agents)
+        </label>
+
+        <button type="submit" id="siteSubmitBtn">Ajouter la cellule</button>
+        <button type="button" id="siteCancelEditBtn" class="btn-secondary" style="display:none;">Annuler la modification</button>
+
+        <div id="siteStatusMsg"></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Adresse</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="sitesTableBody">
+          <tr><td colspan="4"><p class="loading">Chargement...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 </main>
   </div>
