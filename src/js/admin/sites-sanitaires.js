@@ -28,6 +28,10 @@ function rendreEditeurChecklist() {
   } else {
     container.innerHTML = checklistCourante.map((item, index) => `
       <div class="checklist-item-row">
+        <div class="checklist-item-reorder">
+          <button type="button" class="checklist-item-move" data-index="${index}" data-dir="up" ${index === 0 ? "disabled" : ""}>▲</button>
+          <button type="button" class="checklist-item-move" data-index="${index}" data-dir="down" ${index === checklistCourante.length - 1 ? "disabled" : ""}>▼</button>
+        </div>
         <span class="checklist-item-label">${item.label}</span>
         <span class="checklist-item-type">${item.type === "consommable" ? "🧴 Consommable" : "✅ Tâche"}</span>
         <button type="button" class="checklist-item-remove" data-index="${index}">✕</button>
@@ -37,6 +41,18 @@ function rendreEditeurChecklist() {
     container.querySelectorAll(".checklist-item-remove").forEach((btn) => {
       btn.addEventListener("click", () => {
         checklistCourante.splice(Number(btn.dataset.index), 1);
+        rendreEditeurChecklist();
+      });
+    });
+
+    container.querySelectorAll(".checklist-item-move").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.index);
+        const dir = btn.dataset.dir;
+        const cible = dir === "up" ? index - 1 : index + 1;
+        if (cible < 0 || cible >= checklistCourante.length) return;
+        [checklistCourante[index], checklistCourante[cible]] =
+          [checklistCourante[cible], checklistCourante[index]];
         rendreEditeurChecklist();
       });
     });

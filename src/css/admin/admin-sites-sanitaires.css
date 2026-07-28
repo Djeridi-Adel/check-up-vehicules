@@ -192,3 +192,24 @@
   cursor: pointer;
   font-weight: bold;
 }
+
+#vue-sites .checklist-item-reorder {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+#vue-sites .checklist-item-move {
+  background: none;
+  border: none;
+  color: #65257D;
+  cursor: pointer;
+  font-size: 0.6rem;
+  line-height: 1;
+  padding: 1px 4px;
+}
+
+#vue-sites .checklist-item-move:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
