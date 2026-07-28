@@ -8,6 +8,7 @@ import { ecouterSignalements, afficherSignalements } from './admin/signalements.
 import { chargerVehiculesMaintenance, initMaintenanceRetour } from './admin/maintenance.js';
 import { initProduitsAdmin, chargerProduitsAdmin } from './admin/produits.js';
 import { initSitesAdmin, chargerSitesAdmin } from './admin/sites-sanitaires.js'
+import { chargerControlesAdmin } from './admin/controles-sanitaires.js';
 
 // ============================================
 // STATE GLOBAL
@@ -111,6 +112,7 @@ async function initialiserDashboard() {
       document.getElementById('vue-maintenance').classList.add('hidden');
       document.getElementById('vue-produits').classList.add('hidden');
       document.getElementById('vue-sites').classList.add('hidden');
+      document.getElementById('vue-controles-sanitaires').classList.add('hidden');
 
       if (onglet === 'checkups') {
         document.getElementById('vue-checkups').classList.remove('hidden');
@@ -125,6 +127,9 @@ async function initialiserDashboard() {
       } else if (onglet === 'sites') {
         document.getElementById('vue-sites').classList.remove('hidden');
         chargerSitesAdmin();
+      } else if (onglet === 'controles-sanitaires') {
+        document.getElementById('vue-controles-sanitaires').classList.remove('hidden');
+        chargerControlesAdmin()
       }
     });
   });

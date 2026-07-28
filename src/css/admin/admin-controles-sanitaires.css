@@ -1,0 +1,62 @@
+#vue-controles-sanitaires .controle-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+#vue-controles-sanitaires .controle-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#vue-controles-sanitaires .controle-card-header h3 {
+  margin: 0;
+  color: #65257D;
+  font-size: 1rem;
+}
+
+#vue-controles-sanitaires .controle-meta {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 6px 0;
+}
+
+#vue-controles-sanitaires .controle-photos {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+#vue-controles-sanitaires .controle-photos a {
+  color: #65257D;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+#vue-controles-sanitaires .controle-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+#vue-controles-sanitaires .badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+}
+
+#vue-controles-sanitaires .badge-actif {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+#vue-controles-sanitaires .badge-inactif {
+  background: #ffebee;
+  color: #c62828;
+}

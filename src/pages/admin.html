@@ -69,6 +69,7 @@
     <button class="onglet" data-onglet="maintenance">🔧 Maintenance</button>
     <button class="onglet" data-onglet="produits">🧴 Produits</button>
     <button class="onglet" data-onglet="sites">🚻 Cellules sanitaires</button>
+    <button class="onglet" data-onglet="controles-sanitaires">📋 Contrôles sanitaires</button>
   </div>
 
   <!-- Vue check-ups -->
@@ -243,6 +244,17 @@
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<!-- Vue contrôles sanitaires -->
+<div id="vue-controles-sanitaires" class="hidden">
+  <div class="flotte-header">
+    <h2>Historique des contrôles sanitaires</h2>
+    <select id="filtre-controle-site" class="filtre-select"></select>
+  </div>
+  <div id="controles-liste" class="controles-liste">
+    <p class="loading">Chargement...</p>
   </div>
 </div>
 

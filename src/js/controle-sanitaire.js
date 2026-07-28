@@ -150,8 +150,10 @@ btnPhotoAvantRetour.addEventListener('click', () => {
 });
 
 // ============================================
-// AFFICHAGE DE LA CHECKLIST
+// AFFICHAGE DE LA CHECKLIST (un point à la fois)
 // ============================================
+let checklistIndex = 0;
+
 function slugify(str) {
   return str
     .normalize('NFD')
@@ -162,15 +164,43 @@ function slugify(str) {
 
 function afficherChecklist() {
   checklistTitre.textContent = `Checklist — ${siteSelectionne.nom}`;
+  checklistIndex = 0;
+  afficherPointChecklist();
+}
+
+function afficherPointChecklist() {
   const items = siteSelectionne.checklist || [];
 
   if (items.length === 0) {
     checklistListe.innerHTML = `<p class="loading">Aucun point de contrôle configuré pour cette cellule.</p>`;
+    document.getElementById('checklist-progress').textContent = '';
     return;
   }
 
-  checklistListe.innerHTML = items.map((item) => genererItemChecklist(item)).join('');
-  attacherEvenementsChecklist(items);
+  const item = items[checklistIndex];
+  const itemId = slugify(item.id || item.label);
+
+  document.getElementById('checklist-progress').textContent =
+    `Point ${checklistIndex + 1} / ${items.length}`;
+
+  checklistListe.innerHTML = genererItemChecklist(item);
+  attacherEvenementsPointChecklist(item, itemId);
+
+  // Réaffiche la sélection déjà faite si l'agent revient en arrière
+  const saved = resultats[itemId];
+  if (saved && saved.statut) {
+    const wrapper = checklistListe.querySelector(`[data-item="${itemId}"]`);
+    const btn = wrapper.querySelector(`[data-statut="${saved.statut}"]`);
+    if (btn) btn.classList.add('selected');
+    if (item.type === 'tache' && saved.statut === 'anomalie') {
+      const detail = document.getElementById(`detail-${itemId}`);
+      detail.classList.add('visible');
+      const textarea = wrapper.querySelector('textarea');
+      if (textarea && saved.detail) textarea.value = saved.detail;
+    }
+  }
+
+  btnChecklistSuivant.textContent = checklistIndex === items.length - 1 ? 'Suivant →' : 'Point suivant →';
 }
 
 function genererItemChecklist(item) {
@@ -213,85 +243,90 @@ function genererItemChecklist(item) {
   `;
 }
 
-function attacherEvenementsChecklist(items) {
-  items.forEach((item) => {
-    const itemId = slugify(item.id || item.label);
-    const wrapper = checklistListe.querySelector(`[data-item="${itemId}"]`);
-    const boutons = wrapper.querySelectorAll('.toggle-btn');
+function attacherEvenementsPointChecklist(item, itemId) {
+  const wrapper = checklistListe.querySelector(`[data-item="${itemId}"]`);
+  const boutons = wrapper.querySelectorAll('.toggle-btn');
 
-    boutons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        boutons.forEach((b) => b.classList.remove('selected'));
-        btn.classList.add('selected');
+  boutons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      boutons.forEach((b) => b.classList.remove('selected'));
+      btn.classList.add('selected');
 
-        const statut = btn.dataset.statut;
-        resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
-        resultats[itemId].statut = statut;
+      const statut = btn.dataset.statut;
+      resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
+      resultats[itemId].statut = statut;
 
-        if (item.type === 'tache') {
-          const detail = document.getElementById(`detail-${itemId}`);
-          if (statut === 'anomalie') {
-            detail.classList.add('visible');
-          } else {
-            detail.classList.remove('visible');
-          }
+      if (item.type === 'tache') {
+        const detail = document.getElementById(`detail-${itemId}`);
+        if (statut === 'anomalie') {
+          detail.classList.add('visible');
+        } else {
+          detail.classList.remove('visible');
         }
-      });
+      }
+    });
+  });
+
+  if (item.type === 'tache') {
+    const inputPhoto = document.getElementById(`photo-${itemId}`);
+    const preview = document.getElementById(`preview-${itemId}`);
+    const btnRemove = document.getElementById(`remove-${itemId}`);
+    const textarea = wrapper.querySelector('textarea');
+
+    textarea.addEventListener('input', () => {
+      resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
+      resultats[itemId].detail = textarea.value;
     });
 
-    if (item.type === 'tache') {
-      const inputPhoto = document.getElementById(`photo-${itemId}`);
-      const preview = document.getElementById(`preview-${itemId}`);
-      const btnRemove = document.getElementById(`remove-${itemId}`);
-      const textarea = wrapper.querySelector('textarea');
+    inputPhoto.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
+      resultats[itemId].photoFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        preview.src = ev.target.result;
+        preview.classList.add('visible');
+        btnRemove.classList.add('visible');
+      };
+      reader.readAsDataURL(file);
+    });
 
-      textarea.addEventListener('input', () => {
-        resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
-        resultats[itemId].detail = textarea.value;
-      });
-
-      inputPhoto.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        resultats[itemId] = resultats[itemId] || { label: item.label, type: item.type };
-        resultats[itemId].photoFile = file;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          preview.src = ev.target.result;
-          preview.classList.add('visible');
-          btnRemove.classList.add('visible');
-        };
-        reader.readAsDataURL(file);
-      });
-
-      btnRemove.addEventListener('click', () => {
-        if (resultats[itemId]) delete resultats[itemId].photoFile;
-        inputPhoto.value = '';
-        preview.src = '';
-        preview.classList.remove('visible');
-        btnRemove.classList.remove('visible');
-      });
-    }
-  });
+    btnRemove.addEventListener('click', () => {
+      if (resultats[itemId]) delete resultats[itemId].photoFile;
+      inputPhoto.value = '';
+      preview.src = '';
+      preview.classList.remove('visible');
+      btnRemove.classList.remove('visible');
+    });
+  }
 }
 
 btnChecklistSuivant.addEventListener('click', () => {
   const items = siteSelectionne.checklist || [];
-  const itemsNonRepondus = items.filter((item) => {
-    const itemId = slugify(item.id || item.label);
-    return !resultats[itemId] || !resultats[itemId].statut;
-  });
+  const item = items[checklistIndex];
+  const itemId = slugify(item.id || item.label);
 
-  if (itemsNonRepondus.length > 0) {
-    alert('Merci de répondre à tous les points de la checklist avant de continuer.');
+  if (!resultats[itemId] || !resultats[itemId].statut) {
+    alert('Merci de répondre à ce point avant de continuer.');
     return;
   }
 
-  showStep(stepPhotoApres);
+  if (checklistIndex < items.length - 1) {
+    checklistIndex++;
+    afficherPointChecklist();
+  } else {
+    showStep(stepPhotoApres);
+  }
 });
 
 btnChecklistRetour.addEventListener('click', () => {
-  showStep(stepPhotoAvant);
+  if (checklistIndex > 0) {
+    checklistIndex--;
+    afficherPointChecklist();
+  } else {
+    showStep(stepPhotoAvant);
+  }
 });
 
 btnPhotoApresRetour.addEventListener('click', () => {

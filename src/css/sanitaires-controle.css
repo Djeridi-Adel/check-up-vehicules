@@ -57,3 +57,10 @@
   color: white;
   border-color: #f57c00;
 }
+
+.checklist-progress {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
