@@ -19,12 +19,28 @@ import { db } from "./firebase.js";
 const SITES_COLLECTION = "sanitaires";
 
 /**
+ * Checklist par défaut proposée à la création d'une nouvelle cellule.
+ * Entièrement modifiable ensuite (ajout/suppression de points) depuis l'admin.
+ */
+export const CHECKLIST_PAR_DEFAUT = [
+  { id: "papier-toilette", label: "Papier toilette", type: "consommable" },
+  { id: "savon-mains", label: "Savon mains", type: "consommable" },
+  { id: "produit-nettoyant-sol", label: "Produit nettoyant sol", type: "consommable" },
+  { id: "nettoyage-sol", label: "Nettoyage / désinfection sol", type: "tache" },
+  { id: "nettoyage-sanitaires", label: "Nettoyage sanitaires (WC/urinoirs)", type: "tache" },
+  { id: "nettoyage-miroir", label: "Nettoyage miroir", type: "tache" },
+  { id: "vidage-poubelle", label: "Vidage poubelle(s)", type: "tache" },
+  { id: "distributeurs-fonctionnels", label: "Distributeurs fonctionnels", type: "tache" }
+];
+
+/**
  * Crée une nouvelle cellule sanitaire
- * @param {Object} site { nom, adresse, notes }
+ * @param {Object} site { nom, adresse, notes, checklist }
  */
 export async function creerSite(site) {
   const docRef = await addDoc(collection(db, SITES_COLLECTION), {
     ...site,
+    checklist: site.checklist || CHECKLIST_PAR_DEFAUT,
     actif: true,
     dateAjout: serverTimestamp()
   });

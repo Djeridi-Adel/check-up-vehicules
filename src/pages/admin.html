@@ -209,6 +209,18 @@
           Cellule active (visible par les agents)
         </label>
 
+        <label style="margin-top:18px;">Checklist de contrôle</label>
+        <div id="checklistEditor" class="checklist-editor"></div>
+
+        <div class="checklist-add-row">
+          <input type="text" id="nouveauPointLabel" placeholder="Ex: Vérifier chasse d'eau">
+          <select id="nouveauPointType">
+            <option value="tache">✅ Tâche</option>
+            <option value="consommable">🧴 Consommable</option>
+          </select>
+          <button type="button" id="btnAjouterPointChecklist" class="btn-ajouter-point">+</button>
+        </div>
+
         <button type="submit" id="siteSubmitBtn">Ajouter la cellule</button>
         <button type="button" id="siteCancelEditBtn" class="btn-secondary" style="display:none;">Annuler la modification</button>
 
