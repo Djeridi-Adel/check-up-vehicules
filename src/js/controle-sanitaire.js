@@ -105,8 +105,6 @@ function selectionnerSite(site) {
   resultats = {};
   previewPhotoAvant.classList.remove('visible');
   previewPhotoApres.classList.remove('visible');
-  btnPhotoAvantSuivant.disabled = true;
-  btnEnvoyer.disabled = true;
   headerTitle.textContent = site.nom;
   showStep(stepPhotoAvant);
 }
@@ -122,7 +120,6 @@ inputPhotoAvant.addEventListener('change', (e) => {
   reader.onload = (ev) => {
     previewPhotoAvant.src = ev.target.result;
     previewPhotoAvant.classList.add('visible');
-    btnPhotoAvantSuivant.disabled = false;
   };
   reader.readAsDataURL(file);
 });
@@ -135,12 +132,15 @@ inputPhotoApres.addEventListener('change', (e) => {
   reader.onload = (ev) => {
     previewPhotoApres.src = ev.target.result;
     previewPhotoApres.classList.add('visible');
-    btnEnvoyer.disabled = false;
   };
   reader.readAsDataURL(file);
 });
 
 btnPhotoAvantSuivant.addEventListener('click', () => {
+  if (!photoAvantFile) {
+    alert('Merci de prendre une photo avant de continuer.');
+    return;
+  }
   afficherChecklist();
   showStep(stepChecklist);
 });
@@ -322,6 +322,11 @@ async function uploadPhoto(file, dossier, nomFichier) {
 // ENVOI DU CONTRÔLE
 // ============================================
 btnEnvoyer.addEventListener('click', async () => {
+  if (!photoApresFile) {
+    alert('Merci de prendre une photo avant d\'envoyer le contrôle.');
+    return;
+  }
+
   btnEnvoyer.disabled = true;
   btnEnvoyer.textContent = 'Envoi en cours...';
 
