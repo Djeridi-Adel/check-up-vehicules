@@ -1,9 +1,127 @@
+#vue-sites .layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 800px) {
+  #vue-sites .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+#vue-sites .card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+#vue-sites label {
+  display: block;
+  font-weight: bold;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+#vue-sites input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+#vue-sites #siteForm button[type="submit"] {
+  background: #65257D;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 18px;
+  width: 100%;
+}
+
+#vue-sites #siteForm button[type="submit"]:hover {
+  background: #8a4aa3;
+}
+
+#vue-sites .btn-secondary {
+  background: #888;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+#vue-sites #siteStatusMsg {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+
+#vue-sites #siteStatusMsg.error {
+  color: #c62828;
+}
+
+#vue-sites #siteStatusMsg.success {
+  color: #2e7d32;
+}
+
+#vue-sites table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+#vue-sites th,
+#vue-sites td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#vue-sites th {
+  color: #65257D;
+}
+
+#vue-sites .badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+}
+
+#vue-sites .actions button {
+  width: auto;
+  margin: 0 4px 0 0;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  background: #65257D;
+  cursor: pointer;
+}
+
+#vue-sites .actions button:hover {
+  background: #8a4aa3;
+}
+
 #vue-sites .badge-actif {
-    background: #e8f5e9;
-    color: #2e7d32
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
 #vue-sites .badge-inactif {
-    background: #ffebee;
-    color: #c62828;
+  background: #ffebee;
+  color: #c62828;
 }
