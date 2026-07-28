@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#65257D">
+  <title>Contrôle cellule sanitaire</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/sanitaires-controle.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <button id="btn-retour" class="btn-retour">X Annuler</button>
+      <h1 id="header-title">Contrôle sanitaire</h1>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- Sélection de la cellule -->
+    <section id="step-site" class="step active">
+      <h2>Sélectionne la cellule</h2>
+      <div id="liste-sites" class="liste-vehicules">
+        <p class="loading">Chargement des cellules...</p>
+      </div>
+    </section>
+
+    <!-- Photo avant -->
+    <section id="step-photo-avant" class="step">
+      <div class="photo-etape">
+        <h2>📷 Photo avant intervention</h2>
+        <p class="photo-etape-desc">Prends une photo de l'état de la cellule avant ton passage.</p>
+        <label class="btn-photo-large" for="input-photo-avant">
+          📷 Prendre la photo
+        </label>
+        <input type="file" id="input-photo-avant" accept="image/*" capture="environment" style="display:none">
+        <img id="preview-photo-avant" class="photo-preview-large" alt="Photo avant">
+        <div class="nav-buttons">
+          <button id="btn-photo-avant-retour" class="btn-secondary-action">← Précédent</button>
+          <button id="btn-photo-avant-suivant" class="btn-primary" disabled>Suivant →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checklist -->
+    <section id="step-checklist" class="step">
+      <h2 id="checklist-titre">Checklist</h2>
+      <div id="checklist-liste" class="checkpoint-group"></div>
+      <div class="nav-buttons">
+        <button id="btn-checklist-retour" class="btn-secondary-action">← Précédent</button>
+        <button id="btn-checklist-suivant" class="btn-primary">Suivant →</button>
+      </div>
+    </section>
+
+    <!-- Photo après -->
+    <section id="step-photo-apres" class="step">
+      <div class="photo-etape">
+        <h2>📷 Photo après intervention</h2>
+        <p class="photo-etape-desc">Prends une photo de l'état de la cellule une fois le passage terminé.</p>
+        <label class="btn-photo-large" for="input-photo-apres">
+          📷 Prendre la photo
+        </label>
+        <input type="file" id="input-photo-apres" accept="image/*" capture="environment" style="display:none">
+        <img id="preview-photo-apres" class="photo-preview-large" alt="Photo après">
+        <div class="nav-buttons">
+          <button id="btn-photo-apres-retour" class="btn-secondary-action">← Précédent</button>
+          <button id="btn-envoyer" class="btn-primary" disabled>Envoyer le contrôle ✓</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Confirmation -->
+    <section id="step-confirmation" class="step">
+      <div class="confirmation">
+        <span class="confirmation-icon">✓</span>
+        <h2>Contrôle envoyé !</h2>
+        <p id="recap-site"></p>
+        <p id="recap-heure"></p>
+        <button id="btn-nouveau" class="btn-primary">Retour</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/firebase.js"></script>
+  <script type="module" src="../js/controle-sanitaire.js"></script>
+
+</body>
+</html>
