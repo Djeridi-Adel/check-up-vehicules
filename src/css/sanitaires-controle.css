@@ -64,3 +64,78 @@
   font-size: 0.85rem;
   margin-bottom: 12px;
 }
+
+.dysfonctionnements-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.dysfonctionnement-card {
+  position: relative;
+  background: #fff3f3;
+  border: 1px solid #ffcdd2;
+  border-radius: var(--radius, 10px);
+  padding: 12px 36px 12px 12px;
+}
+
+.dysfonctionnement-card p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.dysfonctionnement-thumb {
+  max-width: 100%;
+  max-height: 140px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.dysfonctionnement-card .btn-remove-photo {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.dysfonctionnement-form {
+  background: #f9f9f9;
+  border-radius: var(--radius, 10px);
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.dysfonctionnement-form.hidden {
+  display: none;
+}
+
+.dysfonctionnement-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.dysfonctionnement-form textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.dysfonctionnement-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.dysfonctionnement-form-actions button {
+  flex: 1;
+}

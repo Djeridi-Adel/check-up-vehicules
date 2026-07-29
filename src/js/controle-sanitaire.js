@@ -37,8 +37,20 @@ const btnPhotoAvantRetour  = document.getElementById('btn-photo-avant-retour');
 
 const inputPhotoApres     = document.getElementById('input-photo-apres');
 const previewPhotoApres   = document.getElementById('preview-photo-apres');
-const btnEnvoyer          = document.getElementById('btn-envoyer');
+const btnPhotoApresSuivant = document.getElementById('btn-photo-apres-suivant');
 const btnPhotoApresRetour = document.getElementById('btn-photo-apres-retour');
+
+const stepDysfonctionnements   = document.getElementById('step-dysfonctionnements');
+const dysfonctionnementsListe  = document.getElementById('dysfonctionnements-liste');
+const dysfonctionnementForm    = document.getElementById('dysfonctionnement-form');
+const btnOuvrirDysfonctionnement = document.getElementById('btn-ouvrir-dysfonctionnement');
+const btnAnnulerDysfonctionnement = document.getElementById('btn-annuler-dysfonctionnement');
+const btnValiderDysfonctionnement = document.getElementById('btn-valider-dysfonctionnement');
+const inputDysfonctionnementDesc  = document.getElementById('dysfonctionnement-description');
+const inputDysfonctionnementPhoto = document.getElementById('dysfonctionnement-photo');
+const previewDysfonctionnementPhoto = document.getElementById('dysfonctionnement-photo-preview');
+const btnDysfonctionnementsRetour = document.getElementById('btn-dysfonctionnements-retour');
+const btnEnvoyer          = document.getElementById('btn-envoyer');
 
 const btnChecklistRetour  = document.getElementById('btn-checklist-retour');
 const btnChecklistSuivant = document.getElementById('btn-checklist-suivant');
@@ -56,6 +68,8 @@ let siteSelectionne = null;
 let photoAvantFile = null;
 let photoApresFile = null;
 let resultats = {}; // { itemId: { label, type, statut, detail, photo } }
+let dysfonctionnements = []; // [{ description, photoFile, photoUrl }]
+let dysfonctionnementPhotoEnCours = null;
 
 // ============================================
 // NAVIGATION
@@ -103,6 +117,7 @@ function selectionnerSite(site) {
   photoAvantFile = null;
   photoApresFile = null;
   resultats = {};
+  dysfonctionnements = [];
   previewPhotoAvant.classList.remove('visible');
   previewPhotoApres.classList.remove('visible');
   headerTitle.textContent = site.nom;
@@ -134,6 +149,100 @@ inputPhotoApres.addEventListener('change', (e) => {
     previewPhotoApres.classList.add('visible');
   };
   reader.readAsDataURL(file);
+});
+
+btnPhotoApresSuivant.addEventListener('click', () => {
+  if (!photoApresFile) {
+    alert('Merci de prendre une photo avant de continuer.');
+    return;
+  }
+  afficherDysfonctionnements();
+  showStep(stepDysfonctionnements);
+});
+
+btnPhotoApresRetour.addEventListener('click', () => {
+  showStep(stepChecklist);
+});
+
+// ============================================
+// DYSFONCTIONNEMENTS
+// ============================================
+function afficherDysfonctionnements() {
+  rendreListeDysfonctionnements();
+}
+
+function rendreListeDysfonctionnements() {
+  if (dysfonctionnements.length === 0) {
+    dysfonctionnementsListe.innerHTML = '';
+    return;
+  }
+  dysfonctionnementsListe.innerHTML = dysfonctionnements.map((d, index) => `
+    <div class="dysfonctionnement-card">
+      ${d.previewUrl ? `<img src="${d.previewUrl}" class="dysfonctionnement-thumb" alt="Photo">` : ''}
+      <p>${d.description}</p>
+      <button type="button" class="btn-remove-photo visible" data-index="${index}">✕</button>
+    </div>
+  `).join('');
+
+  dysfonctionnementsListe.querySelectorAll('.btn-remove-photo').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      dysfonctionnements.splice(Number(btn.dataset.index), 1);
+      rendreListeDysfonctionnements();
+    });
+  });
+}
+
+btnOuvrirDysfonctionnement.addEventListener('click', () => {
+  dysfonctionnementForm.classList.remove('hidden');
+  btnOuvrirDysfonctionnement.classList.add('hidden');
+});
+
+btnAnnulerDysfonctionnement.addEventListener('click', () => {
+  inputDysfonctionnementDesc.value = '';
+  inputDysfonctionnementPhoto.value = '';
+  previewDysfonctionnementPhoto.classList.remove('visible');
+  dysfonctionnementPhotoEnCours = null;
+  dysfonctionnementForm.classList.add('hidden');
+  btnOuvrirDysfonctionnement.classList.remove('hidden');
+});
+
+inputDysfonctionnementPhoto.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  dysfonctionnementPhotoEnCours = file;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    previewDysfonctionnementPhoto.src = ev.target.result;
+    previewDysfonctionnementPhoto.classList.add('visible');
+  };
+  reader.readAsDataURL(file);
+});
+
+btnValiderDysfonctionnement.addEventListener('click', () => {
+  const description = inputDysfonctionnementDesc.value.trim();
+  if (!description) {
+    alert('Merci de décrire le dysfonctionnement.');
+    return;
+  }
+
+  dysfonctionnements.push({
+    description,
+    photoFile: dysfonctionnementPhotoEnCours,
+    previewUrl: dysfonctionnementPhotoEnCours ? previewDysfonctionnementPhoto.src : null
+  });
+
+  inputDysfonctionnementDesc.value = '';
+  inputDysfonctionnementPhoto.value = '';
+  previewDysfonctionnementPhoto.classList.remove('visible');
+  dysfonctionnementPhotoEnCours = null;
+  dysfonctionnementForm.classList.add('hidden');
+  btnOuvrirDysfonctionnement.classList.remove('hidden');
+
+  rendreListeDysfonctionnements();
+});
+
+btnDysfonctionnementsRetour.addEventListener('click', () => {
+  showStep(stepPhotoApres);
 });
 
 btnPhotoAvantSuivant.addEventListener('click', () => {
@@ -329,10 +438,6 @@ btnChecklistRetour.addEventListener('click', () => {
   }
 });
 
-btnPhotoApresRetour.addEventListener('click', () => {
-  showStep(stepChecklist);
-});
-
 // ============================================
 // UPLOAD PHOTO VERS CLOUDINARY
 // ============================================
@@ -383,6 +488,17 @@ btnEnvoyer.addEventListener('click', async () => {
       delete r.photoFile;
     }
 
+    const dysfonctionnementsFinaux = [];
+    for (let i = 0; i < dysfonctionnements.length; i++) {
+      const d = dysfonctionnements[i];
+      let photoUrl = null;
+      if (d.photoFile) {
+        btnEnvoyer.textContent = `Upload dysfonctionnements (${i + 1}/${dysfonctionnements.length})...`;
+        photoUrl = await uploadPhoto(d.photoFile, dossier, `dysfonctionnement-${i}`);
+      }
+      dysfonctionnementsFinaux.push({ description: d.description, photoUrl });
+    }
+
     await addDoc(collection(db, 'controles'), {
       siteId: siteSelectionne.id,
       siteNom: siteSelectionne.nom,
@@ -390,8 +506,21 @@ btnEnvoyer.addEventListener('click', async () => {
       photoAvantUrl,
       photoApresUrl,
       resultats,
+      dysfonctionnements: dysfonctionnementsFinaux,
       date: serverTimestamp()
     });
+
+    for (const d of dysfonctionnementsFinaux) {
+      await addDoc(collection(db, 'pannes'), {
+        siteId: siteSelectionne.id,
+        siteNom: siteSelectionne.nom,
+        description: d.description,
+        photoUrl: d.photoUrl,
+        statut: 'signale',
+        agentMail,
+        dateSignalement: serverTimestamp()
+      });
+    }
 
     recapSite.textContent = `Cellule : ${siteSelectionne.nom}`;
     recapHeure.textContent = `Heure : ${new Date().toLocaleTimeString('fr-FR')}`;

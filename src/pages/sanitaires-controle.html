@@ -67,8 +67,35 @@
         <img id="preview-photo-apres" class="photo-preview-large" alt="Photo après">
         <div class="nav-buttons">
           <button id="btn-photo-apres-retour" class="btn-secondary-action">← Précédent</button>
-          <button id="btn-envoyer" class="btn-primary">Envoyer le contrôle ✓</button>
+          <button id="btn-photo-apres-suivant" class="btn-primary">Suivant →</button>
         </div>
+      </div>
+    </section>
+
+    <!-- Dysfonctionnements éventuels -->
+    <section id="step-dysfonctionnements" class="step">
+      <h2>🔧 Dysfonctionnement à signaler ?</h2>
+      <p class="photo-etape-desc">Si tu as constaté un problème (matériel cassé, fuite, etc.), ajoute-le ici. Sinon, passe directement à l'envoi.</p>
+
+      <div id="dysfonctionnements-liste" class="dysfonctionnements-liste"></div>
+
+      <div id="dysfonctionnement-form" class="dysfonctionnement-form hidden">
+        <label for="dysfonctionnement-description">Description du problème</label>
+        <textarea id="dysfonctionnement-description" placeholder="Ex: Distributeur de savon cassé, verrou de porte HS..."></textarea>
+        <label class="btn-photo" for="dysfonctionnement-photo">📷 Ajouter une photo (optionnel)</label>
+        <input type="file" id="dysfonctionnement-photo" accept="image/*" capture="environment" style="display:none">
+        <img id="dysfonctionnement-photo-preview" class="photo-preview" alt="Photo dysfonctionnement">
+        <div class="dysfonctionnement-form-actions">
+          <button type="button" id="btn-annuler-dysfonctionnement" class="btn-secondary-action">Annuler</button>
+          <button type="button" id="btn-valider-dysfonctionnement" class="btn-primary">Ajouter ce point</button>
+        </div>
+      </div>
+
+      <button type="button" id="btn-ouvrir-dysfonctionnement" class="btn-outline">+ Signaler un dysfonctionnement</button>
+
+      <div class="nav-buttons">
+        <button id="btn-dysfonctionnements-retour" class="btn-secondary-action">← Précédent</button>
+        <button id="btn-envoyer" class="btn-primary">Envoyer le contrôle ✓</button>
       </div>
     </section>
 
