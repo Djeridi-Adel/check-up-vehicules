@@ -4,6 +4,8 @@ import { db } from "../firebase.js";
 import {
   collection,
   getDocs,
+  deleteDoc,
+  doc,
   query,
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -67,9 +69,26 @@ function rendreListe() {
           ${c.photoApresUrl ? `<a href="${c.photoApresUrl}" target="_blank">📷 Après</a>` : ""}
         </div>
         <div class="controle-points">${detailPoints}</div>
+        <button type="button" class="btn-supprimer-controle" data-id="${c.id}">🗑 Supprimer</button>
       </div>
     `;
   }).join("");
+
+  el.liste.querySelectorAll(".btn-supprimer-controle").forEach((btn) => {
+    btn.addEventListener("click", () => confirmerSuppressionControle(btn.dataset.id));
+  });
+}
+
+async function confirmerSuppressionControle(controleId) {
+  if (!confirm("Supprimer définitivement ce contrôle ? (les photos resteront sur Cloudinary)")) return;
+  try {
+    await deleteDoc(doc(db, "controles", controleId));
+    controlesListe = controlesListe.filter((c) => c.id !== controleId);
+    rendreListe();
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors de la suppression.");
+  }
 }
 
 async function chargerFiltreSites() {

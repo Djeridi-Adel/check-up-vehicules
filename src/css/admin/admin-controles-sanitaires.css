@@ -60,3 +60,19 @@
   background: #ffebee;
   color: #c62828;
 }
+
+#vue-controles-sanitaires .btn-supprimer-controle {
+  margin-top: 10px;
+  background: #fff;
+  border: 1px solid #c62828;
+  color: #c62828;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+#vue-controles-sanitaires .btn-supprimer-controle:hover {
+  background: #c62828;
+  color: #fff;
+}

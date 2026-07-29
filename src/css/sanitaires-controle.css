@@ -139,3 +139,34 @@
 .dysfonctionnement-form-actions button {
   flex: 1;
 }
+
+.btn-signaler-dysfonctionnement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #fff;
+  border: 2px dashed #65257D;
+  color: #65257D;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 14px;
+  border-radius: var(--radius, 10px);
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s ease, border-style 0.2s ease;
+}
+
+.btn-signaler-dysfonctionnement:hover {
+  background: #f5edf8;
+  border-style: solid;
+}
+
+.btn-signaler-dysfonctionnement:active {
+  transform: scale(0.98);
+}
+
+.btn-signaler-icon {
+  font-size: 1.1rem;
+}
