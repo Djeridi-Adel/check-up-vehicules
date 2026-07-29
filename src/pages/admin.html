@@ -70,6 +70,7 @@
     <button class="onglet" data-onglet="produits">🧴 Produits</button>
     <button class="onglet" data-onglet="sites">🚻 Cellules sanitaires</button>
     <button class="onglet" data-onglet="controles-sanitaires">📋 Contrôles sanitaires</button>
+    <button class="onglet" data-onglet="pannes-sanitaires">🔧 Pannes sanitaires</button>
   </div>
 
   <!-- Vue check-ups -->
@@ -254,6 +255,23 @@
     <select id="filtre-controle-site" class="filtre-select"></select>
   </div>
   <div id="controles-liste" class="controles-liste">
+    <p class="loading">Chargement...</p>
+  </div>
+</div>
+
+<!-- Vue pannes sanitaires -->
+<div id="vue-pannes-sanitaires" class="hidden">
+  <div class="flotte-header">
+    <h2>Suivi des pannes sanitaires</h2>
+    <select id="filtre-panne-site" class="filtre-select"></select>
+  </div>
+  <div class="filtres-statut">
+    <button type="button" class="filtre-statut-panne active" data-statut="">Toutes</button>
+    <button type="button" class="filtre-statut-panne" data-statut="signale">🔴 Signalées</button>
+    <button type="button" class="filtre-statut-panne" data-statut="en_cours">🟠 En cours</button>
+    <button type="button" class="filtre-statut-panne" data-statut="resolu">🟢 Résolues</button>
+  </div>
+  <div id="pannes-liste">
     <p class="loading">Chargement...</p>
   </div>
 </div>

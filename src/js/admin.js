@@ -9,6 +9,7 @@ import { chargerVehiculesMaintenance, initMaintenanceRetour } from './admin/main
 import { initProduitsAdmin, chargerProduitsAdmin } from './admin/produits.js';
 import { initSitesAdmin, chargerSitesAdmin } from './admin/sites-sanitaires.js'
 import { chargerControlesAdmin } from './admin/controles-sanitaires.js';
+import { chargerPannesAdmin } from './admin/pannes-sanitaires.js';
 
 // ============================================
 // STATE GLOBAL
@@ -113,6 +114,7 @@ async function initialiserDashboard() {
       document.getElementById('vue-produits').classList.add('hidden');
       document.getElementById('vue-sites').classList.add('hidden');
       document.getElementById('vue-controles-sanitaires').classList.add('hidden');
+      document.getElementById('vue-pannes-sanitaires').classList.add('hidden');
 
       if (onglet === 'checkups') {
         document.getElementById('vue-checkups').classList.remove('hidden');
@@ -130,6 +132,9 @@ async function initialiserDashboard() {
       } else if (onglet === 'controles-sanitaires') {
         document.getElementById('vue-controles-sanitaires').classList.remove('hidden');
         chargerControlesAdmin()
+      } else if (onglet === 'pannes-sanitaires') {
+        document.getElementById('vue-pannes-sanitaires').classList.remove('hidden');
+        chargerPannesAdmin();
       }
     });
   });

@@ -1,0 +1,150 @@
+#vue-pannes-sanitaires .filtres-statut {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+#vue-pannes-sanitaires .filtre-statut-panne {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+#vue-pannes-sanitaires .filtre-statut-panne.active {
+  background: #65257D;
+  color: #fff;
+  border-color: #65257D;
+}
+
+#vue-pannes-sanitaires .panne-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+#vue-pannes-sanitaires .panne-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#vue-pannes-sanitaires .panne-card-header h3 {
+  margin: 0;
+  color: #65257D;
+  font-size: 1rem;
+}
+
+#vue-pannes-sanitaires .panne-description {
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+#vue-pannes-sanitaires .panne-photo-link {
+  display: inline-block;
+  color: #65257D;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  margin-bottom: 6px;
+}
+
+#vue-pannes-sanitaires .panne-meta {
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+#vue-pannes-sanitaires .panne-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#vue-pannes-sanitaires .panne-intervention-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+#vue-pannes-sanitaires .btn-panne-action {
+  background: #65257D;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+#vue-pannes-sanitaires .btn-panne-action:hover {
+  background: #8a4aa3;
+}
+
+#vue-pannes-sanitaires .btn-panne-resoudre {
+  background: #2e7d32;
+}
+
+#vue-pannes-sanitaires .btn-panne-resoudre:hover {
+  background: #388e3c;
+}
+
+#vue-pannes-sanitaires .panne-resolution-info {
+  font-size: 0.85rem;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0;
+}
+
+#vue-pannes-sanitaires .badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+#vue-pannes-sanitaires .statut-signale {
+  background: #ffebee;
+  color: #c62828;
+}
+
+#vue-pannes-sanitaires .statut-en-cours {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+#vue-pannes-sanitaires .statut-resolu {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+#vue-pannes-sanitaires .btn-supprimer-panne {
+  margin-top: 10px;
+  background: #fff;
+  border: 1px solid #c62828;
+  color: #c62828;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+#vue-pannes-sanitaires .btn-supprimer-panne:hover {
+  background: #c62828;
+  color: #fff;
+}
