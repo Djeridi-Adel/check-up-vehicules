@@ -76,3 +76,30 @@
   background: #c62828;
   color: #fff;
 }
+
+#vue-controles-sanitaires .controle-dysfonctionnements {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff3f3;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+}
+
+#vue-controles-sanitaires .controle-dysfonctionnements-titre {
+  margin: 0 0 6px 0;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #c62828;
+}
+
+#vue-controles-sanitaires .controle-dysfonctionnement-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+#vue-controles-sanitaires .controle-dysfonctionnement-item a {
+  text-decoration: none;
+}

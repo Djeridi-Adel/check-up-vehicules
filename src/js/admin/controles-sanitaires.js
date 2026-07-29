@@ -46,7 +46,7 @@ function rendreListe() {
   }
 
   el.liste.innerHTML = controles.map((c) => {
-    const nbAlertes = compterAlertes(c.resultats);
+    const nbAlertes = compterAlertes(c.resultats) + (c.dysfonctionnements || []).length;
     const detailPoints = Object.values(c.resultats || {}).map((r) => {
       let badge = "";
       if (r.statut === "ok" || r.statut === "suffisant") badge = `<span class="badge badge-actif">${r.label}</span>`;
@@ -54,6 +54,20 @@ function rendreListe() {
       else badge = `<span class="badge badge-inactif">${r.label} — ${r.statut === "manquant" ? "manquant" : "anomalie"}</span>`;
       return badge;
     }).join(" ");
+
+    const dysfonctionnementsHtml = (c.dysfonctionnements || []).length > 0
+      ? `
+        <div class="controle-dysfonctionnements">
+          <p class="controle-dysfonctionnements-titre">🔧 Dysfonctionnements signalés :</p>
+          ${c.dysfonctionnements.map((d) => `
+            <div class="controle-dysfonctionnement-item">
+              ${d.photoUrl ? `<a href="${d.photoUrl}" target="_blank">📷</a>` : ""}
+              <span>${d.description}</span>
+            </div>
+          `).join("")}
+        </div>
+      `
+      : "";
 
     return `
       <div class="controle-card">
@@ -69,6 +83,7 @@ function rendreListe() {
           ${c.photoApresUrl ? `<a href="${c.photoApresUrl}" target="_blank">📷 Après</a>` : ""}
         </div>
         <div class="controle-points">${detailPoints}</div>
+        ${dysfonctionnementsHtml}
         <button type="button" class="btn-supprimer-controle" data-id="${c.id}">🗑 Supprimer</button>
       </div>
     `;
