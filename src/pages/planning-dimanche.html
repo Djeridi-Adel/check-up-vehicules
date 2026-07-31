@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Planning des dimanches — Admin</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin/admin-planning-dimanches.css">
+</head>
+<body>
+
+  <header class="admin-header">
+    <h1>📅 Planning des dimanches</h1>
+    <div class="header-actions">
+      <a href="admin.html" class="btn-secondary">← Retour au tableau de bord</a>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <p id="pd-loading" class="loading">Vérification de l'accès...</p>
+
+    <div id="pd-app" class="hidden">
+
+      <div class="pd-rules-box">
+        Règles appliquées automatiquement
+        <ul>
+          <li>Un agent ne peut pas travailler le dimanche s'il travaille le <strong>samedi précédent</strong> ou le <strong>samedi de la semaine suivante</strong>.</li>
+          <li>Un agent <strong>en vacances</strong> la semaine du dimanche n'est pas éligible.</li>
+          <li>Chaque poste exigeant une <strong>compétence</strong> ne peut être tenu que par un agent qui la possède.</li>
+          <li>Un agent avec une <strong>restriction</strong> sur un poste ne peut pas y être affecté.</li>
+          <li>Seuls les <strong>volontaires</strong> peuvent être affectés, un seul poste par agent et par dimanche.</li>
+          <li>La répartition automatique privilégie les agents ayant fait <strong>le moins de dimanches</strong>.</li>
+        </ul>
+        <div class="pd-save-indicator">
+          <span id="pd-save-dot" class="pd-save-dot"></span>
+          <span id="pd-save-label">à jour</span>
+        </div>
+      </div>
+
+      <nav class="pd-tabs" id="pd-tabs"></nav>
+      <div id="pd-tab-content"></div>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="../js/firebase.js"></script>
+  <script type="module">
+    import { auth } from "../js/firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { initPlanningDimanches } from "../js/admin/planning-dimanches.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "admin.html";
+        return;
+      }
+      initPlanningDimanches();
+    });
+  </script>
+
+</body>
+</html>
