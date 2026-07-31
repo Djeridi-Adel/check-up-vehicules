@@ -51,11 +51,18 @@ function affectesCeDimanche(dateISO) {
 }
 
 // ---------- éligibilité ----------
+function estEnConges(agent, dateISO) {
+  // Périodes de congés (nouveau modèle)
+  const enPeriode = (agent.conges || []).some((p) => dateISO >= p.debut && dateISO <= p.fin);
+  if (enPeriode) return true;
+  // Compatibilité avec l'ancien modèle (dimanches cochés un par un)
+  return (agent.vacances || []).includes(dateISO);
+}
 function checkBaseEligibilite(agentId, dateISO) {
   const raisons = [];
   const agent = agentObj(agentId);
   if (!agent) return raisons;
-  if ((agent.vacances || []).includes(dateISO)) raisons.push("en vacances cette semaine");
+  if (estEnConges(agent, dateISO)) raisons.push("en congés cette semaine");
   const satAvant = addDays(dateISO, -1);
   const satApres = addDays(dateISO, 6);
   const travailles = agent.samedisTravailles || [];
@@ -83,7 +90,7 @@ function debouncedSaveAgent(agent) {
       await modifierAgent(agent.id, {
         competences: agent.competences,
         restrictions: agent.restrictions,
-        vacances: agent.vacances,
+        conges: agent.conges,
         samedisTravailles: agent.samedisTravailles
       });
       setSaveStatus("saved");
@@ -402,28 +409,52 @@ function renderProfilsTab() {
   const sundays = Object.keys(state.dimanches).sort();
   const saturdays = getRelevantSaturdays();
 
-  const vacTitle = document.createElement("div"); vacTitle.className = "pd-chip-title"; vacTitle.textContent = "Semaines de vacances (par dimanche)";
-  detail.appendChild(vacTitle);
-  if (sundays.length === 0) {
-    const none = document.createElement("div"); none.className = "pd-empty-inline"; none.textContent = "Définissez d'abord une période dans l'onglet Planning.";
+  const congesTitle = document.createElement("div"); congesTitle.className = "pd-chip-title"; congesTitle.textContent = "Congés";
+  detail.appendChild(congesTitle);
+  agent.conges = agent.conges || [];
+
+  const congesForm = document.createElement("div"); congesForm.className = "pd-conges-form";
+  congesForm.innerHTML = `
+    <div class="pd-field"><label>Du</label><input type="date" id="pd-conges-debut"></div>
+    <div class="pd-field"><label>Au</label><input type="date" id="pd-conges-fin"></div>`;
+  const addCongesBtn = document.createElement("button"); addCongesBtn.className = "btn-secondary"; addCongesBtn.textContent = "Ajouter la période";
+  addCongesBtn.addEventListener("click", () => {
+    const debut = document.getElementById("pd-conges-debut").value;
+    const fin = document.getElementById("pd-conges-fin").value;
+    if (!debut || !fin || debut > fin) { alert("Indiquez une période valide (début avant fin)."); return; }
+    agent.conges.push({ debut, fin });
+    agent.conges.sort((a, b) => a.debut.localeCompare(b.debut));
+    debouncedSaveAgent(agent);
+    render();
+  });
+  congesForm.appendChild(addCongesBtn);
+  detail.appendChild(congesForm);
+
+  if (agent.conges.length === 0) {
+    const none = document.createElement("div"); none.className = "pd-empty-inline"; none.textContent = "Aucune période de congés enregistrée.";
     detail.appendChild(none);
   } else {
-    const vacGrid = document.createElement("div"); vacGrid.className = "pd-chip-grid";
-    sundays.forEach((sun) => {
-      const chip = document.createElement("span"); chip.className = "pd-chip";
-      if ((agent.vacances || []).includes(sun)) chip.classList.add("on-vacation");
-      chip.textContent = fmtShort(sun);
-      chip.addEventListener("click", () => {
-        agent.vacances = agent.vacances || [];
-        const idx = agent.vacances.indexOf(sun);
-        if (idx >= 0) agent.vacances.splice(idx, 1); else agent.vacances.push(sun);
+    const congesList = document.createElement("div"); congesList.className = "pd-conges-list";
+    agent.conges.forEach((periode, idx) => {
+      const row = document.createElement("div"); row.className = "pd-conges-row";
+      const label = document.createElement("span");
+      label.textContent = `${fmtShort(periode.debut)} → ${fmtShort(periode.fin)}`;
+      const delBtn = document.createElement("button"); delBtn.className = "pd-conges-remove"; delBtn.textContent = "✕"; delBtn.title = "Supprimer cette période";
+      delBtn.addEventListener("click", () => {
+        agent.conges.splice(idx, 1);
         debouncedSaveAgent(agent);
         render();
       });
-      vacGrid.appendChild(chip);
+      row.appendChild(label); row.appendChild(delBtn);
+      congesList.appendChild(row);
     });
-    detail.appendChild(vacGrid);
+    detail.appendChild(congesList);
+  }
 
+  if (sundays.length === 0) {
+    const none = document.createElement("div"); none.className = "pd-empty-inline"; none.textContent = "Définissez d'abord une période dans l'onglet Planning pour les samedis travaillés.";
+    detail.appendChild(none);
+  } else {
     const satTitle = document.createElement("div"); satTitle.className = "pd-chip-title"; satTitle.textContent = "Samedis travaillés";
     detail.appendChild(satTitle);
     const satGrid = document.createElement("div"); satGrid.className = "pd-chip-grid";
@@ -526,7 +557,9 @@ function renderPlanningTab() {
     } catch (e) { console.error(e); alert("Erreur lors de la réinitialisation."); }
     finally { resetBtn.disabled = false; }
   });
-  actRow.appendChild(autoBtn); actRow.appendChild(resetBtn);
+  const printBtn = document.createElement("button"); printBtn.className = "btn-secondary"; printBtn.textContent = "🖨️ Imprimer / exporter le planning";
+  printBtn.addEventListener("click", () => imprimerPlanning());
+  actRow.appendChild(autoBtn); actRow.appendChild(resetBtn); actRow.appendChild(printBtn);
   actionsPanel.appendChild(actRow);
   wrap.appendChild(actionsPanel);
 
@@ -605,9 +638,11 @@ function renderSundayCard(sun) {
 
     const bright = document.createElement("div"); bright.className = "pd-row";
     const assignedId = s.affectations[poste.id];
-    const filledLabel = document.createElement("span"); filledLabel.className = "pd-post-filled";
-    filledLabel.textContent = assignedId ? agentLabel(assignedId) : "— non pourvu";
-    bright.appendChild(filledLabel);
+    if (desactive) {
+      const filledLabel = document.createElement("span"); filledLabel.className = "pd-post-filled";
+      filledLabel.textContent = "non requis";
+      bright.appendChild(filledLabel);
+    }
     const toggleLabel = document.createElement("label"); toggleLabel.className = "pd-post-toggle";
     const toggleInput = document.createElement("input"); toggleInput.type = "checkbox"; toggleInput.checked = !desactive;
     toggleInput.addEventListener("change", () => {
@@ -623,37 +658,87 @@ function renderSundayCard(sun) {
     block.appendChild(bhead);
 
     if (!desactive) {
-      const assignGrid = document.createElement("div"); assignGrid.className = "pd-assign-row";
+      const selectRow = document.createElement("div"); selectRow.className = "pd-post-select-row";
+      const select = document.createElement("select"); select.className = "pd-post-select";
+      const emptyOpt = document.createElement("option"); emptyOpt.value = ""; emptyOpt.textContent = "— Non pourvu —";
+      select.appendChild(emptyOpt);
       s.volontaires.forEach((agentId) => {
         const elig = checkPosteEligibilite(agentId, sun, poste);
-        const isAssigned = assignedId === agentId;
-        const busyElsewhere = !isAssigned && affectesCeDimanche(sun).has(agentId);
-        const chip = document.createElement("span");
-        chip.className = "pd-chip pd-assign " + (elig.eligible ? "eligible" : "conflict") + (isAssigned ? " assigned" : "");
-        chip.textContent = `${agentLabel(agentId)} (${totalAffecteCount(agentId)})` + (busyElsewhere ? " •" : "");
-        let title = "";
-        if (!elig.eligible) title = "Conflit : " + elig.raisons.join(" · ");
-        if (busyElsewhere) title += (title ? " · " : "") + "déjà affecté à un autre poste ce dimanche";
-        if (title) chip.title = title;
-        chip.addEventListener("click", () => {
-          if (isAssigned) { s.affectations[poste.id] = null; debouncedSaveDimanche(sun); render(); return; }
+        const opt = document.createElement("option");
+        opt.value = agentId;
+        opt.textContent = agentLabel(agentId) + (elig.eligible ? "" : " ⚠");
+        if (assignedId === agentId) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (assignedId && !s.volontaires.includes(assignedId)) {
+        // agent affecté mais retiré des volontaires depuis : on le garde visible pour ne pas le perdre en silence
+        const opt = document.createElement("option");
+        opt.value = assignedId; opt.textContent = agentLabel(assignedId) + " (non volontaire)"; opt.selected = true;
+        select.appendChild(opt);
+      }
+      select.addEventListener("change", () => {
+        const agentId = select.value || null;
+        if (agentId) {
+          const elig = checkPosteEligibilite(agentId, sun, poste);
           if (!elig.eligible) {
             const ok = confirm(`${agentLabel(agentId)} ne respecte pas une contrainte :\n- ${elig.raisons.join("\n- ")}\n\nAffecter quand même ?`);
-            if (!ok) return;
+            if (!ok) { select.value = assignedId || ""; return; }
           }
-          if (busyElsewhere) Object.keys(s.affectations).forEach((pid) => { if (s.affectations[pid] === agentId) s.affectations[pid] = null; });
-          s.affectations[poste.id] = agentId;
-          debouncedSaveDimanche(sun);
-          render();
-        });
-        assignGrid.appendChild(chip);
+          Object.keys(s.affectations).forEach((pid) => { if (pid !== poste.id && s.affectations[pid] === agentId) s.affectations[pid] = null; });
+        }
+        s.affectations[poste.id] = agentId;
+        debouncedSaveDimanche(sun);
+        render();
       });
-      block.appendChild(assignGrid);
+      selectRow.appendChild(select);
+      if (assignedId) {
+        const elig = checkPosteEligibilite(assignedId, sun, poste);
+        if (!elig.eligible) {
+          const warn = document.createElement("span"); warn.className = "pd-post-warn";
+          warn.textContent = "⚠ " + elig.raisons.join(" · ");
+          selectRow.appendChild(warn);
+        }
+      }
+      block.appendChild(selectRow);
     }
     card.appendChild(block);
   });
 
   return card;
+}
+
+function imprimerPlanning() {
+  let area = document.getElementById("pd-print-area");
+  if (!area) {
+    area = document.createElement("div");
+    area.id = "pd-print-area";
+    document.body.appendChild(area);
+  }
+
+  const sundayDates = Object.keys(state.dimanches).sort();
+  let html = `<h1>Planning des dimanches</h1>`;
+  if (state.periode.debut && state.periode.fin) {
+    html += `<p class="pd-print-periode">Du ${fmtLong(state.periode.debut)} au ${fmtLong(state.periode.fin)}</p>`;
+  }
+  html += `<table class="pd-print-table"><thead><tr><th>Dimanche</th><th>Poste</th><th>Agent</th></tr></thead><tbody>`;
+
+  sundayDates.forEach((sun) => {
+    const s = state.dimanches[sun];
+    const actifs = state.postes.filter((p) => !(s.postesDesactives || []).includes(p.id));
+    if (actifs.length === 0) return;
+    actifs.forEach((poste, idx) => {
+      const assignedId = (s.affectations || {})[poste.id];
+      html += `<tr class="${idx === 0 ? "pd-print-first-row" : ""}">`;
+      html += `<td>${idx === 0 ? fmtLong(sun) : ""}</td>`;
+      html += `<td>${poste.nom}</td>`;
+      html += `<td>${assignedId ? agentLabel(assignedId) : "—"}</td>`;
+      html += `</tr>`;
+    });
+  });
+  html += `</tbody></table>`;
+
+  area.innerHTML = html;
+  window.print();
 }
 
 async function autoAssign() {

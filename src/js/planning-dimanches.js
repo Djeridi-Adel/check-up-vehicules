@@ -99,7 +99,7 @@ export async function creerAgent(initiales) {
     initiales,
     competences: [],
     restrictions: [],
-    vacances: [],
+    conges: [],
     samedisTravailles: []
   });
   return docRef.id;
