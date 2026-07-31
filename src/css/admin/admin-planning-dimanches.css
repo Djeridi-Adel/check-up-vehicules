@@ -545,6 +545,16 @@
   color: var(--text-secondary);
 }
 
+.dashboard .btn-secondary {
+  background: #eef1f5;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.dashboard .btn-secondary:hover {
+  background: #e2e6eb;
+}
+
 /* ============================================
    DESKTOP / MOBILE
    ============================================ */
