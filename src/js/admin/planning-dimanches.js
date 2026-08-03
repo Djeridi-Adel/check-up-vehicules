@@ -557,9 +557,11 @@ function renderPlanningTab() {
     } catch (e) { console.error(e); alert("Erreur lors de la réinitialisation."); }
     finally { resetBtn.disabled = false; }
   });
-  const printBtn = document.createElement("button"); printBtn.className = "btn-secondary"; printBtn.textContent = "🖨️ Imprimer / exporter le planning";
+  const printBtn = document.createElement("button"); printBtn.className = "btn-secondary"; printBtn.textContent = "🖨️ Imprimer / exporter en PDF";
   printBtn.addEventListener("click", () => imprimerPlanning());
-  actRow.appendChild(autoBtn); actRow.appendChild(resetBtn); actRow.appendChild(printBtn);
+  const excelBtn = document.createElement("button"); excelBtn.className = "btn-secondary"; excelBtn.textContent = "📊 Exporter en Excel";
+  excelBtn.addEventListener("click", () => exporterPlanningExcel());
+  actRow.appendChild(autoBtn); actRow.appendChild(resetBtn); actRow.appendChild(printBtn); actRow.appendChild(excelBtn);
   actionsPanel.appendChild(actRow);
   wrap.appendChild(actionsPanel);
 
@@ -707,6 +709,39 @@ function renderSundayCard(sun) {
   return card;
 }
 
+function telechargerExcel(nomFichier, feuilles) {
+  if (typeof XLSX === "undefined") {
+    alert("La bibliothèque d'export Excel n'a pas pu se charger. Vérifie ta connexion et réessaie.");
+    return;
+  }
+  const wb = XLSX.utils.book_new();
+  feuilles.forEach(({ nom, lignes }) => {
+    const ws = XLSX.utils.aoa_to_sheet(lignes);
+    XLSX.utils.book_append_sheet(wb, ws, nom.slice(0, 31));
+  });
+  XLSX.writeFile(wb, nomFichier);
+}
+
+function exporterPlanningExcel() {
+  const sundayDates = Object.keys(state.dimanches).sort();
+  const lignes = [["Dimanche", "Poste", "Compétence requise", "Agent (initiales/surnom)", "Nom complet (à compléter)"]];
+  sundayDates.forEach((sun) => {
+    const s = state.dimanches[sun];
+    const actifs = state.postes.filter((p) => !(s.postesDesactives || []).includes(p.id));
+    actifs.forEach((poste) => {
+      const assignedId = (s.affectations || {})[poste.id];
+      lignes.push([
+        fmtLong(sun),
+        poste.nom,
+        poste.competenceId ? competenceNom(poste.competenceId) : "",
+        assignedId ? agentLabel(assignedId) : "",
+        ""
+      ]);
+    });
+  });
+  telechargerExcel("planning-dimanches.xlsx", [{ nom: "Planning", lignes }]);
+}
+
 function imprimerPlanning() {
   let area = document.getElementById("pd-print-area");
   if (!area) {
@@ -766,6 +801,53 @@ async function autoAssign() {
 }
 
 // ---------- Équité ----------
+function calculerEquiteAgents() {
+  const counts = state.agents.map((a) => {
+    const dates = Object.keys(state.dimanches).filter((sun) => Object.values(state.dimanches[sun].affectations || {}).includes(a.id)).sort();
+    const details = dates.map((sun) => {
+      const s = state.dimanches[sun];
+      const pid = Object.keys(s.affectations || {}).find((k) => s.affectations[k] === a.id);
+      const p = posteObj(pid);
+      return `${fmtShort(sun)} (${p ? p.nom : "?"})`;
+    });
+    return { agent: a, count: dates.length, details };
+  });
+  counts.sort((x, y) => y.count - x.count);
+  return counts;
+}
+
+function exporterEquiteExcel() {
+  const counts = calculerEquiteAgents();
+  const lignes = [["Agent (initiales/surnom)", "Nom complet (à compléter)", "Nombre de dimanches", "Détail (date - poste)"]];
+  counts.forEach((c) => {
+    lignes.push([c.agent.initiales, "", c.count, c.details.join(" ; ")]);
+  });
+  telechargerExcel("equite-dimanches.xlsx", [{ nom: "Équité", lignes }]);
+}
+
+function imprimerEquite() {
+  let area = document.getElementById("pd-print-area");
+  if (!area) {
+    area = document.createElement("div");
+    area.id = "pd-print-area";
+    document.body.appendChild(area);
+  }
+
+  const counts = calculerEquiteAgents();
+  let html = `<h1>Équité entre agents — planning des dimanches</h1>`;
+  if (state.periode.debut && state.periode.fin) {
+    html += `<p class="pd-print-periode">Du ${fmtLong(state.periode.debut)} au ${fmtLong(state.periode.fin)}</p>`;
+  }
+  html += `<table class="pd-print-table"><thead><tr><th>Agent</th><th>Dimanches</th><th>Détail</th></tr></thead><tbody>`;
+  counts.forEach((c) => {
+    html += `<tr><td>${c.agent.initiales}</td><td>${c.count}</td><td>${c.details.join(", ") || "—"}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+
+  area.innerHTML = html;
+  window.print();
+}
+
 function renderEquiteTab() {
   const wrap = document.createElement("div");
 
@@ -800,18 +882,16 @@ function renderEquiteTab() {
   const panel = document.createElement("div"); panel.className = "pd-panel";
   panel.innerHTML = `<h2>Équité entre agents</h2><p class="pd-sub">Nombre de dimanches affectés par agent, tous postes confondus.</p>`;
 
-  const counts = state.agents.map((a) => {
-    const dates = Object.keys(state.dimanches).filter((sun) => Object.values(state.dimanches[sun].affectations || {}).includes(a.id)).sort();
-    const details = dates.map((sun) => {
-      const s = state.dimanches[sun];
-      const pid = Object.keys(s.affectations || {}).find((k) => s.affectations[k] === a.id);
-      const p = posteObj(pid);
-      return `${fmtShort(sun)} (${p ? p.nom : "?"})`;
-    });
-    return { agent: a, count: dates.length, details };
-  });
+  const equiteActions = document.createElement("div"); equiteActions.className = "pd-row";
+  const equitePrintBtn = document.createElement("button"); equitePrintBtn.className = "btn-secondary"; equitePrintBtn.textContent = "🖨️ Imprimer / exporter en PDF";
+  equitePrintBtn.addEventListener("click", () => imprimerEquite());
+  const equiteExcelBtn = document.createElement("button"); equiteExcelBtn.className = "btn-secondary"; equiteExcelBtn.textContent = "📊 Exporter en Excel";
+  equiteExcelBtn.addEventListener("click", () => exporterEquiteExcel());
+  equiteActions.appendChild(equitePrintBtn); equiteActions.appendChild(equiteExcelBtn);
+  panel.appendChild(equiteActions);
+
+  const counts = calculerEquiteAgents();
   const maxCount = Math.max(1, ...counts.map((c) => c.count));
-  counts.sort((x, y) => y.count - x.count);
 
   const table = document.createElement("table"); table.className = "pd-equity";
   table.innerHTML = "<thead><tr><th>Agent</th><th>Dimanches</th><th>Répartition</th><th>Détail</th></tr></thead>";
