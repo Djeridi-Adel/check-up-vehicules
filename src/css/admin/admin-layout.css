@@ -74,6 +74,7 @@
   flex: 1;
   min-width: 120px;
   padding: 10px 12px;
+  margin: 20px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 0.9rem;
