@@ -659,6 +659,23 @@
   .pd-print-first-row td {
     border-top: 2px solid #333;
   }
+
+  .pd-print-bar-wrap {
+    background: #eee;
+    border-radius: 4px;
+    height: 10px;
+    width: 100px;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pd-print-bar-fill {
+    height: 100%;
+    background: #1a73e8;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* ============================================

@@ -834,13 +834,17 @@ function imprimerEquite() {
   }
 
   const counts = calculerEquiteAgents();
+  const maxCount = Math.max(1, ...counts.map((c) => c.count));
   let html = `<h1>Équité entre agents — planning des dimanches</h1>`;
   if (state.periode.debut && state.periode.fin) {
     html += `<p class="pd-print-periode">Du ${fmtLong(state.periode.debut)} au ${fmtLong(state.periode.fin)}</p>`;
   }
-  html += `<table class="pd-print-table"><thead><tr><th>Agent</th><th>Dimanches</th><th>Détail</th></tr></thead><tbody>`;
+  html += `<table class="pd-print-table"><thead><tr><th>Agent</th><th>Dimanches</th><th>Répartition</th><th>Détail</th></tr></thead><tbody>`;
   counts.forEach((c) => {
-    html += `<tr><td>${c.agent.initiales}</td><td>${c.count}</td><td>${c.details.join(", ") || "—"}</td></tr>`;
+    const pct = Math.round((c.count / maxCount) * 100);
+    html += `<tr><td>${c.agent.initiales}</td><td>${c.count}</td>`;
+    html += `<td><div class="pd-print-bar-wrap"><div class="pd-print-bar-fill" style="width:${pct}%;"></div></div></td>`;
+    html += `<td>${c.details.join(", ") || "—"}</td></tr>`;
   });
   html += `</tbody></table>`;
 
