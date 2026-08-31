@@ -217,7 +217,8 @@
       afficherProduits(tousLesProduits);
     } catch (err) {
       console.error(err);
-      loadingState.textContent = "Erreur de chargement des produits.";
+      loadingState.textContent = "Erreur : " + err.message + " | " + err.code;
+      alert("Erreur : " + err.message + " | Code : " + err.code);
     }
   }
 
