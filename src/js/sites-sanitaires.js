@@ -79,7 +79,7 @@ export async function listerSitesActifs() {
   const exclusions = serverTimestamp.joursExclusion || [];
   const jourActuel = new Date().getDay();
 
-  return sites.filter((s) => {*
+  return sites.filter((s) => {
     if (s.actif === false) return false;
     const exclusions = s.joursEclusion || [];
     return !exclusions.includes(jourActuel);
