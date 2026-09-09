@@ -81,7 +81,7 @@ export async function listerSitesActifs() {
 
   return sites.filter((s) => {
     if (s.actif === false) return false;
-    const exclusions = s.joursEclusion || [];
+    const exclusions = s.joursExclusion || [];
     return !exclusions.includes(jourActuel);
   });
 }
