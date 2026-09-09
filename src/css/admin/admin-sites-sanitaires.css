@@ -213,3 +213,29 @@
   color: #ccc;
   cursor: not-allowed;
 }
+
+.jours-exclusion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.jours-exclusion label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.jours-exclusion label:has(input:checked) {
+  border-color: var(--danger);
+  background: #fce8e6;
+  color: var(--danger);
+  font-weight: 600;
+}

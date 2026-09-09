@@ -113,6 +113,8 @@ function resetForm() {
   el.cancelEditBtn.style.display = "none";
   checklistCourante = JSON.parse(JSON.stringify(CHECKLIST_PAR_DEFAUT));
   rendreEditeurChecklist();
+  // Reset jours exclusion
+  document.querySelectorAll('.jour-exclusion').forEach(cb => cb.checked = false);
   afficherStatus("", "");
 }
 
@@ -129,6 +131,12 @@ function remplirFormulairePourEdition(site) {
     ? JSON.parse(JSON.stringify(site.checklist))
     : JSON.parse(JSON.stringify(CHECKLIST_PAR_DEFAUT));
   rendreEditeurChecklist();
+
+  // Pré-coche les jours d'exclusion
+  const exclusions = site.joursExclusion || [];
+  document.querySelectorAll('.jour-exclusion').forEach(cb => {
+    cb.checked = exclusions.includes(Number(cb.value));
+    });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -200,12 +208,16 @@ export function initSitesAdmin() {
 
     try {
       const siteId = el.siteIdInput.value;
+      const joursExclusion = [...document.querySelectorAll('.jour-exclusion:checked')]
+      .map(cb => Number(cb.value));
+
       const donnees = {
         nom: el.nomInput.value.trim(),
         adresse: el.adresseInput.value.trim(),
         notes: el.notesInput.value.trim(),
         actif: el.actifInput.checked,
-        checklist: checklistCourante
+        checklist: checklistCourante,
+        joursExclusion
       };
 
       if (siteId) {
