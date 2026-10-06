@@ -110,13 +110,15 @@ async function supprimerCheckup(checkupId) {
 // LISTE DES TÉLÉPHONES — modifie ici si besoin
 // ============================================
 const TELEPHONES = [
-  { id: "tel-frap",    label: "Téléphone FRAP" },
-  { id: "tel-bom-1",  label: "Téléphone BOM 1" },
-  { id: "tel-bom-2",  label: "Téléphone BOM 2" },
-  { id: "tel-ravo",   label: "Téléphone Ravo" },
-  { id: "tel-iveco",  label: "Téléphone Iveco" },
-  { id: "tel-goupil", label: "Téléphone Goupil" },
-  { id: "tel-kangoo", label: "Téléphone Kangoo" },
+  { id: "tel-frap",    label: "Téléphone FRAP Centre-Ville" },
+  { id: "tel-bom-1",  label: "Téléphone BOM 16T" },
+  { id: "tel-bom-2",  label: "Téléphone BOM 3,5T" },
+  { id: "tel-ravo",   label: "Téléphone Ravo 1114" },
+  { id: "tel-iveco",  label: "Téléphone Iveco 1118" },
+  { id: "tel-goupil", label: "Téléphone Goupil G4" },
+  { id: "tel-kangoo", label: "Téléphone Iveco 1123" },
+  { id: "tel-kangoo", label: "Téléphone Ravo 1205" },
+  { id: "tel-kangoo", label: "Téléphone Goupil G6" },
 ];
 
 function initialiserIdentification() {
