@@ -106,9 +106,20 @@ async function supprimerCheckup(checkupId) {
 // ============================================
 // IDENTIFICATION AGENT
 // ============================================
+// ============================================
+// LISTE DES TÉLÉPHONES — modifie ici si besoin
+// ============================================
+const TELEPHONES = [
+  { id: "tel-frap",    label: "Téléphone FRAP" },
+  { id: "tel-bom-1",  label: "Téléphone BOM 1" },
+  { id: "tel-bom-2",  label: "Téléphone BOM 2" },
+  { id: "tel-ravo",   label: "Téléphone Ravo" },
+  { id: "tel-iveco",  label: "Téléphone Iveco" },
+  { id: "tel-goupil", label: "Téléphone Goupil" },
+  { id: "tel-kangoo", label: "Téléphone Kangoo" },
+];
+
 function initialiserIdentification() {
-  if (btnRetour) btnRetour.textContent = '';
-  
   if (agentMail) {
     const accueilMail = document.getElementById('accueil-mail');
     if (accueilMail) accueilMail.textContent = agentMail;
@@ -116,27 +127,47 @@ function initialiserIdentification() {
     return;
   }
 
+  // Remplace le champ mail par un menu déroulant
+  const inputMailEl = document.getElementById('input-mail');
+  if (inputMailEl) {
+    const select = document.createElement('select');
+    select.id = 'select-telephone';
+    select.className = 'select-telephone';
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = 'Sélectionne ton téléphone...';
+    select.appendChild(defaultOpt);
+
+    TELEPHONES.forEach(tel => {
+      const opt       = document.createElement('option');
+      opt.value       = tel.id + '@mairie-valence.fr';
+      opt.textContent = tel.label;
+      select.appendChild(opt);
+    });
+
+    inputMailEl.replaceWith(select);
+  }
+
   showStep(stepIdentification);
 
   if (btnIdentifier) {
     btnIdentifier.addEventListener('click', () => {
-      const mail = inputMail.value.trim();
-      if (!mail || !mail.includes('@')) {
-        if (mailError) mailError.textContent = 'Saisis une adresse mail valide.';
+      const select = document.getElementById('select-telephone');
+      const val    = select ? select.value : '';
+
+      if (!val) {
+        if (mailError) mailError.textContent = 'Sélectionne un téléphone.';
         return;
       }
-      localStorage.setItem('agent-mail', mail);
-      agentMail = mail;
-      if (mailError) mailError.textContent = '';
-      const accueilMail = document.getElementById('accueil-mail');
-      if (accueilMail) accueilMail.textContent = mail;
-      showStep(stepAccueil);
-    });
-  }
 
-  if (inputMail) {
-    inputMail.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && btnIdentifier) btnIdentifier.click();
+      localStorage.setItem('agent-mail', val);
+      agentMail = val;
+      if (mailError) mailError.textContent = '';
+
+      const accueilMail = document.getElementById('accueil-mail');
+      if (accueilMail) accueilMail.textContent = val;
+      showStep(stepAccueil);
     });
   }
 }

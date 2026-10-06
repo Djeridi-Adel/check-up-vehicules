@@ -6,6 +6,11 @@
   <meta name="theme-color" content="#1a73e8">
   <title>Activité et Suivi Propreté Urbaine</title>
   <link rel="stylesheet" href="src/css/main.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="src/icones/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="src/icones/apple-touch-icon.png">
+  <meta name="theme-color" content="#1a73e8">
 </head>
 <body>
 
@@ -22,16 +27,11 @@
     <!-- Écran d'identification -->
     <section id="step-identification" class="step active">
       <div class="identification">
-        <div class="identification-icon">👤</div>
+        <div class="identification-icon">📱</div>
         <h2>Identification</h2>
-        <p>Renseigne ton adresse mail pour commencer</p>
+        <p>Sélectionne ton téléphone pour commencer</p>
         <div class="form-group">
-          <input
-            type="email"
-            id="input-mail"
-            placeholder="prenom.nom@mairie.fr"
-            autocomplete="email"
-          >
+          <input type="hidden" id="input-mail">
           <p id="mail-error" class="mail-error"></p>
         </div>
         <button id="btn-identifier" class="btn-primary">Continuer →</button>
