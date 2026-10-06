@@ -57,7 +57,7 @@ let sections            = [];
 let sectionIndex        = 0;
 let resultats           = {};
 let photos              = {};
-let agentMail           = localStorage.getItem('agent-mail') || '';
+let agentMail           = sessionStorage.getItem('agent-mail') || '';
 
 // ============================================
 // NAVIGATION
@@ -163,7 +163,7 @@ function initialiserIdentification() {
         return;
       }
 
-      localStorage.setItem('agent-mail', val);
+      sessionStorage.setItem('agent-mail', val);
       agentMail = val;
       if (mailError) mailError.textContent = '';
 
