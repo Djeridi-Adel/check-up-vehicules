@@ -113,12 +113,13 @@ const TELEPHONES = [
   { id: "tel-frap",    label: "Téléphone FRAP Centre-Ville" },
   { id: "tel-bom-1",  label: "Téléphone BOM 16T" },
   { id: "tel-bom-2",  label: "Téléphone BOM 3,5T" },
-  { id: "tel-ravo",   label: "Téléphone Ravo 1114" },
-  { id: "tel-iveco",  label: "Téléphone Iveco 1118" },
-  { id: "tel-goupil", label: "Téléphone Goupil G4" },
-  { id: "tel-kangoo", label: "Téléphone Iveco 1123" },
-  { id: "tel-kangoo", label: "Téléphone Ravo 1205" },
-  { id: "tel-kangoo", label: "Téléphone Goupil G6" },
+  { id: "tel-ravo-1114",   label: "Téléphone Ravo 1114" },
+  { id: "tel-iveco-1118",  label: "Téléphone Iveco 1118" },
+  { id: "tel-goupil-g4", label: "Téléphone Goupil G4" },
+  { id: "tel-iveco-1123", label: "Téléphone Iveco 1123" },
+  { id: "tel-ravo-1205", label: "Téléphone Ravo 1205" },
+  { id: "tel-goupil-g6", label: "Téléphone Goupil G6" },
+  { id: "tel-camion-tag", label: "Téléphone TAG" },
 ];
 
 function initialiserIdentification() {
