@@ -199,3 +199,21 @@ export async function listerToutesInterventions() {
 export async function supprimerIntervention(id) {
   await deleteDoc(doc(db, INTERVENTIONS, id));
 }
+
+// Marque une panne comme réparée à une date donnée
+export async function marquerReparee(id, dateReparation, noteReparation = "") {
+  await updateDoc(doc(db, INTERVENTIONS, id), {
+    reparee: true,
+    dateReparation,
+    noteReparation
+  });
+}
+
+// Annule la réparation (la panne redevient "en cours")
+export async function rouvrirPanne(id) {
+  await updateDoc(doc(db, INTERVENTIONS, id), {
+    reparee: false,
+    dateReparation: null,
+    noteReparation: ""
+  });
+}

@@ -11,7 +11,9 @@ import {
   aujourdhuiISO,
   ajouterIntervention,
   listerInterventions,
-  supprimerIntervention
+  supprimerIntervention,
+  marquerReparee,
+  rouvrirPanne
 } from "../parc.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -66,7 +68,10 @@ function rendreResume() {
   const joursAnnee = joursImmobilises(objet, annee);
   const joursTotal = joursImmobilises(objet);
   const pannes     = interventions.filter((i) => i.nature === "panne" && i.date.startsWith(String(annee))).length;
-  const repars     = interventions.filter((i) => i.nature === "reparation" && i.date.startsWith(String(annee))).length;
+    const repars = interventions.filter((i) =>
+    (i.nature === "reparation" && i.date.startsWith(String(annee))) ||
+    (i.nature === "panne" && i.reparee && (i.dateReparation || "").startsWith(String(annee)))
+    ).length;
   const sousTitre  = objet.immatriculation || objet.adresse || "";
 
   const el = document.getElementById("fiche-resume");
@@ -201,19 +206,112 @@ function rendreHistorique() {
   el.innerHTML = "";
   interventions.forEach((i) => {
     const estPanne = i.nature === "panne";
+    const reparee  = estPanne && i.reparee;
+    const enCours  = estPanne && !i.reparee;
+
+    let badge;
+    if (enCours)      badge = '<span class="fiche-badge panne">🔴 Panne en cours</span>';
+    else if (reparee) badge = '<span class="fiche-badge reparation">✅ Panne réparée</span>';
+    else              badge = '<span class="fiche-badge reparation">🛠️ Réparation</span>';
+
+    let detailReparation = "";
+    if (reparee) {
+      const delai = joursEntre(i.date, i.dateReparation) - 1;
+      detailReparation = `
+        <p class="fiche-reparation-info">
+          🛠️ Réparée le ${fmtDate(i.dateReparation)}
+          (${delai === 0 ? "le jour même" : pluriel(delai, "jour") + " après la panne"})
+          ${i.noteReparation ? " — " + esc(i.noteReparation) : ""}
+        </p>`;
+    }
+
     const row = document.createElement("div");
-    row.className = "fiche-row " + (estPanne ? "panne" : "reparation");
+    row.className = "fiche-row " + (enCours ? "panne" : "reparation");
     row.innerHTML = `
       <div class="fiche-row-main">
         <div>
-          <span class="fiche-badge ${estPanne ? "panne" : "reparation"}">${estPanne ? "🔴 Panne" : "🛠️ Réparation"}</span>
+          ${badge}
           <span class="fiche-row-sub">${fmtDate(i.date)}</span>
         </div>
         <p>${esc(i.description)}</p>
+        ${detailReparation}
       </div>
-      <button type="button" class="btn-suppr-card" title="Supprimer">🗑️</button>
+      <div class="fiche-row-actions">
+        ${enCours ? '<button type="button" class="btn-reparee">✅ Marquer réparée</button>' : ""}
+        ${reparee ? '<button type="button" class="btn-rouvrir">↩️ Rouvrir</button>' : ""}
+        <button type="button" class="btn-suppr-card" title="Supprimer">🗑️</button>
+      </div>
+      ${enCours ? `
+        <div class="fiche-reparer-form">
+          <label class="fiche-field">Date de réparation
+            <input type="date" class="fiche-rep-date" value="${aujourdhuiISO()}" min="${i.date}" max="${aujourdhuiISO()}">
+          </label>
+          <input type="text" class="fiche-rep-note" placeholder="Réparation effectuée (optionnel)">
+          <button type="button" class="btn-ajouter fiche-rep-valider">Valider</button>
+          <button type="button" class="btn-secondary fiche-rep-annuler">Annuler</button>
+        </div>` : ""}
     `;
 
+    // Marquer comme réparée
+    const btnReparee = row.querySelector(".btn-reparee");
+    if (btnReparee) {
+      const form = row.querySelector(".fiche-reparer-form");
+
+      btnReparee.addEventListener("click", () => form.classList.toggle("visible"));
+      row.querySelector(".fiche-rep-annuler").addEventListener("click", () => form.classList.remove("visible"));
+
+      row.querySelector(".fiche-rep-valider").addEventListener("click", async (e) => {
+        const btn  = e.currentTarget;
+        const date = row.querySelector(".fiche-rep-date").value;
+        const note = row.querySelector(".fiche-rep-note").value.trim();
+
+        if (!date) {
+          alert("Indiquez la date de réparation.");
+          return;
+        }
+        if (date < i.date) {
+          alert(`La date ne peut pas précéder celle de la panne (${fmtDate(i.date)}).`);
+          return;
+        }
+        if (date > aujourdhuiISO()) {
+          alert("La date de réparation ne peut pas être dans le futur.");
+          return;
+        }
+
+        btn.disabled = true;
+        try {
+          await marquerReparee(i.id, date, note);
+          i.reparee         = true;
+          i.dateReparation  = date;
+          i.noteReparation  = note;
+          rendreTout();
+        } catch (err) {
+          console.error(err);
+          alert("Erreur lors de l'enregistrement.");
+          btn.disabled = false;
+        }
+      });
+    }
+
+    // Rouvrir une panne
+    const btnRouvrir = row.querySelector(".btn-rouvrir");
+    if (btnRouvrir) {
+      btnRouvrir.addEventListener("click", async () => {
+        if (!confirm("Rouvrir cette panne ? La date de réparation sera effacée.")) return;
+        try {
+          await rouvrirPanne(i.id);
+          i.reparee        = false;
+          i.dateReparation = null;
+          i.noteReparation = "";
+          rendreTout();
+        } catch (err) {
+          console.error(err);
+          alert("Erreur lors de la mise à jour.");
+        }
+      });
+    }
+
+    // Supprimer l'entrée
     row.querySelector(".btn-suppr-card").addEventListener("click", async () => {
       if (!confirm("Supprimer cette entrée ?")) return;
       try {
