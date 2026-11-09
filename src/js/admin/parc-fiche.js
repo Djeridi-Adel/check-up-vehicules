@@ -284,14 +284,15 @@ function rendreHistorique() {
           i.reparee         = true;
           i.dateReparation  = date;
           i.noteReparation  = note;
-          rendreTout();
         } catch (err) {
-          console.error(err);
-          alert("Erreur lors de l'enregistrement.");
-          btn.disabled = false;
-        }
-      });
-    }
+        console.error(err);
+        alert("Erreur lors de l'enregistrement.");
+        btn.disabled = false;
+        return;          
+      }
+
+      await proposerRemiseEnService(date);
+      rendreTout();
 
     // Rouvrir une panne
     const btnRouvrir = row.querySelector(".btn-rouvrir");
@@ -326,6 +327,32 @@ function rendreHistorique() {
 
     el.appendChild(row);
   });
+}
+
+// Après une réparation : propose de remettre l'objet en service à la même date
+async function proposerRemiseEnService(date) {
+  if (estDisponible(objet)) return;
+
+  const debut = immobilisationEnCours(objet);
+  if (!debut || date < debut) return;
+
+  const autres = interventions.filter((x) => x.nature === "panne" && !x.reparee).length;
+  const action = type === "cellule" ? "Rouvrir" : "Remettre en service";
+
+  let message = `${action} "${objet.nom}" au ${fmtDate(date)} ?`;
+  if (autres > 0) {
+    message += `\n\nAttention : il reste ${autres > 1 ? autres + " autres pannes" : "1 autre panne"} en cours.`;
+  }
+
+  if (!confirm(message)) return;
+  
+  try {
+    objet.immobilisation = await basculerDisponibilite(tyoe, objet, true, date);
+    objet.disponible = true;
+  } catch (err) {
+    console.error(err);
+    alert("La panne est bien marquée réparée, mais la remise en service a échoué. Utilisez le bouton en haut de la fiche. Si cela ne marche toujours pas, faites un ticket auprès de monsieur Djeridi");
+  }
 }
 
 function rendreTout() {
