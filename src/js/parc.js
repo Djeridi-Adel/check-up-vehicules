@@ -49,9 +49,9 @@ export async function listerObjets(type) {
     .sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
 }
 
-export async function obtenirObjet(type, finISO) {
+export async function obtenirObjet(type, id) {
   const snap = await getDoc(doc(db, COLLECTIONS[type], id));
-  return snap.exist() ? { id: snap.id, ...snap.data() } : null;
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
 export async function creerVehicule({ nom, immatriculation, type, vehiculeCheckupId }) {
