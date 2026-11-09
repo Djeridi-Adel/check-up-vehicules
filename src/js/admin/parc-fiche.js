@@ -293,6 +293,8 @@ function rendreHistorique() {
 
       await proposerRemiseEnService(date);
       rendreTout();
+    });  
+  }
 
     // Rouvrir une panne
     const btnRouvrir = row.querySelector(".btn-rouvrir");
@@ -347,7 +349,7 @@ async function proposerRemiseEnService(date) {
   if (!confirm(message)) return;
   
   try {
-    objet.immobilisation = await basculerDisponibilite(tyoe, objet, true, date);
+    objet.immobilisations = await basculerDisponibilite(type, objet, true, date);
     objet.disponible = true;
   } catch (err) {
     console.error(err);
