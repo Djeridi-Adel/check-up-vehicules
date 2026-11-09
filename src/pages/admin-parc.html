@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/admin.css">
   <link rel="stylesheet" href="../css/admin/admin-parc.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -22,22 +23,46 @@
 
     <p id="parc-loading" class="loading">Vérification de l'accès...</p>
 
-    <div id="parc-app" class="hidden">
+        <div id="parc-app" class="hidden">
 
-      <section class="parc-panel">
-        <h2>Ajouter un véhicule</h2>
-        <div class="parc-form">
-          <input type="text" id="parc-nom" placeholder="Nom (ex : Benne OM 3)">
-          <input type="text" id="parc-immat" placeholder="Immatriculation / n° d'inventaire">
-          <input type="text" id="parc-type" placeholder="Type (ex : Benne ordures ménagères)">
-          <button id="parc-ajouter" class="btn-ajouter">Ajouter</button>
-        </div>
-        <div class="parc-actions-row">
-          <button id="parc-importer" class="btn-secondary">⬇ Importer les véhicules du check-up</button>
-        </div>
-      </section>
+      <div class="onglets">
+        <button type="button" class="onglet active" data-onglet="parc">🚛 Véhicules &amp; cellules</button>
+        <button type="button" class="onglet" data-onglet="recap">📊 Récap annuel</button>
+      </div>
 
-      <div id="tp-app"></div>
+      <!-- Onglet 1 : véhicules et cellules -->
+      <div id="vue-parc-liste">
+
+        <section class="parc-panel">
+          <h2>Ajouter un véhicule</h2>
+          <div class="parc-form">
+            <input type="text" id="parc-nom" placeholder="Nom (ex : Benne OM 3)">
+            <input type="text" id="parc-immat" placeholder="Immatriculation / n° d'inventaire">
+            <input type="text" id="parc-type" placeholder="Type (ex : Benne ordures ménagères)">
+            <button id="parc-ajouter" class="btn-ajouter">Ajouter</button>
+          </div>
+          <div class="parc-actions-row">
+            <button id="parc-importer" class="btn-secondary">⬇ Importer les véhicules du check-up</button>
+          </div>
+        </section>
+
+        <div id="tp-app"></div>
+
+      </div>
+
+      <!-- Onglet 2 : récap annuel -->
+      <div id="vue-recap" class="hidden">
+        <section class="parc-panel" id="recap-panel">
+          <div class="recap-toolbar">
+            <label class="fiche-field">Année
+              <select id="recap-annee"></select>
+            </label>
+            <button type="button" id="recap-actualiser" class="btn-secondary">↻ Actualiser</button>
+            <button type="button" id="recap-excel" class="btn-secondary">📊 Exporter en Excel</button>
+          </div>
+          <div id="recap-contenu"><p class="loading">Chargement...</p></div>
+        </section>
+      </div>
 
     </div>
 

@@ -2,8 +2,25 @@ import { auth } from "../firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { creerVehicule, importerDepuisCheckup } from "../parc.js";
 import { chargerTableauParc } from "./tableau-parc.js";
-
+import { initRecapParc } from "./recap-parc.js";
+import { initRecapParc, chargerRecapParc } from "./recap-parc.js";
 let initialise = false;
+
+function initialiserOnglets() {
+  document.querySelectorAll(".onglet").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".onglet").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const onglet = btn.dataset.onglet;
+      document.getElementById("vue-parc-liste").classList.toggle("hidden", onglet !== "parc");
+      document.getElementById("vue-recap").classList.toggle("hidden", onglet !== "recap");
+
+      // Le récap est recalculé à chaque ouverture pour refléter les derniers changements
+      if (onglet === "recap") chargerRecapParc();
+    });
+  });
+}
 
 function initialiser() {
   if (initialise) return;
@@ -55,6 +72,8 @@ function initialiser() {
   });
 
   chargerTableauParc();
+  initRecapParc();
+  initialiserOnglets();
 }
 
 onAuthStateChanged(auth, (user) => {
