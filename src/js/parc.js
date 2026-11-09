@@ -113,7 +113,8 @@ export async function importerDepuisCheckup() {
 // fin = null → l'objet est encore immobilisé
 // ============================================
 export function estDisponible(objet) {
-  return objet.disponible !== false;
+  if (objet.disponible !== undefined) return objet.disponible !== false;
+  return objet.actif !== false;
 }
 
 export function immobilisationEnCours(objet) {
@@ -150,10 +151,10 @@ export async function basculerDisponibilite(type, objet, disponible, dateISO = a
     if (ouverte) ouverte.fin = dateISO;
   }
 
-  await updateDoc(doc(db, COLLECTIONS[type], objet.id), {
-    disponible,
-    immobilisations: periodes
-  });
+  const champs = { disponible, immobilisations: periodes };
+  if (type === "cellule") champs.actif = disponible;
+
+  await updateDoc(doc(db, COLLECTIONS[type], objet.id), champs);
 
   // Synchronise avec le véhicule du check-up (grisé côté agent)
   if (type === "vehicule" && objet.vehiculeCheckupId) {

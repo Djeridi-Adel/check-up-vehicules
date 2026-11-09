@@ -65,27 +65,12 @@ card.innerHTML = `
     </div>
   </div>
   <div class="flotte-card-actions">
-    <button class="btn-toggle-dispo ${estDisponible ? 'btn-toggle-dispo-on' : 'btn-toggle-dispo-off'}" data-id="${v.id}" data-dispo="${estDisponible}">
-      ${estDisponible ? '✅ Disponible' : '🔧 Indisponible'}
-    </button>
     <button class="btn-edit" data-id="${v.id}">✏️ Modifier</button>
     <button class="btn-delete" data-id="${v.id}">🗑️</button>
   </div>
 `;
 
-card.querySelector('.btn-toggle-dispo').addEventListener('click', async (e) => {
-  e.stopPropagation();
-  const nouvelleValeur = !(e.target.dataset.dispo === 'true');
-  try {
-    await updateDoc(doc(db, 'vehicules', v.id), {
-      disponible: nouvelleValeur
-    });
-    chargerFlotte(onEditer);
-  } catch (error) {
-    alert('Erreur lors de la mise à jour.');
-    console.error(error);
-  }
-});
+
 
     card.querySelector('.btn-edit').addEventListener('click', () => onEditer(v.id));
     card.querySelector('.btn-delete').addEventListener('click', () => supprimerVehicule(v.id, v.nom, onEditer));
