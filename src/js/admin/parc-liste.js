@@ -2,7 +2,6 @@ import { auth } from "../firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { creerVehicule, importerDepuisCheckup } from "../parc.js";
 import { chargerTableauParc } from "./tableau-parc.js";
-import { initRecapParc } from "./recap-parc.js";
 import { initRecapParc, chargerRecapParc } from "./recap-parc.js";
 let initialise = false;
 
