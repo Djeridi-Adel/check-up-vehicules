@@ -8,6 +8,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -34,7 +35,7 @@ function parseISO(s) {
 }
 
 // Nombre de jours entre deux dates, début et fin inclus
-function joursEntre(debutISO, finISO) {
+export function joursEntre(debutISO, finISO) {
   return Math.round((parseISO(finISO) - parseISO(debutISO)) / 86400000) + 1;
 }
 
@@ -46,6 +47,11 @@ export async function listerObjets(type) {
   return snapshot.docs
     .map((d) => ({ id: d.id, ...d.data() }))
     .sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
+}
+
+export async function obtenirObjet(type, finISO) {
+  const snap = await getDoc(doc(db, COLLECTIONS[type], id));
+  return snap.exist() ? { id: snap.id, ...snap.data() } : null;
 }
 
 export async function creerVehicule({ nom, immatriculation, type, vehiculeCheckupId }) {

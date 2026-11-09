@@ -99,3 +99,139 @@
 .dashboard .btn-secondary:hover {
   background: #e2e6eb;
 }
+
+/* ============================================
+   FICHE (véhicule ou cellule)
+   ============================================ */
+.fiche-resume-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.fiche-resume-head h2 {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.fiche-statut {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fiche-statut.ok { background: #e6f4ea; color: #1e7e34; }
+.fiche-statut.ko { background: #fff3e0; color: #e65100; }
+
+.fiche-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fiche-stat {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.fiche-stat-n {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.fiche-toggle-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.fiche-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.fiche-field input,
+.fiche-form input,
+.fiche-form select {
+  padding: 9px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--surface);
+}
+
+.fiche-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fiche-form input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+}
+
+.fiche-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 4px solid var(--border);
+}
+
+.fiche-row.panne { border-left-color: var(--danger); }
+.fiche-row.reparation { border-left-color: var(--success); }
+
+.fiche-row-main p {
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+.fiche-row-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-left: 6px;
+}
+
+.fiche-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.fiche-badge.panne { background: #fce8e6; color: #c62828; }
+.fiche-badge.reparation { background: #e6f4ea; color: #1e7e34; }
+
+.fiche-vide {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .fiche-stats { grid-template-columns: repeat(2, 1fr); }
+}

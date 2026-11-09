@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Fiche — Admin</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin/admin-parc.css">
+</head>
+<body>
+
+  <header class="admin-header">
+    <h1 id="fiche-titre">Fiche</h1>
+    <div class="header-actions">
+      <a id="fiche-retour" href="admin-parc.html" class="btn-secondary">← Retour</a>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <p id="fiche-loading" class="loading">Chargement...</p>
+
+    <div id="fiche-app" class="hidden">
+
+      <section class="parc-panel" id="fiche-resume"></section>
+
+      <section class="parc-panel">
+        <h2>Déclarer une panne ou une réparation</h2>
+        <div class="fiche-form">
+          <select id="fiche-nature">
+            <option value="panne">🔴 Panne</option>
+            <option value="reparation">🛠️ Réparation</option>
+          </select>
+          <input type="date" id="fiche-date">
+          <input type="text" id="fiche-description" placeholder="Description (ex : fuite circuit hydraulique)">
+          <button id="fiche-ajouter" class="btn-ajouter">Ajouter</button>
+        </div>
+      </section>
+
+      <section class="parc-panel">
+        <h2>Historique des pannes et réparations</h2>
+        <div id="fiche-historique"></div>
+      </section>
+
+      <section class="parc-panel">
+        <h2>Périodes d'immobilisation</h2>
+        <div id="fiche-periodes"></div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="../js/admin/parc-fiche.js"></script>
+
+</body>
+</html>
