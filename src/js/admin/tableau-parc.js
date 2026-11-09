@@ -4,6 +4,7 @@
 import {
   listerObjets,
   basculerDisponibilite,
+  supprimerObjet,
   estDisponible,
   immobilisationEnCours,
   joursImmobilises,
@@ -137,6 +138,26 @@ function rendreColonne(type) {
     `;
 
     row.querySelector("button").addEventListener("click", () => basculerRapide(type, o));
+
+        if (type === "vehicule") {
+      const suppr = document.createElement("button");
+      suppr.type = "button";
+      suppr.className = "btn-delete";
+      suppr.title = "Supprimer";
+      suppr.textContent = "🗑️";
+      suppr.addEventListener("click", async () => {
+        if (!confirm(`Supprimer "${o.nom}" et tout son historique de pannes ? Cette action est irréversible.`)) return;
+        try {
+          await supprimerObjet("vehicule", o.id);
+          objets.vehicule = objets.vehicule.filter((x) => x.id !== o.id);
+          rendre();
+        } catch (err) {
+          console.error(err);
+          alert("Erreur lors de la suppression.");
+        }
+      });
+      row.appendChild(suppr);
+    }
     col.appendChild(row);
   });
 

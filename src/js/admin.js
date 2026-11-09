@@ -10,7 +10,6 @@ import { initProduitsAdmin, chargerProduitsAdmin } from './admin/produits.js';
 import { initSitesAdmin, chargerSitesAdmin } from './admin/sites-sanitaires.js'
 import { chargerControlesAdmin } from './admin/controles-sanitaires.js';
 import { chargerPannesAdmin } from './admin/pannes-sanitaires.js';
-import { chargerTableauParc } from './admin/tableau-parc.js';
 
 // ============================================
 // STATE GLOBAL
@@ -112,7 +111,6 @@ async function initialiserDashboard() {
       document.getElementById('vue-checkups').classList.add('hidden');
       document.getElementById('vue-signalements').classList.add('hidden');
       document.getElementById('vue-maintenance').classList.add('hidden');
-      document.getElementById('vue-parc').classList.add('hidden');
       document.getElementById('vue-produits').classList.add('hidden');
       document.getElementById('vue-sites').classList.add('hidden');
       document.getElementById('vue-controles-sanitaires').classList.add('hidden');
@@ -137,9 +135,6 @@ async function initialiserDashboard() {
       } else if (onglet === 'pannes-sanitaires') {
         document.getElementById('vue-pannes-sanitaires').classList.remove('hidden');
         chargerPannesAdmin();
-      } else if (onglet === 'parc') {
-        document.getElementById('vue-parc').classList.remove('hidden');
-        chargerTableauParc();
       }
     });
   });

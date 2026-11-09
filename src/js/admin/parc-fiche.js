@@ -27,15 +27,15 @@ const LIBELLES = {
     actionIndispo: "🔧 Mettre en indisponible",
     actionDispo: "✅ Remettre en service",
     retour: "admin-parc.html",
-    retourLabel: "← Parc global"
+    retourLabel: "← Parc auto & cellules"
   },
   cellule: {
     dispo: "Ouverte",
     indispo: "Fermée",
     actionIndispo: "🔒 Fermer la cellule",
     actionDispo: "✅ Rouvrir la cellule",
-    retour: "admin.html",
-    retourLabel: "← Tableau de bord"
+    retour: "admin-parc.html",
+    retourLabel: "← Parc auto & cellules"
   }
 };
 
