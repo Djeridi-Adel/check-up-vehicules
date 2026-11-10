@@ -132,3 +132,91 @@
     display: block;
   }
 }
+
+/* ============================================
+   FILTRES DE LA COLONNE VÉHICULES
+   ============================================ */
+.tp-filtres {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tp-filtres select,
+.tp-filtres input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.tp-filtres select:focus,
+.tp-filtres input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.tp-filtre-famille,
+.tp-filtre-statut {
+  flex: 1 1 140px;
+}
+
+.tp-filtre-recherche {
+  flex: 1 1 100%;
+}
+
+.tp-filtre-reset {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.tp-filtre-reset:hover {
+  text-decoration: underline;
+}
+
+.tp-filtre-reset[hidden] {
+  display: none;
+}
+
+/* ============================================
+   MODIFICATION D'UN VÉHICULE
+   ============================================ */
+/* Avec trois boutons par ligne, on laisse la ligne passer à la ligne sur petit écran */
+.tp-row {
+  flex-wrap: wrap;
+}
+
+.tp-row-info {
+  flex: 1 1 160px;
+}
+
+.tp-row.edition {
+  border-left-color: var(--primary);
+  background: #f4f8ff;
+}
+
+.tp-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.tp-edit-form .fiche-field input {
+  width: 100%;
+}
+
+.tp-edit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
