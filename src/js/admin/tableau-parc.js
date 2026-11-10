@@ -300,7 +300,6 @@ function creerLigne(type, o, annee) {
   return row;
 }
 
-
 // ============================================
 // MODIFICATION D'UN VÉHICULE (formulaire dans la ligne)
 // ============================================
@@ -371,6 +370,7 @@ function ouvrirEdition(row, o) {
   inputNom.focus();
   inputNom.select();
 }
+
 
 // ============================================
 // BASCULE RAPIDE (date du jour)
