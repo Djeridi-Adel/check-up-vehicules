@@ -71,6 +71,22 @@ export async function modifierObjet(type, id, champs) {
   await updateDoc(doc(db, COLLECTIONS[type], id), champs);
 }
 
+// Modifie un véhicule du parc et répercute nom / immatriculation / type
+export async function modifierVehicule(objet, { nom, immatriculation, type }) {
+  const champs = { nom, immatriculation, type };
+  await updateDoc(doc(db, COLLECTIONS.vehicule, objet.id), champs);
+
+  if (!objet.vehiculeCheckupId) return null;
+
+  try {
+    await updateDoc(doc(db, VEHICULES_CHECKUP, objet.vehiculeCheckupId), champs);
+    return true;
+  } catch (e) {
+    console.warn("Synchronisation avec le véhicule du check-up impossible :", e);
+    return false;
+  }
+}
+
 // Supprime l'objet et toutes ses pannes/réparations
 export async function supprimerObjet(type, id) {
   const interventions = await listerInterventions(id);
