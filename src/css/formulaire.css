@@ -410,6 +410,57 @@
   }
 }
 
+/* ============================================
+   PHOTOS MULTIPLES D'UNE ANOMALIE
+   ============================================ */
+.photo-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.btn-photo.complet {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.photo-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.photo-mini {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.photo-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+}
+
+.photo-mini-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--danger);
+  color: white;
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ============================================
    DESKTOP

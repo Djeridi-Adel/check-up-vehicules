@@ -1,5 +1,5 @@
 import { db } from '../firebase.js';
-import { getHistoriqueVehicule } from '../anomalies.js';
+import { getHistoriqueVehicule, photosDe } from '../anomalies.js';
 import {
   collection,
   getDocs
@@ -128,12 +128,13 @@ async function afficherHistorique(vehicule) {
         </div>
         ${a.description ? `<p class="maintenance-panne-desc">${a.description}</p>` : ''}
         ${dateResolution ? `<p class="maintenance-panne-date">Résolu le ${dateResolution}</p>` : ''}
-        ${a.photoUrl ? `
-          <a href="${a.photoUrl}" target="_blank" class="photo-link">
-            <img src="${a.photoUrl}" class="photo-thumb" alt="Photo">
-            <span>Voir la photo</span>
-          </a>` : ''}
-      `;
+                ${photosDe(a).length > 0 ? `
+          <div class="photo-galerie">
+            ${photosDe(a).map((url, i) => `
+              <a href="${url}" target="_blank" class="photo-link" title="Ouvrir la photo ${i + 1}">
+                <img src="${url}" class="photo-thumb" alt="Photo ${i + 1}">
+              </a>`).join('')}
+          </div>` : ''}
 
       listePannes.appendChild(card);
     });

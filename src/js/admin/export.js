@@ -1,3 +1,5 @@
+import { photosDe } from '../anomalies.js';
+
 export function initExport(getTousLesCheckups) {
   document.getElementById('btn-export').addEventListener('click', () => {
     const checkups = getTousLesCheckups();
@@ -7,7 +9,7 @@ export function initExport(getTousLesCheckups) {
       return;
     }
 
-    const lignes = ['Date,Véhicule,Immatriculation,Point de contrôle,Statut,Détail,Photo'];
+    const lignes = ['Date,Véhicule,Immatriculation,Point de contrôle,Statut,Détail,Photos'];
 
     checkups.forEach(c => {
       const date = c.date ? c.date.toDate().toLocaleString('fr-FR') : '';
@@ -19,7 +21,7 @@ export function initExport(getTousLesCheckups) {
           `"${point}"`,
           `"${data.statut}"`,
           `"${data.detail || ''}"`,
-          `"${data.photoUrl || ''}"`
+          `"${data.photosDe(data).join(' | ')}"`
         ].join(','));
       });
     });
