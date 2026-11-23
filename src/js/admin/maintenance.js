@@ -128,13 +128,14 @@ async function afficherHistorique(vehicule) {
         </div>
         ${a.description ? `<p class="maintenance-panne-desc">${a.description}</p>` : ''}
         ${dateResolution ? `<p class="maintenance-panne-date">Résolu le ${dateResolution}</p>` : ''}
-                ${photosDe(a).length > 0 ? `
+        ${photosDe(a).length > 0 ? `
           <div class="photo-galerie">
             ${photosDe(a).map((url, i) => `
               <a href="${url}" target="_blank" class="photo-link" title="Ouvrir la photo ${i + 1}">
                 <img src="${url}" class="photo-thumb" alt="Photo ${i + 1}">
               </a>`).join('')}
           </div>` : ''}
+      `;
 
       listePannes.appendChild(card);
     });
@@ -142,18 +143,5 @@ async function afficherHistorique(vehicule) {
   } catch (error) {
     listePannes.innerHTML = '<p class="loading">Erreur de chargement.</p>';
     console.error(error);
-  }
-}
-
-// ============================================
-// BOUTON RETOUR
-// ============================================
-export function initMaintenanceRetour() {
-  const btn = document.getElementById('btn-retour-maintenance');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      document.getElementById('maintenance-vehicules').classList.remove('hidden');
-      document.getElementById('maintenance-historique').classList.add('hidden');
-    });
   }
 }
