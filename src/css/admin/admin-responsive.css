@@ -1,0 +1,77 @@
+/* ============================================
+   ADMIN — RESPONSIVE MOBILE
+   Chargé en dernier, avec des sélecteurs plus précis,
+   pour ne pas être écrasé par les autres fichiers.
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* En-tête : titre + déconnexion en haut, boutons en grille de 2 colonnes dessous */
+  header.admin-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 14px;
+  }
+
+  /* Les boutons deviennent des éléments directs de la grille */
+  header.admin-header .header-actions {
+    display: contents;
+  }
+
+  header.admin-header h1 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  header.admin-header #btn-logout {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    padding: 6px 4px;
+  }
+
+  header.admin-header .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  /* Onglets : 2 par ligne, tous visibles sans faire glisser */
+  .dashboard {
+    min-width: 0;
+  }
+
+  .dashboard .onglets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .dashboard .onglets .onglet {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+    padding: 9px 6px;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  /* Formulaire et tableau : l'un sous l'autre, tableau qui défile dans sa carte */
+  .dashboard .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard .card {
+    overflow-x: auto;
+  }
+}
