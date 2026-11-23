@@ -241,7 +241,7 @@ function rendreHistorique() {
       <div class="fiche-row-main">
         <div>
           ${badge}
-          <span class="fiche-row-sub">${fmtDate(i.date)}</span>
+          <span class="fiche-row-sub">${fmtDate(i.date)}${i.heure ? " à " + i.heure : ""}</span>
           ${origine}
         </div>
         <p>${esc(i.description)}</p>
