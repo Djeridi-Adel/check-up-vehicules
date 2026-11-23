@@ -294,3 +294,14 @@
     color: var(--sucess);
    }
    
+
+.photo-galerie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.photo-galerie .photo-link {
+  margin-top: 0;
+}   

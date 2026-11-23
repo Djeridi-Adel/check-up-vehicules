@@ -20,11 +20,11 @@ const CLOUDINARY_CONFIG = {
   apiKey:       "236871857242973",
   uploadPreset: "ocgjzqqe"
 };
+const MAX_PHOTOS = 4; // Photo maximum par point en anomalie
 
 // ============================================
 // RÉFÉRENCES DOM
 // ============================================
-const stepIdentification  = document.getElementById('step-identification');
 const stepAccueil         = document.getElementById('step-accueil');
 const stepVehicule        = document.getElementById('step-vehicule');
 const stepSection         = document.getElementById('step-section');
@@ -45,9 +45,6 @@ const headerTitle         = document.getElementById('header-title');
 const progressBar         = document.getElementById('progress-bar');
 const progressLabel       = document.getElementById('progress-label');
 const progressContainer   = document.getElementById('progress-bar-container');
-const inputMail           = document.getElementById('input-mail');
-const btnIdentifier       = document.getElementById('btn-identifier');
-const mailError           = document.getElementById('mail-error');
 
 // ============================================
 // STATE
@@ -57,7 +54,7 @@ let sections            = [];
 let sectionIndex        = 0;
 let resultats           = {};
 let photos              = {};
-let agentMail           = sessionStorage.getItem('agent-mail') || '';
+const agentMail           = sessionStorage.getItem('agent-mail') || '';
 
 // ============================================
 // NAVIGATION
@@ -101,79 +98,6 @@ async function supprimerCheckup(checkupId) {
   }
 }
 
-
-
-// ============================================
-// IDENTIFICATION AGENT
-// ============================================
-// ============================================
-// LISTE DES TÉLÉPHONES — modifie ici si besoin
-// ============================================
-const TELEPHONES = [
-  { id: "tel-frap",    label: "Téléphone FRAP Centre-Ville" },
-  { id: "tel-bom-1",  label: "Téléphone BOM 16T" },
-  { id: "tel-bom-2",  label: "Téléphone BOM 3,5T" },
-  { id: "tel-ravo-1114",   label: "Téléphone Ravo 1114" },
-  { id: "tel-iveco-1118",  label: "Téléphone Iveco 1118" },
-  { id: "tel-goupil-g4", label: "Téléphone Goupil G4" },
-  { id: "tel-iveco-1123", label: "Téléphone Iveco 1123" },
-  { id: "tel-ravo-1205", label: "Téléphone Ravo 1205" },
-  { id: "tel-goupil-g6", label: "Téléphone Goupil G6" },
-  { id: "tel-camion-tag", label: "Téléphone TAG" },
-];
-
-function initialiserIdentification() {
-  if (agentMail) {
-    const accueilMail = document.getElementById('accueil-mail');
-    if (accueilMail) accueilMail.textContent = agentMail;
-    showStep(stepAccueil);
-    return;
-  }
-
-  // Remplace le champ mail par un menu déroulant
-  const inputMailEl = document.getElementById('input-mail');
-  if (inputMailEl) {
-    const select = document.createElement('select');
-    select.id = 'select-telephone';
-    select.className = 'select-telephone';
-
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = '';
-    defaultOpt.textContent = 'Sélectionne ton téléphone...';
-    select.appendChild(defaultOpt);
-
-    TELEPHONES.forEach(tel => {
-      const opt       = document.createElement('option');
-      opt.value       = tel.id + '@mairie-valence.fr';
-      opt.textContent = tel.label;
-      select.appendChild(opt);
-    });
-
-    inputMailEl.replaceWith(select);
-  }
-
-  showStep(stepIdentification);
-
-  if (btnIdentifier) {
-    btnIdentifier.addEventListener('click', () => {
-      const select = document.getElementById('select-telephone');
-      const val    = select ? select.value : '';
-
-      if (!val) {
-        if (mailError) mailError.textContent = 'Sélectionne un téléphone.';
-        return;
-      }
-
-      sessionStorage.setItem('agent-mail', val);
-      agentMail = val;
-      if (mailError) mailError.textContent = '';
-
-      const accueilMail = document.getElementById('accueil-mail');
-      if (accueilMail) accueilMail.textContent = val;
-      showStep(stepAccueil);
-    });
-  }
-}
 
 // ============================================
 // CHARGEMENT DES VÉHICULES
@@ -447,7 +371,7 @@ function genererCheckpoint(point) {
       <div class="anomalie-detail" id="detail-${pointId}">
         <textarea placeholder="Décris l'anomalie... (optionnel)"></textarea>
         <div class="photo-upload">
-          <label class="btn-photo" for="photo-${pointId}">
+          <label class="btn-photo" id="label-${pointId}" for="photo-${pointId}">
             📷 Ajouter une photo
           </label>
           <input
@@ -457,9 +381,9 @@ function genererCheckpoint(point) {
             capture="environment"
             style="display:none"
           >
-          <img class="photo-preview" id="preview-${pointId}" alt="Photo anomalie">
-          <button type="button" class="btn-remove-photo" id="remove-${pointId}">✕</button>
+          <span class="photo-count" id="count-${pointId}"></span>
         </div>
+        <div class="photo-thumbs" id="thumbs-${pointId}"></div>
       </div>
     </div>
   `;
@@ -470,14 +394,11 @@ function genererCheckpoint(point) {
 // ============================================
 function attacherEvenements(points) {
   points.forEach(point => {
-    const pointId    = slugify(point);
     const wrapper    = formSection.querySelector(`[data-point="${point}"]`);
     const btnOk      = wrapper.querySelector('.toggle-btn.ok');
     const btnAno     = wrapper.querySelector('.toggle-btn.anomalie');
     const detail     = wrapper.querySelector('.anomalie-detail');
-    const inputPhoto = document.getElementById(`photo-${pointId}`);
-    const preview    = document.getElementById(`preview-${pointId}`);
-    const btnRemove  = document.getElementById(`remove-${pointId}`);
+    const inputPhoto = document.getElementById(`photo-${slugify(point)}`);
 
     btnOk.addEventListener('click', () => {
       btnOk.classList.add('selected');
@@ -493,25 +414,54 @@ function attacherEvenements(points) {
 
     inputPhoto.addEventListener('change', (e) => {
       const file = e.target.files[0];
+      e.target.value = ''; // permet de reprendre une photo juste après
       if (!file) return;
-      photos[point]   = file;
-      const reader    = new FileReader();
-      reader.onload   = (ev) => {
-        preview.src = ev.target.result;
-        preview.classList.add('visible');
-        btnRemove.classList.add('visible');
-      };
-      reader.readAsDataURL(file);
+
+      photos[point] = photos[point] || [];
+      if (photos[point].length >= MAX_PHOTOS) {
+        alert(`${MAX_PHOTOS} photos maximum par point.`);
+        return;
+      }
+      photos[point].push(file);
+      afficherPhotos(point);
     });
 
-    btnRemove.addEventListener('click', () => {
-      delete photos[point];
-      inputPhoto.value = '';
-      preview.src      = '';
-      preview.classList.remove('visible');
-      btnRemove.classList.remove('visible');
-    });
+    // Réaffiche les photos déjà prises si on revient sur cette section
+    afficherPhotos(point);
   });
+}
+
+// ============================================
+// VIGNETTES DES PHOTOS D'UN POINT
+// ============================================
+function afficherPhotos(point) {
+  const pointId = slugify(point);
+  const liste   = photos[point] || [];
+  const thumbs  = document.getElementById(`thumbs-${pointId}`);
+  const count   = document.getElementById(`count-${pointId}`);
+  const label   = document.getElementById(`label-${pointId}`);
+  if (!thumbs) return;
+
+  thumbs.innerHTML = '';
+  liste.forEach((file, index) => {
+    const url  = URL.createObjectURL(file);
+    const item = document.createElement('div');
+    item.className = 'photo-mini';
+    item.innerHTML = `
+      <img src="${url}" alt="Photo ${index + 1}">
+      <button type="button" class="photo-mini-remove" title="Retirer cette photo">✕</button>
+    `;
+    item.querySelector('img').onload = () => URL.revokeObjectURL(url);
+    item.querySelector('button').addEventListener('click', () => {
+      photos[point].splice(index, 1);
+      afficherPhotos(point);
+    });
+    thumbs.appendChild(item);
+  });
+
+  count.textContent = liste.length > 0 ? `${liste.length}/${MAX_PHOTOS}` : '';
+  label.classList.toggle('complet', liste.length >= MAX_PHOTOS);
+  label.textContent = liste.length === 0 ? '📷 Ajouter une photo' : '📷 Ajouter une autre photo';
 }
 
 // ============================================
@@ -519,8 +469,7 @@ function attacherEvenements(points) {
 // ============================================
 function restaurerReponses(points) {
   points.forEach(point => {
-    const pointId = slugify(point);
-    const saved   = resultats[point];
+    const saved = resultats[point];
     if (!saved) return;
 
     const wrapper  = formSection.querySelector(`[data-point="${point}"]`);
@@ -535,18 +484,6 @@ function restaurerReponses(points) {
       btnAno.classList.add('selected');
       detail.classList.add('visible');
       textarea.value = saved.detail || '';
-
-      if (photos[point]) {
-        const preview   = document.getElementById(`preview-${pointId}`);
-        const btnRemove = document.getElementById(`remove-${pointId}`);
-        const reader    = new FileReader();
-        reader.onload   = (ev) => {
-          preview.src = ev.target.result;
-          preview.classList.add('visible');
-          btnRemove.classList.add('visible');
-        };
-        reader.readAsDataURL(photos[point]);
-      }
     }
   });
 }
@@ -585,9 +522,9 @@ function sauvegarderSection() {
 // ============================================
 // UPLOAD PHOTO VERS CLOUDINARY
 // ============================================
-async function uploadPhoto(file, checkupId, point, categorie) {
+async function uploadPhoto(file, checkupId, point, categorie, indice) {
   const nomPhoto = slugify(
-    `${vehiculeSelectionne.id}-${categorie}-${point}`
+    `${vehiculeSelectionne.id}-${categorie}-${point}-${indice}`
   );
 
   const formData = new FormData();
@@ -606,6 +543,36 @@ async function uploadPhoto(file, checkupId, point, categorie) {
   return data.secure_url;
 }
 
+// Réduit une photo (1600 px max, JPEG 80 %) pour un envoi plus rapide en 4G.
+// En cas de problème ou si le résultat n'est pas plus léger, on garde l'originale.
+function compresserImage(file, maxCote = 1600, qualite = 0.8) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const ratio  = Math.min(1, maxCote / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => resolve(blob && blob.size < file.size ? blob : file),
+        'image/jpeg',
+        qualite
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+
+    img.src = url;
+  });
+}
+
 // ============================================
 // ENVOI DU CHECK-UP
 // ============================================
@@ -614,23 +581,30 @@ async function envoyerCheckup(btnEnvoi) {
   btnEnvoi.textContent = 'Envoi en cours...';
 
   try {
-    const checkupId    = `${vehiculeSelectionne.id}-${Date.now()}`;
-    const photosUrls   = {};
-    const photoEntries = Object.entries(photos);
+    const checkupId = `${vehiculeSelectionne.id}-${Date.now()}`;
 
-    if (photoEntries.length > 0) {
-      for (let i = 0; i < photoEntries.length; i++) {
-        const [point, file] = photoEntries[i];
-        btnEnvoi.textContent = `Upload photos (${i + 1}/${photoEntries.length})...`;
-        const categorie = Object.entries(vehiculeSelectionne.checkpoints)
-          .find(([cat, pts]) => pts.includes(point))?.[0] || 'general';
-        photosUrls[point] = await uploadPhoto(file, checkupId, point, categorie);
+    // Seules les photos des points encore en anomalie sont envoyées
+    const aEnvoyer = Object.entries(photos).filter(([point, liste]) =>
+      liste.length > 0 && resultats[point]?.statut === 'anomalie'
+    );
+    const totalPhotos = aEnvoyer.reduce((n, [, liste]) => n + liste.length, 0);
+    let envoyees = 0;
+
+    for (const [point, liste] of aEnvoyer) {
+      const categorie = Object.entries(vehiculeSelectionne.checkpoints)
+        .find(([cat, pts]) => pts.includes(point))?.[0] || 'general';
+
+      const urls = [];
+      for (let n = 0; n < liste.length; n++) {
+        envoyees++;
+        btnEnvoi.textContent = `Upload photos (${envoyees}/${totalPhotos})...`;
+        const fichier = await compresserImage(liste[n]);
+        urls.push(await uploadPhoto(fichier, checkupId, point, categorie, n + 1));
       }
-    }
 
-    Object.entries(photosUrls).forEach(([point, url]) => {
-      if (resultats[point]) resultats[point].photoUrl = url;
-    });
+      resultats[point].photoUrls = urls;
+      resultats[point].photoUrl  = urls[0]; // compatibilité : anomalies, export, anciens écrans
+    }
 
     const checkupRef = await addDoc(collection(db, 'checkups'), {
       vehiculeId:      vehiculeSelectionne.id,
@@ -641,7 +615,7 @@ async function envoyerCheckup(btnEnvoi) {
       date:            serverTimestamp()
     });
 
-    // Crée les anomalies persistantes pour les points en anomalie avec Id Firestone
+    // Crée les anomalies persistantes avec l'ID Firestore réel du check-up
     await creerAnomalies(
       checkupRef.id,
       vehiculeSelectionne.id,
@@ -765,4 +739,5 @@ function afficherIcone(icone) {
 // ============================================
 // INITIALISATION
 // ============================================
-initialiserIdentification();
+if (btnRetour) btnRetour.textContent = '';
+showStep(stepAccueil);

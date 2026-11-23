@@ -15,6 +15,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
+// Toutes les photos d'une entrée : anciens enregistrements (photoUrl seule) ou nouveaux (photoUrls)
+export function photosDe(objet) {
+  if (Array.isArray(objet.photoUrls) && objet.photoUrls.length > 0) return objet.photoUrls;
+  return objet.photoUrl ? [objet.photoUrl] : [];
+}
+
 // =============================================
 // CRÉER UNE ANOMALIE PERSISTANTE
 // Appellé quand un agent signale une anomalie
@@ -37,6 +43,7 @@ export async function creerAnomalies(checkupId, vehiculeId, vehiculeNom, immatri
             point,
             description:    data.detail || '',
             photoUrl:       data.photoUrl || null,
+            photoUrls:      photosDe(data) ||,
             statut:         'en_attente',
             agentMail,
             dateSignalement: serverTimestamp(),

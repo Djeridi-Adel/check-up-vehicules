@@ -1,5 +1,5 @@
 import { db } from '../firebase.js';
-import { getAnomalieActive, marquerPrisEnCompte, marquerAstechDemande } from '../anomalies.js';
+import { getAnomalieActive, marquerPrisEnCompte, marquerAstechDemande, photoDe } from '../anomalies.js';
 import {
   collection,
   query,
@@ -75,7 +75,6 @@ export function afficherCheckups(tousLesCheckups, filtreActif, filtres) {
         <div>
           <h3>${checkup.vehiculeNom} — ${checkup.immatriculation}</h3>
           <p class="checkup-meta">${date}</p>
-          <p class="checkup-meta">${checkup.agentMail || 'Agent non identifié'}</p>
         </div>
         <div class="card-actions">
           <span class="checkup-badge ${hasAnomalie ? 'anomalie' : 'ok'}">
@@ -172,11 +171,13 @@ function genererDetailCheckup(resultats, vehiculeId) {
       <div class="checkpoint-result-info">
         <div class="checkpoint-result-label">${point}</div>
         ${data.detail ? `<div class="detail-text">${data.detail}</div>` : ''}
-        ${data.photoUrl ? `
-          <a href="${data.photoUrl}" target="_blank" class="photo-link">
-            <img src="${data.photoUrl}" class="photo-thumb" alt="Photo anomalie">
-            <span>Voir la photo</span>
-          </a>` : ''}
+                ${photosDe(data).length > 0 ? `
+          <div class="photo-galerie">
+            ${photosDe(data).map((url, i) => `
+              <a href="${url}" target="_blank" class="photo-link" title="Ouvrir la photo ${i + 1}">
+                <img src="${url}" class="photo-thumb" alt="Photo ${i + 1}">
+              </a>`).join('')}
+          </div>` : ''}
         ${data.statut === 'anomalie' ? `
           <div class="btn-actions-anomalie">
             <button class="btn-action-anomalie btn-pris-en-compte" data-point="${point}">

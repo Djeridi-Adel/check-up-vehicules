@@ -49,7 +49,7 @@ export function afficherSignalements(signalements) {
       <div class="signalement-card-header">
         <div>
           <h3>${s.vehiculeNom} — ${s.immatriculation}</h3>
-          <p class="checkup-meta">${date} — ${s.agentMail || 'Agent inconnu'}</p>
+          <p class="checkup-meta">${date}${s.agentMail ? ' — ' + s.agentMail : ''}</p>
         </div>
         <div class="card-actions">
           <span class="signalement-badge ${badgeClass}">${badgeLabel}</span>

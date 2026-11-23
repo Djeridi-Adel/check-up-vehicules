@@ -39,7 +39,7 @@ const recapHeure       = document.getElementById('recap-heure');
 // ============================================
 // STATE
 // ============================================
-const agentMail = sessionStorage.getItem('agent-mail') || '';
+const agentMail = null;
 let photoFile   = null;
 
 // ============================================

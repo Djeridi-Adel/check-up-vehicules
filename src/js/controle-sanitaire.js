@@ -63,7 +63,7 @@ const recapHeure = document.getElementById('recap-heure');
 // ============================================
 // STATE
 // ============================================
-const agentMail = localStorage.getItem('agent-mail') || '';
+const agentMail = null;
 let siteSelectionne = null;
 let photoAvantFile = null;
 let photoApresFile = null;
