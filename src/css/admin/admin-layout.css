@@ -128,3 +128,43 @@
 @media (min-width: 768px) {
   .admin-header h1 { font-size: 1.3rem; }
 }
+
+
+/* ============================================
+   ONGLETS — RESPONSIVE MOBILE
+   Les onglets passent à la ligne au lieu de déborder : tout est visible sans faire glisser.
+   ============================================ */
+@media (max-width: 640px) {
+  .onglets {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .onglet {
+    flex: 1 1 calc(50% - 4px); /* 2 onglets par ligne */
+    min-width: 0;
+    padding: 9px 6px;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: normal;       /* le libellé peut passer sur 2 lignes */
+  }
+
+  /* Boutons du bandeau haut (Parc, Planning, Export…) : ils passent à la ligne aussi */
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Formulaire et tableau : l'un sous l'autre */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  /* Les tableaux défilent dans leur carte au lieu d'élargir toute la page */
+  .card {
+    overflow-x: auto;
+  }
+}
