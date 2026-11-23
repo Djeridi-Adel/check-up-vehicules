@@ -123,6 +123,43 @@ export async function importerDepuisCheckup() {
   return compteur;
 }
 
+// Date locale → "AAAA-MM-JJ"
+export function dateVersISO(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// Retrouve la fiche du parc liée à un véhicule du check-up
+export async function trouverVehiculeParc(vehiculeCheckupId) {
+  if (!vehiculeCheckupId) return null;
+  const q = query(
+    collection(db, COLLECTIONS.vehicule),
+    where("vehiculeCheckupId", "==", vehiculeCheckupId)
+  );
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  const d = snapshot.docs[0];
+  return { id: d.id, ...d.data() };
+}
+
+// Crée la fiche du parc pour un seul véhicule du check-up
+export async function importerUnVehicule(vehiculeCheckupId) {
+  const snap = await getDoc(doc(db, VEHICULES_CHECKUP, vehiculeCheckupId));
+  if (!snap.exists()) return null;
+
+  const v     = snap.data();
+  const dispo = v.disponible !== false;
+  const ref   = await addDoc(collection(db, COLLECTIONS.vehicule), {
+    nom: v.nom || "",
+    immatriculation: v.immatriculation || "",
+    type: v.type || "",
+    vehiculeCheckupId,
+    disponible: dispo,
+    immobilisations: dispo ? [] : [{ debut: aujourdhuiISO(), fin: null }],
+    dateAjout: serverTimestamp()
+  });
+  return { id: ref.id, nom: v.nom || "" };
+}
+
 // ============================================
 // DISPONIBILITÉ ET IMMOBILISATION
 // immobilisations = [{ debut: "2026-10-29", fin: "2026-11-03" | null }]
@@ -188,14 +225,15 @@ export async function basculerDisponibilite(type, objet, disponible, dateISO = a
 // PANNES ET RÉPARATIONS
 // nature : "panne" | "reparation"
 // ============================================
-export async function ajouterIntervention({ type, objetId, nature, date, description }) {
+export async function ajouterIntervention({ type, objetId, nature, date, description, extra = {} }) {
   const ref = await addDoc(collection(db, INTERVENTIONS), {
     typeObjet: type,
     objetId,
     nature,
     date,
     description: description || "",
-    dateCreation: serverTimestamp()
+    dateCreation: serverTimestamp(),
+    ...extra
   });
   return ref.id;
 }

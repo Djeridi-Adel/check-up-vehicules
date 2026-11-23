@@ -1,5 +1,6 @@
 import { db } from '../firebase.js';
 import { getAnomalieActive, marquerPrisEnCompte, marquerAstechDemande, photosDe } from '../anomalies.js';
+import { trouverVehiculeParc, importerUnVehicule, ajouterIntervention, listerInterventions, dateVersISO } from '../parc.js';
 import {
   collection,
   query,
@@ -156,6 +157,75 @@ card.querySelectorAll('.btn-action-anomalie').forEach(btn => {
   });
 });
 
+    // Boutons "Reporter sur la fiche du véhicule"
+    card.querySelectorAll('.btn-reporter').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const point = btn.dataset.point;
+        const data  = checkup.resultats?.[point] || {};
+
+        btn.disabled = true;
+        try {
+          // 1. Fiche du véhicule dans le parc
+          let fiche = await trouverVehiculeParc(checkup.vehiculeId);
+          if (!fiche) {
+            if (!confirm(`« ${checkup.vehiculeNom} » n'a pas encore de fiche dans le parc.\nL'ajouter maintenant ?`)) return;
+            fiche = await importerUnVehicule(checkup.vehiculeId);
+            if (!fiche) {
+              alert('Véhicule introuvable dans le check-up.');
+              return;
+            }
+          }
+
+          // 2. Déjà reporté depuis ce check-up ?
+          const existantes = await listerInterventions(fiche.id);
+          const exacte = existantes.find(i => i.sourceCheckupId === checkup.id && i.sourcePoint === point);
+          if (exacte) {
+            remplacerParLien(btn, fiche.id, '✅ Déjà reporté — ouvrir la fiche');
+            return;
+          }
+
+          // 3. Même point déjà en panne sur la fiche (anomalie qui revient chaque matin) ?
+          const enCours = existantes.find(i => i.nature === 'panne' && !i.reparee && i.sourcePoint === point);
+          if (enCours) {
+            const depuis = enCours.date.split('-').reverse().join('/');
+            if (!confirm(`Une panne « ${point} » est déjà en cours sur la fiche (déclarée le ${depuis}).\nReporter quand même ?`)) return;
+          }
+
+          // 4. Description proposée, modifiable
+          const defaut      = `${point}${data.detail ? ' — ' + data.detail : ''}`;
+          const description = prompt(`Description à reporter sur la fiche de « ${fiche.nom} » (modifiable) :`, defaut);
+          if (description === null) return;
+          if (!description.trim()) {
+            alert('La description ne peut pas être vide.');
+            return;
+          }
+
+          // 5. Création de la panne, datée du jour du check-up
+          await ajouterIntervention({
+            type: 'vehicule',
+            objetId: fiche.id,
+            nature: 'panne',
+            date: dateVersISO(checkup.date ? checkup.date.toDate() : new Date()),
+            description: description.trim(),
+            extra: {
+              sourceCheckupId: checkup.id,
+              sourcePoint: point,
+              photoUrls: photosDe(data)
+            }
+          });
+
+          remplacerParLien(btn, fiche.id, '✅ Reporté — ouvrir la fiche');
+
+        } catch (err) {
+          console.error(err);
+          alert('Erreur lors du report sur la fiche.');
+        } finally {
+          if (btn.isConnected) btn.disabled = false;
+        }
+      });
+    });
+
     liste.appendChild(card);
   });
 }
@@ -189,6 +259,9 @@ function genererDetailCheckup(resultats, vehiculeId) {
             <button class="btn-action-anomalie btn-resoudre" data-point="${point}">
               ✅ Résolu
             </button>
+            <button type="button" class="btn-reporter" data-point="${point}">
+              ➡️ Reporter sur la fiche
+            </button>
           </div>` : ''}
       </div>
       <span class="statut-${data.statut}">
@@ -196,4 +269,14 @@ function genererDetailCheckup(resultats, vehiculeId) {
       </span>
     </div>
   `).join('');
+}
+
+// Remplace le bouton "Reporter" par un lien vers la fiche une fois la panne reportée
+function remplacerParLien(btn, ficheId, texte) {
+  const lien = document.createElement('a');
+  lien.className   = 'btn-reporter reporte';
+  lien.href        = `admin-parc-fiche.html?type=vehicule&id=${ficheId}`;
+  lien.textContent = texte;
+  lien.addEventListener('click', (e) => e.stopPropagation());
+  btn.replaceWith(lien);
 }

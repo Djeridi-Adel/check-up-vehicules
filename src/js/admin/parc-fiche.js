@@ -224,16 +224,28 @@ function rendreHistorique() {
           ${i.noteReparation ? " — " + esc(i.noteReparation) : ""}
         </p>`;
     }
-
+    const photosPanne = Array.isArray(i.photoUrls) ? i.photoUrls : [];
+    const galerie = photosPanne.length > 0 ? `
+      <div class="photo-galerie">
+        ${photosPanne.map((url, n) => `
+          <a href="${url}" target="_blank" class="photo-link" title="Ouvrir la photo ${n + 1}">
+            <img src="${url}" class="photo-thumb" alt="Photo ${n + 1}">
+          </a>`).join("")}
+      </div>` : "";
+    const origine = i.sourceCheckupId
+      ? '<span class="fiche-row-sub">· reportée depuis un check-up</span>'
+      : "";
     const row = document.createElement("div");
     row.className = "fiche-row " + (enCours ? "panne" : "reparation");
-    row.innerHTML = `
+        row.innerHTML = `
       <div class="fiche-row-main">
         <div>
           ${badge}
           <span class="fiche-row-sub">${fmtDate(i.date)}</span>
+          ${origine}
         </div>
         <p>${esc(i.description)}</p>
+        ${galerie}
         ${detailReparation}
       </div>
       <div class="fiche-row-actions">

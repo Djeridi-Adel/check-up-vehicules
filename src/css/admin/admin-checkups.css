@@ -305,3 +305,41 @@
 .photo-galerie .photo-link {
   margin-top: 0;
 }   
+
+/* ============================================
+   REPORTER UNE ANOMALIE SUR LA FICHE
+   ============================================ */
+.btn-reporter {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1.5px solid var(--primary);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: #e8f0fe;
+  color: var(--primary);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.btn-reporter:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-reporter.reporte {
+  background: #e6f4ea;
+  border-color: #1e7e34;
+  color: #1e7e34;
+}
+
+.btn-reporter.reporte:hover {
+  background: #c8e6c9;
+  color: #1e7e34;
+}
+
+.btn-reporter:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
