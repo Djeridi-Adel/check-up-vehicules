@@ -200,22 +200,23 @@ card.querySelectorAll('.btn-action-anomalie').forEach(btn => {
             alert('La description ne peut pas être vide.');
             return;
           }
-
           // 5. Création de la panne, datée du jour du check-up
+          const dateCheckup = checkup.date ? checkup.date.toDate() : new Date();
+
           await ajouterIntervention({
             type: 'vehicule',
             objetId: fiche.id,
             nature: 'panne',
-            date: dateVersISO(checkup.date ? checkup.date.toDate() : new Date()),
+            date: dateVersISO(dateCheckup),
             description: description.trim(),
             extra: {
               sourceCheckupId: checkup.id,
               sourcePoint: point,
+              heure: dateCheckup.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
               photoUrls: photosDe(data)
             }
           });
-
-          remplacerParLien(btn, fiche.id, '✅ Reporté — ouvrir la fiche');
+                    remplacerParLien(btn, fiche.id, '✅ Reporté — ouvrir la fiche');
 
         } catch (err) {
           console.error(err);
