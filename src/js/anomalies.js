@@ -43,7 +43,7 @@ export async function creerAnomalies(checkupId, vehiculeId, vehiculeNom, immatri
             point,
             description:    data.detail || '',
             photoUrl:       data.photoUrl || null,
-            photoUrls:      photosDe(data) ||,
+            photoUrls:      photosDe(data),
             statut:         'en_attente',
             agentMail,
             dateSignalement: serverTimestamp(),
