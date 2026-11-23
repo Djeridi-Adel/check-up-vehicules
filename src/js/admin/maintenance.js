@@ -145,3 +145,16 @@ async function afficherHistorique(vehicule) {
     console.error(error);
   }
 }
+
+// ============================================
+// BOUTON RETOUR
+// ============================================
+export function initMaintenanceRetour() {
+  const btn = document.getElementById('btn-retour-maintenance');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      document.getElementById('maintenance-vehicules').classList.remove('hidden');
+      document.getElementById('maintenance-historique').classList.add('hidden');
+    });
+  }
+}
